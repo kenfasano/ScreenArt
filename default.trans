@@ -1,0 +1,135 @@
+{
+	"pipeline": {
+		"pipelines": [
+			{"radialwarptransformer": 91},
+			{"anamorphictransformer": 45},
+			{"watercolortransformer": 45},
+			{"colormaptransformer": 41},
+			{"swirlwarptransformer": 35},
+			{"invertrgbtransformer": 23},
+			{"duotonetransformer": 21},
+			{"meltmorphtransformer": 19},
+			{"fractalwarptransformer": 11},
+			{"xraytransformer": 11},
+			{"halftonetransformer": 9},
+			{"datamoshtransformer": 7},
+			{"glitchwarptransformer": 7},
+			{"fluidwarptransformer": 5},
+			{"tritonetransformer": 3},
+			{"posterizationtransformer": 1},
+			{"threedextrusiontransformer": 1},
+			{"thermalimagingtransformer": 1},
+			{"fisheyetransformer": 10}
+		],
+		"#include": ["radialwarptransformer", "fisheyetransformer"]
+	},
+	"radialwarptransformer": {
+		"file_count": 5,
+		"style": "?",
+		"strength": "70.0",
+		"center_x": [0.25, 0.50, 0.75],
+		"center_y": [0.25, 0.50, 0.75],
+		"radius": 0.25  
+	},
+	"fisheyetransformer": {
+		"strength": "?",
+		"zoom": "?",
+		"shape": "?"
+	},
+	"fluidwarptransformer": {
+		"alpha": "0.1",
+		"octaves": 3,
+		"persistence": 0.75
+	},
+	"fractalwarptransformer": {
+		"iterations": 1,
+		"scale": 0.05
+	},
+	"glitchwarptransformer": {
+		"warp_intensity": 0.005
+	},
+	"swirlwarptransformer": {
+		"strength": 1.5
+	},
+	"meltmorphtransformer": {
+		"melt_intensity": 0.5
+	},
+	"threedextrusiontransformer": {
+		"extrusion_intensity": 0.5,
+		"ambient_light": "?"
+	},
+	"anamorphictransformer": {
+		"count": 5,
+		"streak_colors": [
+			"FFFF00",
+			"BFBF40",
+			"808080",
+			"4040BF",
+			"0000FF"
+		],
+		"streak_intensity": [0.0, 0.2, 0.4, 0.6, 0.8]
+	},
+	"duotonetransformer": {
+		"shadow_hex": "#FFFFFF",
+		"hilight_hex": "#000000"
+	},
+	"halftonetransformer": {
+		"dot_size": 1
+	},
+	"tritonetransformer": {
+		"shadow_hex": "#FFFFFF",
+		"mid_hex": "999999",
+		"hilight_hex": "#000000"
+	},
+	"colormaptransformer": {
+		"mode": "random"
+	},
+	"datamoshtransformer": {
+		"mosh_intensity": "?" 
+	},
+	"posterizationtransformer": {
+		"levels": 2 
+	},
+	"watercolortransformer": {
+		"style_name": "?"
+	},
+	"xraytransformer": {
+		"num_colors": 256
+	},
+	"thermalimagingtransformer": {
+	},
+	"wiki": {
+		"count": 15,
+		"image_type": "image"
+	},
+	"nasa": {
+		"count": 15,
+		"image_type": "astronomical"
+	},
+	"bubbles": {
+		"file_count": 10,
+		"iterations": 4,
+		"count": 100000,
+		"radius": [2,10],
+		"center_radius_multiplier": 15.0,
+		"#fill_color": [255,255,0],
+		"#outline_color": [0,0,255],
+		"#bg_color": [255,255,255],
+		"width": 1920,
+		"height": 1280,
+		"image_type": "generated"
+	},
+	"lojong": {
+		"file_count": 10,
+		"image_type": "text"
+	},
+	"bible": {
+		"file_count": 10,
+		"image_type": "text"
+	},
+	"peripheraldriftillusion": {
+		"file_count": 20,
+		"image_type": "generated"
+	},
+	"##exclude": ["bible"]
+}
