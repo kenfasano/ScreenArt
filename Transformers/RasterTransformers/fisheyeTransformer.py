@@ -1,7 +1,7 @@
 import numpy as np # type: ignore
 import random
 from .base import RasterTransformer
-from scipy.ndimage import map_coordinates
+from scipy.ndimage import map_coordinates # type: ignore
 
 # --- Default min/max values for randomization ---
 MIN_STRENGTH = 0.2
@@ -23,11 +23,7 @@ class FisheyeTransformer(RasterTransformer):
         """
         Applies the fisheye distortion based on parameters in the config.
         """
-        self.config = config.get("fisheyetransformer", None)
-
-        if self.config is None:
-            log.error("config is None for fisheyetransformer!")
-            return img_np  # Return original image
+        self.config = common.get_config(config, "fisheyetransformer")
 
         # --- Parameter Handling ---
         # Strength of the distortion
@@ -36,9 +32,9 @@ class FisheyeTransformer(RasterTransformer):
             self.strength = random.uniform(MIN_STRENGTH, MAX_STRENGTH)
 
         # Zoom factor
-        self.zoom = common.get_config(self.config, "zoom")
-        if self.zoom is None or isinstance(self.zoom, str):
-            self.zoom = 1.0
+        #self.zoom = common.get_config(self.config, "zoom")
+        #if self.zoom is None or isinstance(self.zoom, str):
+        self.zoom = random.uniform(0.5,1.5)
             
         # Shape of the lens
         self.shape = common.get_config(self.config, "shape")

@@ -31,9 +31,6 @@ class AnamorphicTransformer(RasterTransformer):
         # LAZY IMPORTS: Prevent circular dependency
         
         self.config = common.get_config(config, "anamorphictransformer")
-        if not self.config:
-            log.error("config is None for AnamorphicTransformer!")
-            return img_np
 
         height, width = img_np.shape[:2]
 

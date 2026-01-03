@@ -17,7 +17,7 @@ class PosterizationTransformer(RasterTransformer):
         """
         np.random.seed()
 
-        self.config = config.get("posterizationtransformer", None)
+        self.config = common.get_config(config, "posterizationtransformer")
 
         if self.config is None:
             log.error("config is None for PosterizationTransformer!")

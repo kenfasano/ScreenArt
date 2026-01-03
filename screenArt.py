@@ -3,8 +3,6 @@ import sys
 
 # Get the directory where screenArt.py lives
 current_dir = os.path.dirname(os.path.abspath(__file__))
-
-# Add it to sys.path so 'Transformers' can be found
 if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
 
@@ -15,51 +13,36 @@ import time
 from . import common
 from . import log
 
-from .InputSources import wiki, nasa, bubbles, lojong, bible, peripheral_drift_illusion
+# REF_CHANGE: Import from Generators package
+from .Generators import wiki, nasa, bubbles, lojong, bible, peripheral_drift_illusion, \
+        kochSnowflake, hilbert
+
 from .bus import ImageProcessingBus
+
 from timeit import timeit
 from collections import namedtuple
 from datetime import datetime
 from typing import List, Tuple
 
-ImageSource = namedtuple("ImageSource", ["source", "should_erase"])
-
-# List of all available transformers by Class Name
-ALL_RASTER_TRANSFORMERS = [
-    "AnamorphicTransformer",
-    "ColormapTransformer",
-    "DataMoshTransformer",
-    "DuotoneTransformer",
-    "FisheyeTransformer",
-    "FluidWarpTransformer",
-    "FractalWarpTransformer",
-    "GlitchWarpTransformer",
-    "HalftoneTransformer",
-    "InvertRGBTransformer",
-    "MeltMorphTransformer",
-    "NullTransformer",
-    "PosterizationTransformer",
-    "RadialWarpTransformer",
-    "SwirlWarpTransformer",
-    "ThermalImagingTransformer",
-    "ThreeDExtrusionTransformer",
-    "TritoneTransformer",
-    "WatercolorTransformer",
-    "XrayTransformer"
-]
+# REF_CHANGE: Renamed namedtuple
+GeneratorConfig = namedtuple("GeneratorConfig", ["source", "should_erase"])
 
 class ScreenArtMain():
     def __init__(self, config: dict):
         random.seed(time.time())
         self.config = config
 
-        self.input_dirs: dict[str, ImageSource] = {
-                "bubbles": ImageSource(source=f"{common.INPUT_SOURCES_IN}/Bubbles", should_erase=True),
-                "nasa": ImageSource(source=f"{common.INPUT_SOURCES_IN}/Nasa", should_erase=True),
-                "wiki": ImageSource(source=f"{common.INPUT_SOURCES_IN}/Wiki", should_erase=True),
-                "lojong": ImageSource(source=f"{common.INPUT_SOURCES_IN}/Lojong", should_erase=True),
-                "bible": ImageSource(source=f"{common.INPUT_SOURCES_IN}/Bible", should_erase=True),
-                "peripheraldriftillusion": ImageSource(source=f"{common.INPUT_SOURCES_IN}/OpticalIllusions", should_erase=True)
+        # REF_CHANGE: Renamed input_dirs -> generators
+        # REF_CHANGE: ImageSource -> GeneratorConfig
+        self.generators: dict[str, GeneratorConfig] = {
+                "bubbles": GeneratorConfig(source=f"{common.INPUT_SOURCES_IN}/Bubbles", should_erase=True),
+                "nasa": GeneratorConfig(source=f"{common.INPUT_SOURCES_IN}/Nasa", should_erase=True),
+                "wiki": GeneratorConfig(source=f"{common.INPUT_SOURCES_IN}/Wiki", should_erase=True),
+                "lojong": GeneratorConfig(source=f"{common.INPUT_SOURCES_IN}/Lojong", should_erase=True),
+                "bible": GeneratorConfig(source=f"{common.INPUT_SOURCES_IN}/Bible", should_erase=True),
+                "peripheraldriftillusion": GeneratorConfig(source=f"{common.INPUT_SOURCES_IN}/OpticalIllusions", should_erase=True),
+                "kochSnowflake": GeneratorConfig(source=f"{common.INPUT_SOURCES_IN}/KochSnowflake", should_erase=True),
+                "hilbert": GeneratorConfig(source=f"{common.INPUT_SOURCES_IN}/Hilbert", should_erase=True),
                 }
 
         self.image_bus = ImageProcessingBus(common.TRANSFORMERS_OUT, common.REJECTED_OUT)
@@ -74,10 +57,6 @@ class ScreenArtMain():
                     log.error(f"Error: {e.filename} - {e.strerror}.")
 
     def _get_keys_to_process(self) -> list[str]:
-        """
-        Helper to determine which input keys to process based on config.
-        Used by both Test Mode and Normal Mode.
-        """
         include_list = self.config.get("include", None)
         exclude_list = self.config.get("exclude", None)
         
@@ -85,45 +64,42 @@ class ScreenArtMain():
         
         if include_list:
             for key in include_list:
-                if key in self.input_dirs:
+                if key in self.generators:
                     keys_to_process.append(key)
                 else:
-                    log.warning(f"Include key '{key}' maps to unknown internal source. Skipping.")
+                    log.warning(f"Include key '{key}' maps to unknown generator. Skipping.")
         elif exclude_list:
-            all_keys = set(self.input_dirs.keys())
+            all_keys = set(self.generators.keys())
             excluded_keys = {key for key in exclude_list}
             keys_to_process = [key for key in all_keys if key not in excluded_keys]
         else:
-            keys_to_process = list(self.input_dirs.keys())
+            keys_to_process = list(self.generators.keys())
             
         return keys_to_process
 
     @timeit # type: ignore
     def run(self):
-        # Standard Cleanup
         self.trim_images(common.TRANSFORMERS_OUT, 50)
         self.trim_images(common.REJECTED_OUT, 0)
 
-        # Determine inputs using the same helper logic
         keys_to_process = self._get_keys_to_process()
         
-        # Phase 1
+        # Phase 1: Run Generators
         for key in keys_to_process:
-            image_source = self.input_dirs[key]
-            if image_source.should_erase:
-                self.erase_image_dir(image_source.source)
-            self.get_input_source(key)
+            gen_config = self.generators[key]
+            if gen_config.should_erase:
+                self.erase_image_dir(gen_config.source)
+            self.run_generator(key)
 
-        # Phase 2
+        # Phase 2: Process Images
         for key in keys_to_process:
-            dir_path = self.input_dirs[key].source
+            dir_path = self.generators[key].source
             self.image_bus.process_images(self.config, dir_path)
 
         return self
 
     def trim_images(self, directory_path: str, max_images: int):
         search_path = os.path.join(directory_path, "*.[jpP]*") 
-
         image_files = glob.glob(search_path)
         current_count = len(image_files)
 
@@ -144,47 +120,54 @@ class ScreenArtMain():
                     print(f"    - Error deleting {file_path}: {e}")
 
             print(f"✅ Trim complete. Deleted {deleted_count} files.")
-            print(f"New image count: {current_count - deleted_count}")
-
         else:
             print("Directory size is within the limit. No trimming needed.")
 
-    def get_input_source(self, key: str):
+    # REF_CHANGE: Renamed method get_input_source -> run_generator
+    def run_generator(self, key: str):
         match key:
             case "wiki":
-                log.info("Connecting to the Wikipedia API...")
+                log.info("Running Wikipedia Generator...")
                 wiki.Wiki(self.config).get_new_images("Wiki")
             case "nasa":
-                log.info("Connecting to the NASA Open Data Portal...")
+                log.info("Running NASA Generator...")
                 nasa.Nasa(self.config).get_new_images("Nasa")
             case "bubbles":
-                log.info("Connecting to the 'Bubbles' generator...")
+                log.info("Running Bubbles Generator...")
                 bubbles.Bubbles(self.config).draw()
             case "lojong":
-                log.info("Connecting to the 'Lojong' generator...")
+                log.info("Running Lojong Generator...")
                 lojong.Lojong(self.config).draw()
             case "bible":
-                log.info("Connecting to the 'Bible' generator...")
+                log.info("Running Bible Generator...")
                 bible.Bible(self.config).draw()
             case "peripheraldriftillusion":
-                log.info("Connecting to the 'PeripheralDriftIllusion' generator...")
+                log.info("Running PeripheralDrift Generator...")
                 peripheral_drift_illusion.PeripheralDriftIllusion(self.config).draw()
+            case "kochSnowflake":
+                log.info("Running KochSnowflake Generator...")
+                kochSnowflake.KochSnowflake(self.config).draw()
+            case "hilbert":
+                log.info("Running Hilbert Generator...")
+                hilbert.Hilbert(self.config).draw()
             case _:
-                log.info(f"Input source for key '{key}' not found.")
+                log.info(f"Generator for key '{key}' not found.")
                 return
 
     def write_outcome(self, elapsed_time: str, ok: bool, stats: List[Tuple[str, float]]):
         current_datetime = datetime.now()
-        formatted_datetime = current_datetime.strftime('%m/%d, %H:%M')
+        formatted_datetime = current_datetime.strftime('%H:%M')
         mark: str = "✓" if ok else "❌"
-        
-        main_msg = f"{formatted_datetime} {elapsed_time} {mark}"
+        ms_value = int(float(elapsed_time))
+
+        main_msg = f":{ms_value:02d}@{formatted_datetime} {mark}"
+        log.info(main_msg)
         
         output_lines = [main_msg]
 
         if stats:
             for name, avg_time in stats:
-                formatted_avg = f"{avg_time:.4f}s"
+                formatted_avg = f"{int(avg_time * 1000)}ms"
                 clean_name = name.replace("Transformer", "")
                 line = f"{clean_name}: {formatted_avg}"
                 output_lines.append(line)
@@ -205,11 +188,8 @@ class ScreenArtMain():
 def main(config: dict):
     s = ScreenArtMain(config)
     try:
-        _, elapsed_time = s.run()
-        
-        # Retrieve stats from bus using the previous method name
+        _, elapsed_time = s.run() # type: ignore
         stats = s.image_bus.get_performance_stats()
-        
         s.write_outcome(elapsed_time, True, stats)
         exit(0)
     except Exception as e:

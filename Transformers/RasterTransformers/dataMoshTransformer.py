@@ -22,10 +22,6 @@ class DataMoshTransformer(RasterTransformer):
 
         self.config = common.get_config(config, "datamoshtransformer")
 
-        if self.config is None:
-            log.error("config is None for DataMoshTransformer!")
-            return img_np 
-
         # --- Parameter Handling ---
         mosh_intensity = self.config.get("mosh_intensity", "?") 
         if isinstance(mosh_intensity, float):

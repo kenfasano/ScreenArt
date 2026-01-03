@@ -28,6 +28,7 @@ FILES_TO_MOVE = [
     "threeDExtrusionTransformer.py",
     "tritoneTransformer.py",
     "watercolorTransformer.py",
+    "wheelTransformer.py",
     "xrayTransformer.py"
 ]
 

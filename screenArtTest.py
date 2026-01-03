@@ -42,6 +42,7 @@ ALL_TRANSFORMERS = [
     "ThreeDExtrusionTransformer",
     "TritoneTransformer",
     "WatercolorTransformer",
+    "WheelTransformer",
     "XrayTransformer"
 ]
 

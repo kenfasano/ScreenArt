@@ -23,7 +23,7 @@ class MeltMorphTransformer(RasterTransformer):
 
         height, width, _ = img_np.shape
 
-        self.config = config.get("meltmorphtransformer", None)
+        self.config = common.get_config(config, "meltmorphtransformer")
 
         if self.config is None:
             log.error("config is None for MeltMorphTransformer!")

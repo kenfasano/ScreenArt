@@ -16,8 +16,9 @@ books = [
 ]
 
 class Bible(text.Text):
-    def __init__(self, config: dict | None = None):
-        self.config = config.get("bible", None) if config else None
+    def __init__(self, config: dict):
+        import common
+        self.config = common.get_config(config, "bible")
         self.file_count = self.config.get("file_count", DEFAULT_FILE_COUNT) if self.config else DEFAULT_FILE_COUNT
 
         input_file_paths: list[str] = []

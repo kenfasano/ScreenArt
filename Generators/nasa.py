@@ -6,8 +6,10 @@ DEFAULT_FILE_COUNT = 3
 
 class Nasa(htmlInputSource.HtmlInputSource):
     def __init__(self, config: dict | None):
+        import common
+
         if config:
-            self.config = config.get("nasa", None)
+            self.config = common.get_config(config, "nasa")
             self.file_count = self.config.get("file_count", DEFAULT_FILE_COUNT) if self.config else DEFAULT_FILE_COUNT
             super().__init__(self.file_count)
         else:

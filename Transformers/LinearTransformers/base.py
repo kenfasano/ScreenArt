@@ -1,6 +1,6 @@
 from typing import Union
 import numpy as np # type: ignore
-from .baseTransformer import Transformer
+from ..base import Transformer
 
 class LinearTransformer(Transformer):
     """

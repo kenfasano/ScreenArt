@@ -8,8 +8,10 @@ from . import text
 DEFAULT_FILE_COUNT = 3
 
 class Lojong(text.Text):
-    def __init__(self, config: dict | None = None):
-        self.config = config.get("lojong", None) if config else None
+    def __init__(self, config: dict):
+        import common
+
+        self.config = common.get_config(config, "lojong")
         self.file_count = self.config.get("file_count", DEFAULT_FILE_COUNT) if self.config else DEFAULT_FILE_COUNT
 
         lojong_directory = f"{common.BASE_PATH}InputSources/Data/Lojong"

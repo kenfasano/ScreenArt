@@ -29,9 +29,6 @@ class ColormapTransformer(RasterTransformer):
         The image is first converted to grayscale if it's a color image.
         """
         self.config = common.get_config(config, "colormaptransformer")
-        if self.config is None:
-            log.error("config is None for ColormapTransformer!")
-            return img_np 
 
         # Ensure the image is in a supported format
         if img_np.dtype != np.uint8:

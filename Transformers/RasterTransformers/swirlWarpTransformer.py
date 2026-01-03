@@ -21,12 +21,13 @@ class SwirlWarpTransformer(RasterTransformer):
         super().__init__()
 
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
+        import common
         import log
 
         if img_np is None or img_np.ndim < 2:
             raise ValueError("SwirlWarpTransformer.transform: expected HxW or HxWxC image array")
 
-        self.config = config.get("swirlwarptransformer", None)
+        self.config = common.get_config(config, "swirlwarptransformer")
 
         if self.config is None:
             log.error("config is None for SwirlWarpTransformer!")

@@ -1,4 +1,3 @@
-
 import numpy as np # type: ignore
 import random
 from .base import RasterTransformer
@@ -33,9 +32,9 @@ class TritoneTransformer(RasterTransformer):
             log.error("config is None for TritoneTransformer!")
             return img_np 
 
-        shadow_hex = self.config.get("shadow_hex", DEFAULT_SHADOW_HEX)
-        mid_hex = self.config.get("mid_hex", DEFAULT_MID_HEX)
-        hilight_hex = self.config.get("hilight_hex", DEFAULT_HILIGHT_HEX)
+        shadow_hex = self.get_random_hex() #self.config.get("shadow_hex", DEFAULT_SHADOW_HEX)
+        mid_hex = self.get_random_hex() #self.config.get("mid_hex", DEFAULT_MID_HEX)
+        hilight_hex = self.get_random_hex() #self.config.get("hilight_hex", DEFAULT_HILIGHT_HEX)
         
         # --- POPULATE METADATA ---
         self.metadata_dictionary = {

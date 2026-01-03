@@ -16,11 +16,9 @@ class FractalWarpTransformer(RasterTransformer):
 
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
         import log
-        self.config = config.get("fractalwarptransformer", None)
+        import common
 
-        if self.config is None:
-            log.error("config is None for fractalwarptransformer!")
-            return img_np 
+        self.config = common.get_config(config, "fractalwarptransformer")
 
         # --- Parameter Handling ---
         iterations = self.config.get("iterations", DEFAULT_ITERATIONS)

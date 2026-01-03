@@ -49,5 +49,4 @@ def run_processing():
 if __name__ == '__main__':
     freeze_support() 
     setup_logging()
-    log.info("freeze_support() and setup_logging() called; calling run_processing.") 
     run_processing()

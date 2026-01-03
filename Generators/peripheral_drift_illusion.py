@@ -1,4 +1,4 @@
-from . import drawInputSource
+from . import drawGenerator
 from PIL import Image, ImageDraw #type: ignore
 import math
 import colorsys
@@ -7,10 +7,12 @@ from .. import common
 
 DEFAULT_FILE_COUNT = 3
 
-class PeripheralDriftIllusion(drawInputSource.DrawInputSource):
-    def __init__(self, config: dict | None):
+class PeripheralDriftIllusion(drawGenerator.DrawGenerator):
+    def __init__(self, config: dict):
+        import common
+
         super().__init__()
-        self.config = config.get("peripheral_drift_illusion", None) if config else None
+        self.config = common.get_config(config, "peripheral_drift_illusion")
         self.file_count = self.config.get("file_count", DEFAULT_FILE_COUNT) if self.config else DEFAULT_FILE_COUNT 
         self.base_filename = "peripheral_drift"
 

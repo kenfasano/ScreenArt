@@ -1,13 +1,13 @@
 import random
 from . import log
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Tuple
 
 DEFAULT_TRANSFORMER_COUNT: int = 3
 
-def get_all_transformers_dict() -> Dict[str, Callable]:
+def get_transformer_dicts() -> Tuple[Dict[str, Callable], Dict[str, Callable]]:
     """
-    Lazily imports transformers and returns a dictionary mapping
-    lowercase class names to the class objects.
+    Lazily imports transformers and returns a tuple of dictionaries:
+    (raster_transformers_dict, linear_transformers_dict)
     
     CRITICAL: This function isolates the imports. Do not move these imports
     to the top of the file, or the circular dependency error will return.
@@ -18,6 +18,7 @@ def get_all_transformers_dict() -> Dict[str, Callable]:
         DataMoshTransformer,
         DuotoneTransformer,
         FisheyeTransformer,
+        FlipWilsonTransformer,
         FluidWarpTransformer,
         FractalWarpTransformer,
         GlitchWarpTransformer,
@@ -32,15 +33,32 @@ def get_all_transformers_dict() -> Dict[str, Callable]:
         ThermalImagingTransformer,
         TritoneTransformer,
         WatercolorTransformer,
+        WheelTransformer,
         XrayTransformer,
     )
 
-    all_transformers: List[Callable] = [
+    # FIXED: Import from the specific module file inside the LinearTransformers folder
+    from Transformers.LinearTransformers.kochSnowflakeTransformer import KochSnowflakeTransformer
+    from Transformers.LinearTransformers.sierpinskiTransformer import SierpinskiTransformer
+    from Transformers.LinearTransformers.smoothingTransformer import SmoothingTransformer
+    from Transformers.LinearTransformers.sinewaveTransformer import SineWaveTransformer
+    from Transformers.LinearTransformers.jitterTransformer import JitterTransformer
+
+    all_linear_transformers: List[Callable] = [
+        KochSnowflakeTransformer,
+        SierpinskiTransformer,
+        SmoothingTransformer,
+        SineWaveTransformer,
+        JitterTransformer
+    ]
+
+    all_raster_transformers: List[Callable] = [
         AnamorphicTransformer,
         ColormapTransformer,
         DataMoshTransformer,
         DuotoneTransformer,
         FisheyeTransformer,
+        FlipWilsonTransformer,
         FluidWarpTransformer,
         FractalWarpTransformer,
         GlitchWarpTransformer,
@@ -55,24 +73,42 @@ def get_all_transformers_dict() -> Dict[str, Callable]:
         ThreeDExtrusionTransformer,
         TritoneTransformer,
         WatercolorTransformer,
+        WheelTransformer,
         XrayTransformer,
     ]
 
-    return {
+    raster_dict = {
         str(transformer.__name__).lower(): transformer
-        for transformer in all_transformers
+        for transformer in all_raster_transformers
+    }
+    
+    linear_dict = {
+        str(transformer.__name__).lower(): transformer
+        for transformer in all_linear_transformers
     }
 
+    return raster_dict, linear_dict
 
 class Pipeline:
     def __init__(self, config: dict | None):
         self.config = config if config is not None else {}
+        self.transformer_count = self.config.get("transformer_count", DEFAULT_TRANSFORMER_COUNT)
         
-        # 1. Fetch the dictionary using the function (Lazy Load)
-        all_transformers_dict = get_all_transformers_dict()
-        current_transformers_dict = all_transformers_dict.copy()
+        # 1. Fetch the dictionaries (Lazy Load)
+        raster_dict_source, linear_dict_source = get_transformer_dicts()
 
-        # 2. Check for an 'include' list and filter if present
+        # 2. Prepare both lists using identical logic
+        self.raster_transformers = self._configure_transformers(raster_dict_source)
+        self.linear_transformers = self._configure_transformers(linear_dict_source)
+
+    def _configure_transformers(self, source_dict: Dict[str, Callable]) -> List[Callable]:
+        """
+        Applies include/exclude filters, NullTransformer logic, and random sampling
+        to a dictionary of transformers, returning a list of instantiated objects.
+        """
+        current_transformers_dict = source_dict.copy()
+
+        # A. Check for an 'include' list and filter if present
         include_list = self.config.get("include")
         if include_list:
             include_list_lower = [str(x).lower() for x in include_list]
@@ -81,7 +117,7 @@ class Pipeline:
                 if name in include_list_lower
             }
 
-        # 3. Check for an 'exclude' list and filter if present
+        # B. Check for an 'exclude' list and filter if present
         exclude_list = self.config.get("exclude")
         if exclude_list:
             exclude_list_lower = [str(x).lower() for x in exclude_list]
@@ -90,43 +126,39 @@ class Pipeline:
                 if name not in exclude_list_lower
             }
 
-        # 4. Filter item out 'NullTransformer' if there is more than one item remaining.
+        # C. Filter out 'NullTransformer' if there is more than one item remaining.
         if (len(current_transformers_dict) > 1 and 
         "nulltransformer" in current_transformers_dict):
             del current_transformers_dict["nulltransformer"]
 
-        # 5. Use the filtered dictionary for selection
-        transformers = list(current_transformers_dict.items())
+        # D. Use the filtered dictionary for selection
+        transformers_list = list(current_transformers_dict.items())
         
         # Handle the case where the dictionary might be empty after filtering
-        if not transformers:
-            self.functions = []
-            log.warning("No transformers available after applying include/exclude filters.")
-            return
-
-        self.transformer_count = self.config.get("transformer_count",  DEFAULT_TRANSFORMER_COUNT)
-        log.info(f"{self.transformer_count=}")
+        if not transformers_list:
+            log.warning("No transformers available in this category after applying filters.")
+            return []
 
         # Get the available transformer names
-        transformer_population = [name for name, _ in transformers]
+        transformer_population = [name for name, _ in transformers_list]
         population_size = len(transformer_population)
 
         if not isinstance(self.transformer_count, int) or self.transformer_count < 0:
             log.warning(f"Invalid transformer_count '{self.transformer_count}', using default {DEFAULT_TRANSFORMER_COUNT}")
-            self.transformer_count = DEFAULT_TRANSFORMER_COUNT
+            # We don't overwrite self.transformer_count here to avoid affecting the next call
+            count_to_use = DEFAULT_TRANSFORMER_COUNT
+        else:
+            count_to_use = self.transformer_count
 
-        num_to_sample = min(self.transformer_count, population_size)
+        num_to_sample = min(count_to_use, population_size)
         
         if population_size > 0:
             chosen_names = random.sample(transformer_population, k=num_to_sample)
         else:
-            chosen_names = []
-            log.warning("No transformers available after applying include/exclude filters.")
-            return
+            return []
 
-        self.functions: list[Callable] = [
-            all_transformers_dict[name]() for name in chosen_names
-        ]
+        # Instantiate and return
+        return [source_dict[name]() for name in chosen_names]
 
     def get_transformers(self):
-        return self.functions
+        return self.raster_transformers, self.linear_transformers

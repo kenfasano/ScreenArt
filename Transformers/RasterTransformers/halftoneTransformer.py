@@ -13,12 +13,10 @@ class HalftoneTransformer(RasterTransformer):
 
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
         import log
-        self.config = config.get("halftonetransformer", None)
-       
-        if self.config is None:
-            log.error("config is None for HalftoneTransformer!")
-            return img_np 
+        import common
 
+        self.config = common.get_config(config, "halftonetransformer")
+       
         dot_size = self.config.get("dot_size", DEFAULT_DOT_SIZE)
         self.dot_size = max(1, dot_size)
         

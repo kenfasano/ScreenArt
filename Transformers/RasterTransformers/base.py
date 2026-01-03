@@ -1,5 +1,6 @@
 import numpy as np #type: ignore
 from ..base import Transformer
+import log
 
 class RasterTransformer(Transformer):
     """
@@ -16,6 +17,7 @@ class RasterTransformer(Transformer):
         If empty, returns the Class Name.
         """
         if not self.metadata_dictionary:
+            log.warning(f"No metadata_dictionary for {self.__class__.__name__}")
             return ""
         
         # Sort keys to ensure consistent filename strings regardless of insertion order

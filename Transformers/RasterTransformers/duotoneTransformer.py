@@ -24,12 +24,8 @@ class DuotoneTransformer(RasterTransformer):
         # Corrected config key from 'radialwarptransformer' to 'duotonetransformer'
         self.config = common.get_config(config, "duotonetransformer")
 
-        if self.config is None:
-            log.error("config is None for DuotoneTransformer!")
-            return img_np 
-
-        shadow_hex = self.config.get("shadow_hex", DEFAULT_SHADOW_HEX)
-        hilight_hex = self.config.get("hilight_hex", DEFAULT_HILIGHT_HEX)
+        shadow_hex = self.get_random_hex() # self.config.get("shadow_hex", DEFAULT_SHADOW_HEX)
+        hilight_hex = self.get_random_hex() # self.config.get("hilight_hex", DEFAULT_HILIGHT_HEX)
         
         # --- POPULATE METADATA ---
         self.metadata_dictionary = {

@@ -17,6 +17,7 @@ transformer_ids = {
     "ThermalImagingTransformer": "th",
     "TritoneTransformer": "tt",
     "WatercolorTransformer": "wa",
+    "WheelTransformer": "wh",
     "XrayTransformer": "xr",
 }
 
@@ -38,5 +39,6 @@ transformer_styles = {
     "sw": None,
     "tt": None,
     "wa": {"monet": "mo", "psychedelic": "psy"},
+    "wh": None,
     "xr": None,
 }

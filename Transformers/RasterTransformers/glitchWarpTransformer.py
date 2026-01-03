@@ -11,12 +11,9 @@ class GlitchWarpTransformer(RasterTransformer):
         super().__init__()
 
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import log
-        self.config = config.get("glitchwarptransformer", None)
+        import common
 
-        if self.config is None:
-            log.error("config is None for GlitchWarpTransformer!")
-            return img_np 
+        self.config = common.get_config(config, "glitchwarptransformer")
 
         self.warp_intensity = self.config.get("warp_intensity", None)
         if self.warp_intensity and isinstance(self.warp_intensity, float):

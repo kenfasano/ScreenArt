@@ -5,8 +5,8 @@ from PIL import Image, ImageDraw, ImageFont #type: ignore
 
 # --- Imports from uploaded files ---
 # NOTE: These imports assume text.py is placed in the same directory 
-# or a directory structure where it can access drawInputSource, common, etc.
-from . import drawInputSource 
+# or a directory structure where it can access drawGenerator, common, etc.
+from . import drawGenerator 
 from .. import log
 
 # --- Configuration Defaults ---
@@ -19,7 +19,7 @@ BORDER_SIZE = 15
 USABLE_WIDTH = WIDTH - (2 * BORDER_SIZE)
 USABLE_HEIGHT = HEIGHT - (2 * BORDER_SIZE)
 
-class Text(drawInputSource.DrawInputSource):
+class Text(drawGenerator.DrawGenerator):
     def __init__(
             self, 
             input_file_paths: list[str],

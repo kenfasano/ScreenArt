@@ -1,8 +1,8 @@
 import numpy as np # type: ignore
 import random
 from .base import RasterTransformer
-from scipy.ndimage import gaussian_filter
-from scipy.ndimage import map_coordinates
+from scipy.ndimage import gaussian_filter #type: ignore
+from scipy.ndimage import map_coordinates #type: ignore
 
 MAX_ALPHA = 20.0
 MAX_SIGMA = 100.0
@@ -30,11 +30,7 @@ class FluidWarpTransformer(RasterTransformer):
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
         import common
         import log
-        self.config = config.get("fluidwarptransformer", None)
-
-        if self.config is None:
-            log.error("config is None for fluidwarptransformer!")
-            return img_np 
+        self.config = common.get_config(config, "fluidwarptransformer")
 
         # --- Parameter Handling ---
         self.alpha = common.get_config(self.config, "alpha")

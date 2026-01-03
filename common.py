@@ -80,11 +80,8 @@ def calculate_image_quality_grade(dominance_percent: float, rejection_threshold:
 
 # --- END NEW GRADING FUNCTIONS ---
 
-def get_config(config_dict: dict, name: str) -> dict | None:
-    config = config_dict.get(name, None)
-    if not config:
-        log.error(f"No config found for {name}")
-    return config
+def get_config(config: dict, name: str) -> dict:
+    return config.get(name, {}) if config else {}
 
 def format_file_size(file_path: str) -> str:
     """Return the size of the file in a human-readable format."""
