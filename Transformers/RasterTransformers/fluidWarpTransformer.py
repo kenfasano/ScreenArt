@@ -29,7 +29,6 @@ class FluidWarpTransformer(RasterTransformer):
 
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
         import common
-        import log
         self.config = common.get_config(config, "fluidwarptransformer")
 
         # --- Parameter Handling ---

@@ -20,11 +20,10 @@ class AnamorphicTransformer(RasterTransformer):
         super().__init__()
 
     def get_random_hex(self):
-        # FIX: Lazy Import needed here too!
+        import hex_to_rgb
         return hex_to_rgb.convert("{:06x}".format(random.randint(0, 0xFFFFFF)))
 
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        from Transformers import hex_to_rgb
         from Transformers import hex_to_rgb
         import common
         import log

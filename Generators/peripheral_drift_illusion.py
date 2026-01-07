@@ -227,5 +227,5 @@ class PeripheralDriftIllusion(drawGenerator.DrawGenerator):
 
             # Save the image if one was created
             if img:
-                this_filename: str = f"{common.INPUT_SOURCES_IN}/OpticalIllusions/{self.base_filename}{i+1}.jpeg"
+                this_filename: str = f"{common.GENERATORS_IN}/OpticalIllusions/{self.base_filename}{i+1}.jpeg"
                 img.save(this_filename, 'JPEG')

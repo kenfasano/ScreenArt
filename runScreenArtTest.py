@@ -25,7 +25,7 @@ def run_processing():
 
     # 2. Determine the config file path (command line overrides default)
     # CHANGED: references args.config instead of args.transformation
-    config_filepath = args.config or "ScreenArt/default.trans"
+    config_filepath = args.config or "ScreenArt/default.sa"
     config = {}
     try:
         with open(config_filepath, 'r') as f:

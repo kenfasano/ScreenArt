@@ -14,8 +14,8 @@ from . import common
 from . import log
 
 # REF_CHANGE: Import from Generators package
-from .Generators import wiki, nasa, bubbles, lojong, bible, peripheral_drift_illusion, \
-        kochSnowflake, hilbert
+from .Generators import wiki, nasa, maps, goes, bubbles, lojong, bible, peripheral_drift_illusion, \
+        kochSnowflake, hilbert, cubes
 
 from .bus import ImageProcessingBus
 
@@ -35,14 +35,17 @@ class ScreenArtMain():
         # REF_CHANGE: Renamed input_dirs -> generators
         # REF_CHANGE: ImageSource -> GeneratorConfig
         self.generators: dict[str, GeneratorConfig] = {
-                "bubbles": GeneratorConfig(source=f"{common.INPUT_SOURCES_IN}/Bubbles", should_erase=True),
-                "nasa": GeneratorConfig(source=f"{common.INPUT_SOURCES_IN}/Nasa", should_erase=True),
-                "wiki": GeneratorConfig(source=f"{common.INPUT_SOURCES_IN}/Wiki", should_erase=True),
-                "lojong": GeneratorConfig(source=f"{common.INPUT_SOURCES_IN}/Lojong", should_erase=True),
-                "bible": GeneratorConfig(source=f"{common.INPUT_SOURCES_IN}/Bible", should_erase=True),
-                "peripheraldriftillusion": GeneratorConfig(source=f"{common.INPUT_SOURCES_IN}/OpticalIllusions", should_erase=True),
-                "kochSnowflake": GeneratorConfig(source=f"{common.INPUT_SOURCES_IN}/KochSnowflake", should_erase=True),
-                "hilbert": GeneratorConfig(source=f"{common.INPUT_SOURCES_IN}/Hilbert", should_erase=True),
+                "bubbles": GeneratorConfig(source=f"{common.GENERATORS_IN}/Bubbles", should_erase=True),
+                "cubes": GeneratorConfig(source=f"{common.GENERATORS_IN}/cubes", should_erase=True),
+                "nasa": GeneratorConfig(source=f"{common.GENERATORS_IN}/Nasa", should_erase=True),
+                "maps": GeneratorConfig(source=f"{common.GENERATORS_IN}/Maps", should_erase=True),
+                "goes": GeneratorConfig(source=f"{common.GENERATORS_IN}/Goes", should_erase=True),
+                "wiki": GeneratorConfig(source=f"{common.GENERATORS_IN}/Wiki", should_erase=False),
+                "lojong": GeneratorConfig(source=f"{common.GENERATORS_IN}/Lojong", should_erase=False),
+                "bible": GeneratorConfig(source=f"{common.GENERATORS_IN}/Bible", should_erase=True),
+                "peripheraldriftillusion": GeneratorConfig(source=f"{common.GENERATORS_IN}/OpticalIllusions", should_erase=True),
+                "kochSnowflake": GeneratorConfig(source=f"{common.GENERATORS_IN}/KochSnowflake", should_erase=True),
+                "hilbert": GeneratorConfig(source=f"{common.GENERATORS_IN}/Hilbert", should_erase=True),
                 }
 
         self.image_bus = ImageProcessingBus(common.TRANSFORMERS_OUT, common.REJECTED_OUT)
@@ -55,48 +58,6 @@ class ScreenArtMain():
                     os.remove(file_path)
                 except OSError as e:
                     log.error(f"Error: {e.filename} - {e.strerror}.")
-
-    def _get_keys_to_process(self) -> list[str]:
-        include_list = self.config.get("include", None)
-        exclude_list = self.config.get("exclude", None)
-        
-        keys_to_process = []
-        
-        if include_list:
-            for key in include_list:
-                if key in self.generators:
-                    keys_to_process.append(key)
-                else:
-                    log.warning(f"Include key '{key}' maps to unknown generator. Skipping.")
-        elif exclude_list:
-            all_keys = set(self.generators.keys())
-            excluded_keys = {key for key in exclude_list}
-            keys_to_process = [key for key in all_keys if key not in excluded_keys]
-        else:
-            keys_to_process = list(self.generators.keys())
-            
-        return keys_to_process
-
-    @timeit # type: ignore
-    def run(self):
-        self.trim_images(common.TRANSFORMERS_OUT, 50)
-        self.trim_images(common.REJECTED_OUT, 0)
-
-        keys_to_process = self._get_keys_to_process()
-        
-        # Phase 1: Run Generators
-        for key in keys_to_process:
-            gen_config = self.generators[key]
-            if gen_config.should_erase:
-                self.erase_image_dir(gen_config.source)
-            self.run_generator(key)
-
-        # Phase 2: Process Images
-        for key in keys_to_process:
-            dir_path = self.generators[key].source
-            self.image_bus.process_images(self.config, dir_path)
-
-        return self
 
     def trim_images(self, directory_path: str, max_images: int):
         search_path = os.path.join(directory_path, "*.[jpP]*") 
@@ -123,18 +84,70 @@ class ScreenArtMain():
         else:
             print("Directory size is within the limit. No trimming needed.")
 
+    def _get_keys_to_process(self) -> list[str]:
+        include_list = self.config.get("include", None)
+        exclude_list = self.config.get("exclude", None)
+        
+        keys_to_process = []
+        
+        if include_list:
+            for key in include_list:
+                if key in self.generators:
+                    keys_to_process.append(key)
+                else:
+                    log.warning(f"Include key '{key}' maps to unknown generator. Skipping.")
+        elif exclude_list:
+            all_keys = set(self.generators.keys())
+            excluded_keys = {key for key in exclude_list}
+            keys_to_process = [key for key in all_keys if key not in excluded_keys]
+        else:
+            keys_to_process = list(self.generators.keys())
+            
+        return keys_to_process
+
+    @timeit # type: ignore
+    def run(self):
+        self.trim_images(common.TRANSFORMERS_OUT, 50)
+        self.trim_images(common.REJECTED_OUT, 0)
+        self.trim_images(common.WIKI_OUT, 10)
+
+        keys_to_process = self._get_keys_to_process()
+        
+        # Phase 1: Run Generators
+        for key in keys_to_process:
+            gen_config = self.generators[key]
+            if gen_config.should_erase:
+                self.erase_image_dir(gen_config.source)
+            self.run_generator(key)
+
+        # Phase 2: Process Images
+        for key in keys_to_process:
+            dir_path = self.generators[key].source
+            self.image_bus.process_images(self.config, dir_path)
+
+        return self
+
     # REF_CHANGE: Renamed method get_input_source -> run_generator
     def run_generator(self, key: str):
         match key:
             case "wiki":
                 log.info("Running Wikipedia Generator...")
-                wiki.Wiki(self.config).get_new_images("Wiki")
+                wiki.Wiki(self.config).draw()
             case "nasa":
                 log.info("Running NASA Generator...")
                 nasa.Nasa(self.config).get_new_images("Nasa")
+            case "maps":
+                log.info("Running NASA Maps Generator...")
+                maps.NasaMapGenerator(self.config).draw()
+            case "goes":
+                log.info("Running NASA GOES Generator...")
+                goes.GoesGenerator(self.config).draw()
             case "bubbles":
                 log.info("Running Bubbles Generator...")
                 bubbles.Bubbles(self.config).draw()
+            case "cubes":
+                log.info("Running Cubes Generator...")
+                cubes.Cubes(self.config).draw()
             case "lojong":
                 log.info("Running Lojong Generator...")
                 lojong.Lojong(self.config).draw()
@@ -160,7 +173,7 @@ class ScreenArtMain():
         mark: str = "✓" if ok else "❌"
         ms_value = int(float(elapsed_time))
 
-        main_msg = f":{ms_value:02d}@{formatted_datetime} {mark}"
+        main_msg = f"{ms_value:02d}s@{formatted_datetime} {mark}"
         log.info(main_msg)
         
         output_lines = [main_msg]

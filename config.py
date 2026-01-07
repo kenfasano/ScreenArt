@@ -1,7 +1,12 @@
 BASE_PATH = "/Users/kenfasano/Library/Mobile Documents/com~apple~CloudDocs/Scripts/ScreenArt/" 	        
 VOL_PATH = "/Volumes/AudioVisual/ScreenArt/"
 FAVORITES_IN = VOL_PATH + "Images/Favorites"
-INPUT_SOURCES_IN = VOL_PATH + "Images/InputSources"
+GENERATORS_IN = VOL_PATH + "Images/Generators"
 TRANSFORMERS_OUT = VOL_PATH + "Images/TransformedImages"
 REJECTED_OUT = VOL_PATH + "Images/Rejected" # Case correction based on typical Mac paths
+WIKI_OUT = VOL_PATH + "Images/Generators/Wiki"
+MAPS_OUT = VOL_PATH + "Images/Generators/Maps"
+GOES_OUT = VOL_PATH + "Images/Generators/GOES"
+NASA_CACHE = VOL_PATH + "/cache/nasa"
+WIKI_CACHE = VOL_PATH + "/cache/wiki"
 MENUBAR_FILE = "/Users/kenfasano/Scripts/Menubar/transformers.txt"

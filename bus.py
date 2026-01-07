@@ -33,7 +33,6 @@ REJECTION_THRESHOLD_PERCENT: float = 75.0
 # --- BUBBLES ALLOW-LIST ---
 ALLOWED_BUBBLE_TRANSFORMERS = [
     "radialwarptransformer",
-    "swirlwarptransformer",
     "meltmorphtransformer",
     "fractalwarptransformer",
     "wheelTransformer",
@@ -43,7 +42,11 @@ ALLOWED_BUBBLE_TRANSFORMERS = [
     "watercolortransformer",
 ]
 
-ALLOWED_LINEAR__TRANSFORMERS = [
+# swirlwarptransformer creates vertical and horizontal roads out of any image - fix!
+# radialwarp OK
+# fractalwarp not doing much
+
+ALLOWED_LINEAR_TRANSFORMERS = [
     "colormaptransformer",
     "fisheyetransformer",
     "flipwilsontransformer"
@@ -51,8 +54,10 @@ ALLOWED_LINEAR__TRANSFORMERS = [
 
 # REF_CHANGE: Renamed Constant
 PASS_THROUGH_GENERATORS = [
+    "Cubes",
     "KochSnowflake",
-    "Hilbert"
+    "Hilbert",
+    "Wiki"
 ]
 
 LINEAR_FILENAME_SUBSTRINGS = []
@@ -135,7 +140,8 @@ class ImageProcessingBus:
         try:
             img_np_rgb = cv2.cvtColor(img_np_bgr, cv2.COLOR_BGR2RGB)
             image_data: np.ndarray = img_np_rgb.astype(np.float32) / 255.0
-            if image_data.size == 0: return None
+            if image_data.size == 0:
+                return None
             chunks: List[np.ndarray] = np.array_split(image_data, NUM_CORES, axis=0)
             worker_func = partial(_process_chunk, num_buckets=NUM_HUE_BUCKETS)
             with Pool(processes=NUM_CORES) as pool:
@@ -212,7 +218,8 @@ class ImageProcessingBus:
         try:
             small = cv2.resize(cv2.imread(file_path), (100, 100), interpolation=cv2.INTER_NEAREST)
             uc = len(np.unique(small.reshape(-1, 3), axis=0))
-        except: pass
+        except: 
+            pass
 
         command = [
             "exiftool", "-overwrite_original",
@@ -229,8 +236,6 @@ class ImageProcessingBus:
         # Initialize defaults
         pass_through_generator = False
         grade = "F"
-        mode = "Unknown"
-        reason = "Unknown"
 
         # 1. Check Generator Bypass
         # REF_CHANGE: Using PASS_THROUGH_GENERATORS
@@ -247,9 +252,12 @@ class ImageProcessingBus:
             _, reason, dominance_percent, mode = self._get_analysis_verdict(img)
             
             grade = "F"
-            if dominance_percent < 50.0: grade = "A"
-            elif dominance_percent < 60.0: grade = "B"
-            elif dominance_percent < 75.0: grade = "C"
+            if dominance_percent < 50.0:
+                grade = "A"
+            elif dominance_percent < 60.0:
+                grade = "B"
+            elif dominance_percent < 75.0: 
+                grade = "C"
         
             # --- Check for Pass-Through Transformers ---
             active_ids_lower = [t.lower() for t in transformer_ids]
@@ -303,7 +311,8 @@ class ImageProcessingBus:
             common.convert_png_to_jpeg(file_path, jpeg_path)
 
         img = cv2.imread(jpeg_path)
-        if img is None: return
+        if img is None: 
+            return
 
         transformer_name_list: list[str] = []
         self.image_metadata = ""
@@ -313,7 +322,8 @@ class ImageProcessingBus:
                 self.transformer_name = transformer.__class__.__name__.replace("Transformer", "")
                 transformer_name_list.append(self.transformer_name)
                 img, _ = self.apply(config, img, transformer)[0] #type: ignore 
-            except Exception: pass
+            except Exception: 
+                pass
 
         self.save_image(img, file_path, transformer_name_list, self.image_metadata)
 
@@ -332,8 +342,10 @@ class ImageProcessingBus:
     
     def process_images(self, config: dict, dir: str) -> None:
         is_bubbles = "Bubbles" in dir
+        is_cubes = "Cubes" in dir
         is_koch_snowflake = "Koch" in dir
         is_hilbert = "Hilbert" in dir
+        #is_space = "Maps" in dir or "NASA" in dir or "GOES" in dir or "Wiki" in dir
 
         source_name = Path(dir).name.lower() 
         source_config = config.get(source_name, {})
@@ -361,7 +373,9 @@ class ImageProcessingBus:
                 if is_bubbles:
                     restricted_allow_list = ALLOWED_BUBBLE_TRANSFORMERS
                 elif is_koch_snowflake or is_hilbert:
-                    restricted_allow_list = ALLOWED_LINEAR__TRANSFORMERS
+                    restricted_allow_list = ALLOWED_LINEAR_TRANSFORMERS
+               # elif is_space:
+               #     restricted_allow_list = ALLOWED_PHOTO_TRANSFORMERS
                 
                 if restricted_allow_list is not None:
                     if restricted_allow_list:

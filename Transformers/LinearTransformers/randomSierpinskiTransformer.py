@@ -1,5 +1,4 @@
 import numpy as np # type: ignore
-import random
 from typing import Union, cast
 from ..base import Transformer
 

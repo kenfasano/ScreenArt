@@ -112,9 +112,6 @@ class Text(drawGenerator.DrawGenerator):
         ]
 
         for i in range(len(self.input_file_paths)):
-            # FIX: Check if output path exists for this index before logging
-            out_path_log = self.output_file_paths[i] if i < len(self.output_file_paths) else "INDEX_ERROR"
-            
             background_color, foreground_color = random.choice(colors)
 
             # Create a new blank image

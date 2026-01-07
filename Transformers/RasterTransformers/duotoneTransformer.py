@@ -1,3 +1,4 @@
+import cv2
 import numpy as np # type: ignore
 import random
 from .base import RasterTransformer

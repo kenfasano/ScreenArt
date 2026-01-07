@@ -1,18 +1,12 @@
 import numpy as np #type: ignore
+from datetime import datetime
 import os
 import re
 import shutil
 import urllib.parse
 import log
 from PIL import Image #type: ignore
-from config import (
-    BASE_PATH,
-    FAVORITES_IN,
-    INPUT_SOURCES_IN,
-    TRANSFORMERS_OUT,
-    REJECTED_OUT,
-    MENUBAR_FILE
-)
+from config import *
 
 # --- REGEX FIX ---
 # Changed from r'px[-_ ]+' to r'\d*px[-_ ]+' to capture the number (500) as well
@@ -79,6 +73,9 @@ def calculate_image_quality_grade(dominance_percent: float, rejection_threshold:
         return "C"
 
 # --- END NEW GRADING FUNCTIONS ---
+
+def get_timestamp() -> str:
+    return datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
 
 def get_config(config: dict, name: str) -> dict:
     return config.get(name, {}) if config else {}

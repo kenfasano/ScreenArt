@@ -25,7 +25,7 @@ class RasterTransformer(Transformer):
         for k, v in sorted(self.metadata_dictionary.items()):
             # specialized formatting for lists/tuples to keep them short
             if isinstance(v, (list, tuple)):
-                val_str = f"{','.join(v)}"
+                val_str = f"{','.join(str(v))}"
             elif isinstance(v, float):
                 val_str = f"{v:.2f}"
             else:

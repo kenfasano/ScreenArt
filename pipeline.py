@@ -3,6 +3,8 @@ from . import log
 from typing import Callable, Dict, List, Tuple
 
 DEFAULT_TRANSFORMER_COUNT: int = 3
+MIN_TRANSFORMER_COUNT: int = 1
+MAX_TRANSFORMER_COUNT: int = 4
 
 def get_transformer_dicts() -> Tuple[Dict[str, Callable], Dict[str, Callable]]:
     """
@@ -92,7 +94,8 @@ def get_transformer_dicts() -> Tuple[Dict[str, Callable], Dict[str, Callable]]:
 class Pipeline:
     def __init__(self, config: dict | None):
         self.config = config if config is not None else {}
-        self.transformer_count = self.config.get("transformer_count", DEFAULT_TRANSFORMER_COUNT)
+        self.transformer_count = self.config.get(
+                "transformer_count", random.randint(MIN_TRANSFORMER_COUNT, MAX_TRANSFORMER_COUNT))
         
         # 1. Fetch the dictionaries (Lazy Load)
         raster_dict_source, linear_dict_source = get_transformer_dicts()

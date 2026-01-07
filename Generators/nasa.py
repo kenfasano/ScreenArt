@@ -5,15 +5,12 @@ from bs4 import BeautifulSoup #type: ignore
 DEFAULT_FILE_COUNT = 3
 
 class Nasa(htmlInputSource.HtmlInputSource):
-    def __init__(self, config: dict | None):
+    def __init__(self, config: dict):
         import common
 
-        if config:
-            self.config = common.get_config(config, "nasa")
-            self.file_count = self.config.get("file_count", DEFAULT_FILE_COUNT) if self.config else DEFAULT_FILE_COUNT
-            super().__init__(self.file_count)
-        else:
-            raise ValueError("No config for nasa!")
+        self.config = common.get_config(config, "nasa")
+        self.file_count = self.config.get("file_count", DEFAULT_FILE_COUNT) if self.config else DEFAULT_FILE_COUNT
+        super().__init__(self.file_count)
 
     def get_new_images(self, input_source: str):
         number_of_images: int = self.fetch(
@@ -25,7 +22,7 @@ class Nasa(htmlInputSource.HtmlInputSource):
         return number_of_images 
 
     def get_random_picture_url(self, min_year: int) -> str:
-    # https://apod.nasa.gov/apod/ap220608.html
+        # https://apod.nasa.gov/apod/ap220608.html
         date_str: str = self.get_random_date(min_year).strftime("%y%m%d")
         random_picture_url =f"https://apod.nasa.gov/apod/ap{date_str}.html"
         return random_picture_url

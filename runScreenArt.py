@@ -3,7 +3,6 @@ import argparse
 import json
 import os
 import sys
-from . import log
 from .log import setup_logging
 from . import screenArt
 from multiprocessing import freeze_support 
@@ -25,7 +24,7 @@ def run_processing():
 
     # 2. Determine the config file path (command line overrides default)
     # CHANGED: references args.config instead of args.transformation
-    config_filepath = args.config or "ScreenArt/default.trans"
+    config_filepath = args.config or "ScreenArt/default.sa"
     config = {}
     try:
         with open(config_filepath, 'r') as f:
@@ -39,12 +38,7 @@ def run_processing():
     project_root = os.path.join(script_dir, '..')
     sys.path.append(project_root)
 
-    # CHANGED: Pass the test_csv argument to main for test
-    #screenArtTest.main(config, test_csv=args.test)
-    if args.test:
-        screenArtTest.main(config, test_csv=args.test)
-    else:
-        screenArt.main(config)
+    screenArt.main(config)
 
 if __name__ == '__main__':
     freeze_support() 

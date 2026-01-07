@@ -44,7 +44,7 @@ def refactor_file(filepath):
     for line in new_lines:
         final_content.append(line)
         if "def apply(self," in line:
-            print(f"  -> Injecting fixed imports into 'apply'")
+            print("  -> Injecting fixed imports into 'apply'")
             final_content.extend(imports_to_move)
 
     # 5. Write back

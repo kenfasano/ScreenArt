@@ -62,7 +62,8 @@ class Bubbles(drawGenerator.DrawGenerator):
             # Red/Orange/Yellow range (0.0 to 0.15)
             # Map jitter (-0.05 to 0.05) to a larger positive range
             h = 0.0 + (abs(jitter) * 1.5) 
-            if h > 0.15: h = 0.15
+            if h > 0.15:
+                h = 0.15
             s = 0.8 + abs(s_rnd)
             v = 0.8 + abs(v_rnd)
 
@@ -87,7 +88,8 @@ class Bubbles(drawGenerator.DrawGenerator):
         distances = np.sqrt(dist_x**2 + dist_y**2)
         
         max_dist = np.sqrt(cx**2 + cy**2)
-        if max_dist == 0: max_dist = 1
+        if max_dist == 0:
+            max_dist = 1
         norm_dist = distances / max_dist
         
         base_r = self.max_radius - (self.max_radius - self.min_radius) * norm_dist
@@ -119,7 +121,8 @@ class Bubbles(drawGenerator.DrawGenerator):
         # 5. Drawing Loop
         for xi, yi, ri, color in zip(x, y, final_r, colors):
             xi, yi, ri = int(xi), int(yi), int(ri)
-            if ri < 1: ri = 1
+            if ri < 1:
+                ri = 1
             
             # Draw Bubble
             draw.ellipse(
@@ -131,7 +134,8 @@ class Bubbles(drawGenerator.DrawGenerator):
             # Draw Highlight
             if add_highlights:
                 high_r = int(ri * 0.25)
-                if high_r < 1: high_r = 1
+                if high_r < 1:
+                    high_r = 1
                 
                 offset = int(ri * 0.35)
                 h_x = xi - offset
@@ -155,5 +159,5 @@ class Bubbles(drawGenerator.DrawGenerator):
             
             self.draw_bubbles(draw, self.width, self.height, add_highlights=has_reflection)
 
-            filename = f"{common.INPUT_SOURCES_IN}/Bubbles/{self.base_filename}{i+1}.jpeg"
+            filename = f"{common.GENERATORS_IN}/Bubbles/{self.base_filename}{i+1}.jpeg"
             img.save(filename, 'JPEG')

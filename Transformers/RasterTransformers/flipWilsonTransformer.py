@@ -29,13 +29,6 @@ class FlipWilsonTransformer(RasterTransformer):
         # -------------------------
 
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        try:
-            import log
-            logger = log
-        except ImportError:
-            import logging
-            logger = logging.getLogger(__name__)
-
         if isinstance(img_np, np.ndarray):
             img = Image.fromarray(img_np)
         elif isinstance(img_np, Image.Image):

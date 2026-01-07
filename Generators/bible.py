@@ -1,4 +1,3 @@
-from .. import common
 import json
 import os
 from pathlib import Path
@@ -40,7 +39,7 @@ class Bible(text.Text):
                 return
             input_file_paths.append(f"{input_base_path}/{base_filename}.json")
 
-            output_base_path = f"{common.INPUT_SOURCES_IN}/Bible"
+            output_base_path = f"{common.GENERATORS_IN}/Bible"
             if not os.path.exists(output_base_path):
                 try:
                     new_directory = Path(output_base_path)

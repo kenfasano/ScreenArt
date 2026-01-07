@@ -5,6 +5,7 @@ from .base import RasterTransformer
 class ThermalImagingTransformer(RasterTransformer):
     def __init__(self):
         super().__init__()
+        self.metadata_dictionary = {}
 
     def _create_thermal_colormap(self) -> np.ndarray:
         # A simple linear interpolation for a thermal-like palette

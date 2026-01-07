@@ -15,7 +15,6 @@ class DataMoshTransformer(RasterTransformer):
 
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
         import common
-        import log
         """
         Applies the data mosh transformation to the input image using vectorized operations.
         """

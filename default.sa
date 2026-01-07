@@ -94,12 +94,16 @@
 	"thermalimagingtransformer": {
 	},
 	"wiki": {
-		"count": 15,
+		"file_count": 1,
+		"keyword_file": "/Users/kenfasano/Scripts/ScreenArt/defaultWikiKeywords.txt",
 		"image_type": "image"
 	},
 	"nasa": {
-		"count": 15,
+		"count": 5,
 		"image_type": "astronomical"
+	},
+	"maps": {
+		"file_count": 4
 	},
 	"bubbles": {
 		"file_count": 3,
@@ -113,6 +117,9 @@
 		"width": 1920,
 		"height": 1280,
 		"image_type": "generated"
+	},
+	"cubes": {
+		"file_count": 6
 	},
 	"kochSnowflake": {
 		"file_count": 6
@@ -132,5 +139,5 @@
 		"file_count": 20,
 		"image_type": "generated"
 	},
-	"#include": ["kochSnowflake", "hilbert"]
+	"include": ["maps", "nasa", "wiki", "goes"]
 }

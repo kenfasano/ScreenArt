@@ -26,7 +26,6 @@ class WheelTransformer(RasterTransformer):
         # Keeping this debug log for one more run to be sure
 
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import log
 
         # 1. Convert incoming Numpy Array to PIL Image
         if isinstance(img_np, np.ndarray):

@@ -17,7 +17,6 @@ class TritoneTransformer(RasterTransformer):
     # Helper function to generate a random hex color
     def get_random_hex(self):
         # ABSOLUTE IMPORT (Safe)
-        from Transformers import hex_to_rgb
         return '#{:06x}'.format(random.randint(0, 0xFFFFFF))
 
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:

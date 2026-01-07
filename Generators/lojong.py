@@ -1,5 +1,4 @@
 import json
-from .. import common
 from .. import log
 import os
 import random
@@ -32,7 +31,7 @@ class Lojong(text.Text):
                 input_file_paths.append(f"{lojong_directory}/lojong_slogans_tib.json")
                 languages.append("Tibetan")
 
-            output_base_path = f"{common.INPUT_SOURCES_IN}/Lojong"
+            output_base_path = f"{common.GENERATORS_IN}/Lojong"
             output_file_paths.append(f"{output_base_path}/{self.base_filename}_{i}.jpeg")
 
         super().__init__(input_file_paths, 
@@ -81,7 +80,7 @@ class Lojong(text.Text):
         # DEBUG: Read the first 4 bytes to see the actual file signature in the logs
         try:
             with open(file_path, 'rb') as f:
-                header = f.read(4)
+                _ = f.read(4)
         except Exception:
             pass
 

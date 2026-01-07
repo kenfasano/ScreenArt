@@ -53,12 +53,12 @@ class ScreenArtTestMain():
         self.test_csv: str | None = test_csv 
 
         self.input_dirs: dict[str, ImageSource] = {
-                "bubbles": ImageSource(source=f"{common.INPUT_SOURCES_IN}/Bubbles", should_erase=True),
-                "nasa": ImageSource(source=f"{common.INPUT_SOURCES_IN}/Nasa", should_erase=True),
-                "wiki": ImageSource(source=f"{common.INPUT_SOURCES_IN}/Wiki", should_erase=True),
-                "lojong": ImageSource(source=f"{common.INPUT_SOURCES_IN}/Lojong", should_erase=True),
-                "bible": ImageSource(source=f"{common.INPUT_SOURCES_IN}/Bible", should_erase=True),
-                "peripheraldriftillusion": ImageSource(source=f"{common.INPUT_SOURCES_IN}/OpticalIllusions", should_erase=True)
+                "bubbles": ImageSource(source=f"{common.GENERATORS_IN}/Bubbles", should_erase=True),
+                "nasa": ImageSource(source=f"{common.GENERATORS_IN}/Nasa", should_erase=True),
+                "wiki": ImageSource(source=f"{common.GENERATORS_IN}/Wiki", should_erase=True),
+                "lojong": ImageSource(source=f"{common.GENERATORS_IN}/Lojong", should_erase=True),
+                "bible": ImageSource(source=f"{common.GENERATORS_IN}/Bible", should_erase=True),
+                "peripheraldriftillusion": ImageSource(source=f"{common.GENERATORS_IN}/OpticalIllusions", should_erase=True)
                 }
 
         self.image_bus = ImageProcessingBus(common.TRANSFORMERS_OUT, common.REJECTED_OUT)

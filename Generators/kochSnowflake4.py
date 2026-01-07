@@ -4,7 +4,7 @@ import time
 import shutil
 import os
 import cv2 # type: ignore
-from PIL import Image, ImageDraw # type: ignore
+from PIL import Image # type: ignore
 from . import drawGenerator
 from .. import common
 from .. import log
@@ -112,7 +112,7 @@ class KochSnowflake4(drawGenerator.DrawGenerator):
         return Image.fromarray(arr), opposite_bg
 
     def draw(self):
-        output_dir = f"{common.INPUT_SOURCES_IN}/KochSnowflake"
+        output_dir = f"{common.GENERATORS_IN}/KochSnowflake"
         if os.path.exists(output_dir):
             shutil.rmtree(output_dir)
         os.makedirs(output_dir, exist_ok=True)
@@ -149,6 +149,5 @@ class KochSnowflake4(drawGenerator.DrawGenerator):
                 filename = f"{output_dir}/{self.base_filename}_{i+1}.jpg"
             
             img.save(filename, 'JPEG')
-            hue_str = ">".join(map(str, current_hues))
             # Log the calculated background color
             log.info(f"Generated KS4: {filename} (Points: {num_points}, Spiral: {spiral_tightness:.2f}, BG: {bg_color})")
