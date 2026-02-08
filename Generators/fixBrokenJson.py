@@ -1,0 +1,130 @@
+import json
+import os
+
+# Paths extracted from your logs
+base_dir = "/Users/kenfasano/Library/Mobile Documents/com~apple~CloudDocs/Scripts/ScreenArt/InputSources/Data/Lojong"
+
+eng_path = os.path.join(base_dir, "lojong_slogans_eng.json")
+tib_path = os.path.join(base_dir, "lojong_slogans_tib.json")
+
+# Data from your upload
+eng_data = [
+  {"point": 1, "category": "The Preliminaries", "slogan_id": "1.1", "text": "First, train in the preliminaries."},
+  {"point": 1, "category": "The Preliminaries", "slogan_id": "1.2", "text": "Maintain an awareness of the preciousness of human life."},
+  {"point": 1, "category": "The Preliminaries", "slogan_id": "1.3", "text": "Be aware of the reality that life ends; death comes for everyone; Impermanence."},
+  {"point": 1, "category": "The Preliminaries", "slogan_id": "1.4", "text": "Recall that whatever you do, whether virtuous or not, has a result; Karma."},
+  {"point": 1, "category": "The Preliminaries", "slogan_id": "1.5", "text": "Contemplate that as long as you are too focused on self-importance and too caught up in thinking about how you are good or bad, you will experience suffering; Ego."},
+  {"point": 2, "category": "The Main Practice: Cultivating Bodhichitta", "slogan_id": "2.1", "text": "Regard all dharmas (phenomena) as dreams."},
+  {"point": 2, "category": "The Main Practice: Cultivating Bodhichitta", "slogan_id": "2.2", "text": "Examine the nature of unborn awareness."},
+  {"point": 2, "category": "The Main Practice: Cultivating Bodhichitta", "slogan_id": "2.3", "text": "Self-liberate even the antidote."},
+  {"point": 2, "category": "The Main Practice: Cultivating Bodhichitta", "slogan_id": "2.4", "text": "Rest in the nature of alaya, the essence."},
+  {"point": 2, "category": "The Main Practice: Cultivating Bodhichitta", "slogan_id": "2.5", "text": "In post-meditation, be a child of illusion."},
+  {"point": 2, "category": "The Main Practice: Cultivating Bodhichitta", "slogan_id": "2.6", "text": "Sending and taking should be practiced alternately. These two should ride the breath (Tonglen)."},
+  {"point": 2, "category": "The Main Practice: Cultivating Bodhichitta", "slogan_id": "2.7", "text": "Three objects, three poisons, and three seeds of virtue."},
+  {"point": 2, "category": "The Main Practice: Cultivating Bodhichitta", "slogan_id": "2.8", "text": "In all activities, train with slogans."},
+  {"point": 2, "category": "The Main Practice: Cultivating Bodhichitta", "slogan_id": "2.9", "text": "Begin the sequence of exchange with yourself."},
+  {"point": 3, "category": "Transforming Adversity into the Path of Awakening", "slogan_id": "3.1", "text": "When the world is filled with evil, transform all mishaps into the path of bodhi (enlightenment)."},
+  {"point": 3, "category": "Transforming Adversity into the Path of Awakening", "slogan_id": "3.2", "text": "Drive all blames into one (oneself)."},
+  {"point": 3, "category": "Transforming Adversity into the Path of Awakening", "slogan_id": "3.3", "text": "Be grateful to everyone (Meditate on the great kindness of everyone)."},
+  {"point": 3, "category": "Transforming Adversity into the Path of Awakening", "slogan_id": "3.4", "text": "Regarding confusion as the four kāyas is the unsurpassable śūnyatā (emptiness) protection."},
+  {"point": 3, "category": "Transforming Adversity into the Path of Awakening", "slogan_id": "3.5", "text": "The fourfold practice is the best of methods."},
+  {"point": 3, "category": "Transforming Adversity into the Path of Awakening", "slogan_id": "3.6", "text": "Whatever you meet unexpectedly, join with meditation."},
+  {"point": 4, "category": "Applying the Practice Throughout the Whole of Life", "slogan_id": "4.1", "text": "The essence of the instruction, briefly stated, is to apply yourself to the five strengths."},
+  {"point": 4, "category": "Applying the Practice Throughout the Whole of Life", "slogan_id": "4.2", "text": "The mahāyāna advice for transference (at death) involves the same five strengths."},
+  {"point": 4, "category": "Applying the Practice Throughout the Whole of Life", "slogan_id": "4.3", "text": "Conduct is important."},
+  {"point": 5, "category": "The Measure of Proficiency in Mind Training", "slogan_id": "5.1", "text": "All Dharma agrees at one point."},
+  {"point": 5, "category": "The Measure of Proficiency in Mind Training", "slogan_id": "5.2", "text": "Of the two witnesses, hold the principal one (the principal witness is you)."},
+  {"point": 5, "category": "The Measure of Proficiency in Mind Training", "slogan_id": "5.3", "text": "Always maintain only a joyful mind."},
+  {"point": 5, "category": "The Measure of Proficiency in Mind Training", "slogan_id": "5.4", "text": "If you can practice even when distracted, you are well trained (or: proficient)."},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.1", "text": "Always abide by the three basic principles (dedication, non-outrageous conduct, patience)."},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.2", "text": "Change your attitude, but remain natural."},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.3", "text": "Don't talk about injured limbs (others' defects)."},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.4", "text": "Don't ponder others' flaws."},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.5", "text": "Work with the greatest defilements (obstacles) first."},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.6", "text": "Abandon any hope of fruition (results)."},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.7", "text": "Abandon poisonous food (cultivating superiority/ego)."},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.8", "text": "Don't be so predictable (Don't hold grudges)."},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.9", "text": "Don't malign others."},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.10", "text": "Don't wait in ambush."},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.11", "text": "Don't bring things to a painful point (Don't humiliate others)."},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.12", "text": "Don't transfer the ox's load to the cow (Take responsibility)."},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.13", "text": "Don't try to be the fastest (Don't compete)."},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.14", "text": "Don't act with a twist (Don't scheme for personal benefit)."},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.15", "text": "Don't turn gods into demons (Don't use slogans to increase self-absorption)."},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.16", "text": "Don't seek others' pain as the limbs of your own happiness."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.1", "text": "All activities should be done with one intention."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.2", "text": "Correct all wrongs with one intention (or: Counter all adversity with a single remedy)."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.3", "text": "Two tasks: one at the beginning and one at the end."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.4", "text": "Whichever of the two occurs, be patient."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.5", "text": "Observe these two, even at the risk of your life."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.6", "text": "Train in the three difficulties."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.7", "text": "Take on the three principal causes (Teacher, Dharma, Sangha)."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.8", "text": "Pay heed that the three never wane (Gratitude, Appreciation of Dharma, Correct Conduct)."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.9", "text": "Keep the three inseparable (Body, Speech, and Mind)."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.10", "text": "Train without bias in all areas."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.11", "text": "Always meditate on whatever provokes resentment."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.12", "text": "Don't be swayed by external circumstances."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.13", "text": "This time, practice the main points."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.14", "text": "Don't misinterpret."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.15", "text": "Don't be inconsistent (Don't vacillate)."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.16", "text": "Train wholeheartedly."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.17", "text": "Liberate yourself by examining and analyzing."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.18", "text": "Don't wallow in self-pity."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.19", "text": "Don't be jealous."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.20", "text": "Don't be frivolous."},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.21", "text": "Don't seek acknowledgement (Don't expect applause)."}
+]
+
+tib_data = [
+  {"point": 1, "category": "The Preliminaries", "slogan_id": "1.1", "text": "སྔོན་འགྲོ་ལ་སྦྱོར།"},
+  {"point": 1, "category": "The Preliminaries", "slogan_id": "1.2", "text": "མི་རྟག་པའི་དོན་ལ་དྲན་པ།"},
+  {"point": 1, "category": "The Preliminaries", "slogan_id": "1.3", "text": "འཆི་བ་དང་མི་རྟག་པ་ལ་ཤེས་པ།"},
+  {"point": 1, "category": "The Preliminaries", "slogan_id": "1.4", "text": "ལས་དང་འབྲས་བུ་ལ་ཤེས་པ།"},
+  {"point": 1, "category": "The Preliminaries", "slogan_id": "1.5", "text": "འཁོར་བའི་སྡུག་བསྔལ་ལ་ཤེས་པ།"},
+  {"point": 2, "category": "The Main Practice: Cultivating Bodhichitta", "slogan_id": "2.1", "text": "བྱང་ཆུབ་སེམས་ཀྱི་རྟོགས་པ་གཅིག་ལ་སྦྱོར།"},
+  {"point": 2, "category": "The Main Practice: Cultivating Bodhichitta", "slogan_id": "2.2", "text": "ཆོས་ཉིད་བྱང་ཆུབ་སེམས་ལ་སྦྱོར།"},
+  {"point": 2, "category": "The Main Practice: Cultivating Bodhichitta", "slogan_id": "2.3", "text": "དགེ་བ་དང་སྡུག་བསྔལ་གཉིས་ལ་སེམས་ཅན་གྱི་དོན་དུ་བསྒོམ།"},
+  {"point": 2, "category": "The Main Practice: Cultivating Bodhichitta", "slogan_id": "2.4", "text": "སེམས་ཅན་དང་བཅས་པའི་དོན་དུ་འཇུག་པ།"},
+  {"point": 2, "category": "The Main Practice: Cultivating Bodhichitta", "slogan_id": "2.5", "text": "གཉིས་ཀ་མི་བསྐྱོད་པའི་སྦྱོར་བ།"},
+  {"point": 3, "category": "Transforming Adversity into the Path of Awakening", "slogan_id": "3.1", "text": "ངན་པ་སུམ་ཅུར་གྱུར་པ་ལ་ལམ་བཅོས།"},
+  {"point": 3, "category": "Transforming Adversity into the Path of Awakening", "slogan_id": "3.2", "text": "གཞན་དོན་དུ་བཅོས་པ།"},
+  {"point": 3, "category": "Transforming Adversity into the Path of Awakening", "slogan_id": "3.3", "text": "ངན་སོང་ལ་གནོད་པར་མ་བྱ།"},
+  {"point": 3, "category": "Transforming Adversity into the Path of Awakening", "slogan_id": "3.4", "text": "ངན་སོང་དང་བཅས་པ་ལ་བསྟན་པ།"},
+  {"point": 3, "category": "Transforming Adversity into the Path of Awakening", "slogan_id": "3.5", "text": "ངན་པ་བཞི་དང་བཅས་པ་ལ་བསྟན་པ།"},
+  {"point": 4, "category": "Applying the Practice Throughout the Whole of Life", "slogan_id": "4.1", "text": "དུས་འཁོར་ལ་གནོད་པར་མ་བྱ།"},
+  {"point": 4, "category": "Applying the Practice Throughout the Whole of Life", "slogan_id": "4.2", "text": "བྱ་བ་དང་སེམས་ཀྱི་འཇུག་ལ་མི་འགྱུར།"},
+  {"point": 4, "category": "Applying the Practice Throughout the Whole of Life", "slogan_id": "4.3", "text": "རང་དོན་ལ་སོགས་པ་ལ་གནོད་པར་མ་བྱ།"},
+  {"point": 4, "category": "Applying the Practice Throughout the Whole of Life", "slogan_id": "4.4", "text": "གནས་སུ་འཇུག་པའི་ལམ་ལ་མ་འཇུག།"},
+  {"point": 4, "category": "Applying the Practice Throughout the Whole of Life", "slogan_id": "4.5", "text": "རང་དོན་ལ་མ་འགྱུར།"},
+  {"point": 5, "category": "The Measure of Proficiency in Mind Training", "slogan_id": "5.1", "text": "གཞན་དོན་དུ་སེམས་བསྒོམ།"},
+  {"point": 5, "category": "The Measure of Proficiency in Mind Training", "slogan_id": "5.2", "text": "གཞན་དོན་ལ་སྦྱོར།"},
+  {"point": 5, "category": "The Measure of Proficiency in Mind Training", "slogan_id": "5.3", "text": "དོན་གྲུབ་ལ་སྦྱོར།"},
+  {"point": 5, "category": "The Measure of Proficiency in Mind Training", "slogan_id": "5.4", "text": "རང་དོན་ལ་སྦྱོར།"},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.1", "text": "བདག་གི་དོན་ལ་མ་འཇུག།"},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.2", "text": "སེམས་ཅན་གྱི་དོན་ལ་འཇུག་པ།"},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.3", "text": "དོན་གྲུབ་ལ་འཇུག་པ།"},
+  {"point": 6, "category": "The Commitments (Disciplines of Mind Training)", "slogan_id": "6.4", "text": "གཞན་དོན་དུ་འཇུག་པ།"},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.1", "text": "རང་དོན་ལ་འཇུག་པ།"},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.2", "text": "གཞན་དོན་ལ་འཇུག་པ།"},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.3", "text": "དོན་གྲུབ་ལ་འཇུག་པ།"},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.4", "text": "སེམས་ཅན་གྱི་དོན་ལ་འཇུག་པ།"},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.5", "text": "གནོད་པར་མ་བྱ།"},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.6", "text": "དུས་འཁོར་ལ་གནོད་པར་མ་བྱ།"},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.7", "text": "དོན་གྲུབ་ལ་འཇུག་པ།"},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.8", "text": "གཞན་དོན་ལ་འཇུག་པ།"},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.9", "text": "ངན་པ་དང་བཅས་པ་ལ་འཇུག་པ།"},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.10", "text": "སེམས་ཅན་གྱི་དོན་ལ་འཇུག་པ།"},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.11", "text": "དངོས་གྲུབ་རྣམ་གྲོལ་ལ་འཇུག་པ།"},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.12", "text": "དམ་ཅན་གྱི་ལམ་ལ་འཇུག་པ།"},
+  {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.13", "text": "གཞན་དོན་དུ་སེམས་བསྒོམ།"}
+]
+
+print(f"Restoring {eng_path}...")
+with open(eng_path, 'w', encoding='utf-8') as f:
+    json.dump(eng_data, f, ensure_ascii=False, indent=2)
+print("Success.")
+
+print(f"Restoring {tib_path}...")
+with open(tib_path, 'w', encoding='utf-8') as f:
+    json.dump(tib_data, f, ensure_ascii=False, indent=2)
+print("Success.")

@@ -1,0 +1,136 @@
+{
+	"pipeline": {
+		"pipelines": [
+			{"radialwarptransformer": 91},
+			{"anamorphictransformer": 45},
+			{"watercolortransformer": 45},
+			{"colormaptransformer": 41},
+			{"swirlwarptransformer": 35},
+			{"invertrgbtransformer": 23},
+			{"duotonetransformer": 21},
+			{"meltmorphtransformer": 19},
+			{"fractalwarptransformer": 11},
+			{"xraytransformer": 11},
+			{"flipwilsontransformer": 10},
+			{"wheeltransformer": 10},
+			{"halftonetransformer": 9},
+			{"datamoshtransformer": 7},
+			{"glitchwarptransformer": 7},
+			{"fluidwarptransformer": 5},
+			{"tritonetransformer": 3},
+			{"posterizationtransformer": 1},
+			{"threedextrusiontransformer": 1},
+			{"thermalimagingtransformer": 1},
+			{"fisheyetransformer": 10}
+		],
+		"#include": ["anamorphictransformer"],
+		"exclude": ["swirlwarptransformer"]
+	},
+	"radialwarptransformer": {
+		"file_count": 5,
+		"style": "?",
+		"strength": "?",
+		"center_x": 0.50,
+		"center_y": 0.50,
+		"radius": 0.25  
+	},
+	"fisheyetransformer": {
+		"strength": "?",
+		"zoom": "?",
+		"shape": "?"
+	},
+	"fluidwarptransformer": {
+		"alpha": "0.1",
+		"octaves": 3,
+		"persistence": 0.75
+	},
+	"fractalwarptransformer": {
+		"iterations": 1,
+		"scale": 0.05
+	},
+	"glitchwarptransformer": {
+		"warp_intensity": 0.005
+	},
+	"swirlwarptransformer": {
+		"strength": 1.5
+	},
+	"meltmorphtransformer": {
+		"melt_intensity": 0.5
+	},
+	"threedextrusiontransformer": {
+		"extrusion_intensity": 0.5,
+		"ambient_light": "?"
+	},
+	"anamorphictransformer": {
+		"count": 5
+	},
+	"duotonetransformer": {
+	},
+	"halftonetransformer": {
+		"dot_size": 1
+	},
+	"tritonetransformer": {
+	},
+	"colormaptransformer": {
+		"mode": "random"
+	},
+	"datamoshtransformer": {
+	},
+	"posterizationtransformer": {
+		"levels": 2 
+	},
+	"watercolortransformer": {
+	},
+	"xraytransformer": {
+		"num_colors": 256
+	},
+	"thermalimagingtransformer": {
+	},
+	"wiki": {
+		"file_count": 1,
+		"keyword_file": "/Users/kenfasano/Scripts/ScreenArt/wikiKeywords.txt",
+		"image_type": "image"
+	},
+	"nasa": {
+		"count": 5,
+		"image_type": "astronomical"
+	},
+	"maps": {
+		"file_count": 4
+	},
+	"bubbles": {
+		"file_count": 3,
+		"iterations": 8,
+		"count": 100000,
+		"radius": [2,15],
+		"center_radius_multiplier": 15.0,
+		"#fill_color": [255,255,0],
+		"#outline_color": [0,0,255],
+		"#bg_color": [255,255,255],
+		"width": 1920,
+		"height": 1280,
+		"image_type": "generated"
+	},
+	"cubes": {
+		"file_count": 6
+	},
+	"kochSnowflake": {
+		"file_count": 6
+	},
+	"hilbert": {
+		"file_count": 10
+	},
+	"lojong": {
+		"file_count": 10,
+		"image_type": "text"
+	},
+	"bible": {
+		"file_count": 10,
+		"image_type": "text"
+	},
+	"peripheraldriftillusion": {
+		"file_count": 20,
+		"image_type": "generated"
+	},
+	"#include": ["lojong", "bible"]
+}

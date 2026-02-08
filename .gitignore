@@ -1,0 +1,23 @@
+# Mac system files
+.DS_Store
+
+# Python build/runtime files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments (adjust name if yours is different)
+.venv/
+venv/
+env/
+
+*.txt
+*.log
+*.csv
+
+# Generated Art
+*.jpg
+*.jpeg
+*.png
+# If you have an output folder, add it here:
+Images/
