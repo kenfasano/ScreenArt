@@ -67,57 +67,55 @@ def get_ascii_frame(target_path, ascii_set, width):
         return [f"Error loading {target_path}: {e}"]
 
 def run_screensaver(stdscr, args):
-    """
-    stdscr is provided by curses.wrapper. 
-    We use it to hide the cursor and listen for 'q', 
-    but use sys.stdout for RGB printing.
-    """
-    # 1. Hide the cursor reliably across Ghostty/Wayland/macOS
-    curses.curs_set(0) 
-    stdscr.nodelay(True) # Non-blocking input check
+    curses.curs_set(0)
+    stdscr.nodelay(True)
     
+    # Ramp selection is still tied to args, but image selection is now global
     selected_ramp = BOURKE_RAMP if args.b else SMALL_RAMP
-    prefix = "b_" if args.b else "a_"
-    extensions = ('*.jpg', '*.jpeg', '*.png', '*.bmp')
-    # Aggressive hide: Clear and send DECTCEM hide sequence
-    sys.stdout.write("\x1b[2J\x1b[?25l")
-    sys.stdout.flush()
+    extensions = ('*.jpg', '*.jpeg', '*.png', '*.bmp', '*.webp')
 
-    # Initial clear
-    sys.stdout.write("\x1b[2J")
+    # Gather ALL matching files in the directory
+    image_files = []
+    for ext in extensions:
+        image_files.extend(glob.glob(os.path.join(IMG_DIR, ext)))
+
+    if not image_files:
+        # Using addstr because print() is invisible inside the curses wrapper
+        stdscr.addstr(0, 0, f"Error: No images found in {IMG_DIR}")
+        stdscr.addstr(1, 0, "Press any key to exit...")
+        stdscr.nodelay(False)
+        stdscr.getch()
+        return
 
     try:
         while True:
-            # Check if 'q' was pressed
+            # Check for quit key
             if stdscr.getch() == ord('q'):
                 break
 
-            # Find images
-            image_list = []
-            for ext in extensions:
-                image_list.extend(glob.glob(os.path.join(IMG_DIR, ext)))
+            target_path = random.choice(image_files)
+            max_y, max_x = stdscr.getmaxyx()
             
-            if not image_list:
-                print(f"No images found in {IMG_DIR}")
-                break
-
-            filtered_list = [img for img in image_list if os.path.basename(img).startswith(prefix)]
-            target_path = random.choice(filtered_list if filtered_list else image_list)
-
-            # Get dynamic width in case window resized
-            width = os.get_terminal_size().columns - 2
+            # Use max_x - 1 to prevent the diagonal wrap bug
+            width = max_x - 1
             new_frame = get_ascii_frame(target_path, selected_ramp, width)
 
-            # Render: Move cursor to top-left and print
-            # The "Nuclear" Cursor Hide:
-            # We move to home \x1b[H and RE-HIDE the cursor \x1b[?25l on every single frame
-            output = "\x1b[H\x1b[?25l" + "\n".join(new_frame)
-            sys.stdout.write(output)
-            sys.stdout.flush()
-            sys.stdout.write(output)
+            # Standard ANSI home and hide cursor
+            sys.stdout.write("\x1b[H\x1b[?25l") 
+            
+            for i, line in enumerate(new_frame):
+                # Ensure we don't exceed terminal height
+                if i < max_y - 1:
+                    # Clear formatting and force newline to keep alignment tight
+                    sys.stdout.write(line.rstrip() + "\x1b[0m\r\n")
+            
             sys.stdout.flush()
             
-            time.sleep(INTERVAL)
+            # Use half-delay sleep so 'q' remains responsive
+            for _ in range(INTERVAL * 10):
+                if stdscr.getch() == ord('q'):
+                    return
+                time.sleep(0.1)
 
     except KeyboardInterrupt:
         pass
