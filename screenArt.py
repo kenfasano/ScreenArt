@@ -28,8 +28,6 @@ from typing import List, Tuple
 # REF_CHANGE: Renamed namedtuple
 GeneratorConfig = namedtuple("GeneratorConfig", ["source", "should_erase"])
 
-# ScreenArtMain needs a superclass ScreenArt, which will also be the superclass of InputSource, HtmlSource, Text, etc.
-
 class ScreenArtMain():
     def __init__(self, config: dict[str, Any]):
         random.seed(time.time())
