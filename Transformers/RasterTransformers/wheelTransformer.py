@@ -2,7 +2,7 @@ from .base import RasterTransformer
 import numpy as np # type: ignore
 from PIL import Image, ImageChops # type: ignore
 import random
-import log
+import ScreenArt.log as log
 
 class WheelTransformer(RasterTransformer):
     """

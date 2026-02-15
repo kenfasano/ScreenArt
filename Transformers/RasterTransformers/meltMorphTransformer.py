@@ -11,8 +11,8 @@ class MeltMorphTransformer(RasterTransformer):
     Applies a melt effect to an image, reminiscent of Salvador Dali's artwork.
     """
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import common
-        import log
+        import ScreenArt.common as common
+        import ScreenArt.log as log
         """
         Applies the melt morph transformation to the input image using vectorized operations.
         """

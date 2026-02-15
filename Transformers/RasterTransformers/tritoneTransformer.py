@@ -21,8 +21,8 @@ class TritoneTransformer(RasterTransformer):
 
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
         from Transformers import hex_to_rgb
-        import common
-        import log
+        import ScreenArt.common as common
+        import ScreenArt.log as log
         
         # Corrected config key
         self.config = common.get_config(config, "tritonetransformer")

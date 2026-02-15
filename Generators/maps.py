@@ -5,12 +5,12 @@ from typing import Tuple, Optional
 from PIL import Image  # type: ignore
 from . import drawGenerator
 from .. import log
-from .. import common
 from . import utils
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
 import pytz                          
 from astral.sun import sun           
 from astral import LocationInfo
+from typing import Any # Import Any for flexible dicts
 
 def is_night_at_location(lat, lon):
     """
@@ -83,9 +83,9 @@ LAYERS = {
 }
 
 class NasaMapGenerator(drawGenerator.DrawGenerator):
-    def __init__(self, config: dict) -> None:
-        super().__init__()
-        self.config = common.get_config(config, "maps")
+    def __init__(self, config: dict[str, Any]) -> None:
+        super().__init__(config, "maps")
+        log.info(f"{self.config=}")
         
         # Standard Configuration
         self.width = int(self.config.get("width", 1920))
@@ -128,7 +128,7 @@ class NasaMapGenerator(drawGenerator.DrawGenerator):
             f"{self.zoom}/{y}/{x}.jpg"
         )
         
-        return utils.get_cached_image(url, cache_dir=f"{common.NASA_CACHE}/{self.layer_id}")
+        return utils.get_cached_image(url, cache_dir=f"{self.paths["nasa_cache"]}/{self.layer_id}")
 
     def get_image(self) -> Image.Image:
         """Generates the stitched NASA map for video or file saving."""
@@ -189,7 +189,7 @@ class NasaMapGenerator(drawGenerator.DrawGenerator):
             safe_layer_name = layer_name.replace(" ", "_").replace("(", "").replace(")", "")
             safe_city_name = city_name.split(",")[0].replace(" ", "_") # "New York, USA" -> "New_York"
             
-            filename = f"{common.MAPS_OUT}/{self.base_filename}_{i+1}_{safe_city_name}_{safe_layer_name}.jpeg"
+            filename = f"{self.paths["maps_out"]}/{self.base_filename}_{i+1}_{safe_city_name}_{safe_layer_name}.jpeg"
             
             img.save(filename, 'JPEG')
             log.info(f"Saved NASA Image: {filename}")

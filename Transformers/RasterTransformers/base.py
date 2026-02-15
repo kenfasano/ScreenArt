@@ -1,8 +1,7 @@
 import numpy as np #type: ignore
 from ..base import Transformer
-import log
-
 class RasterTransformer(Transformer):
+
     """
     The concrete base class for all image/raster based transformers.
     """
@@ -11,6 +10,7 @@ class RasterTransformer(Transformer):
         self.metadata_dictionary = {}
 
     def get_image_metadata(self) -> str:
+        import ScreenArt.log as log
         """
         Generically converts self.metadata_dictionary into a string.
         Format: "Key:Value;Key:Value"

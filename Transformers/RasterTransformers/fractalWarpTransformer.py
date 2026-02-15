@@ -15,8 +15,8 @@ class FractalWarpTransformer(RasterTransformer):
         super().__init__()
 
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import log
-        import common
+        import ScreenArt.log as log
+        import ScreenArt.common as common
 
         self.config = common.get_config(config, "fractalwarptransformer")
 

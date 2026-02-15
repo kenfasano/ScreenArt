@@ -3,13 +3,12 @@ import random
 import colorsys
 from PIL import Image, ImageDraw # type: ignore
 from . import drawGenerator
-from .. import common
 from .. import log
+from typing import Any # Import Any for flexible dicts
 
 class Bubbles(drawGenerator.DrawGenerator):
-    def __init__(self, config: dict):
-        super().__init__()
-        self.config = common.get_config(config, "bubbles")
+    def __init__(self, config: dict[str, Any]):
+        super().__init__(config, "bubbles")
         
         # Standard Configuration
         self.width = int(self.config.get('width', 1920))
@@ -159,5 +158,5 @@ class Bubbles(drawGenerator.DrawGenerator):
             
             self.draw_bubbles(draw, self.width, self.height, add_highlights=has_reflection)
 
-            filename = f"{common.GENERATORS_IN}/Bubbles/{self.base_filename}{i+1}.jpeg"
+            filename = f"{self.paths["generators_in"]}/Bubbles/{self.base_filename}{i+1}.jpeg"
             img.save(filename, 'JPEG')

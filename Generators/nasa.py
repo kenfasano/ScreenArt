@@ -1,16 +1,14 @@
 from . import htmlInputSource
 from .. import log
 from bs4 import BeautifulSoup #type: ignore
+from typing import Any # Import Any for flexible dicts
 
 DEFAULT_FILE_COUNT = 3
 
 class Nasa(htmlInputSource.HtmlInputSource):
-    def __init__(self, config: dict):
-        import common
-
-        self.config = common.get_config(config, "nasa")
-        self.file_count = self.config.get("file_count", DEFAULT_FILE_COUNT) if self.config else DEFAULT_FILE_COUNT
-        super().__init__(self.file_count)
+    def __init__(self, config: dict[str, Any]):
+        super().__init__(config, "nasa")
+        self.file_count = self.config.get("file_count", DEFAULT_FILE_COUNT)
 
     def get_new_images(self, input_source: str):
         number_of_images: int = self.fetch(

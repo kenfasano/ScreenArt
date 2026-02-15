@@ -7,6 +7,7 @@ from PIL import Image
 from . import drawGenerator
 from .. import log
 from .. import common
+from typing import Any # Import Any for flexible dicts
 
 # --- Constants ---
 
@@ -28,9 +29,8 @@ PRODUCTS = {
 }
 
 class GoesGenerator(drawGenerator.DrawGenerator):
-    def __init__(self, config: dict) -> None:
-        super().__init__()
-        self.config = common.get_config(config, "goes")
+    def __init__(self, config: dict[str, Any]):
+        super().__init__(config, "goes")
         
         # Configuration
         self.width = int(self.config.get("width", 1200))
@@ -124,7 +124,7 @@ class GoesGenerator(drawGenerator.DrawGenerator):
             
             # 3. Save
             safe_product_name = self.product_name.replace(" ", "_")
-            filename = f"{common.GOES_OUT}/{self.base_filename}_{i+1}_{SECTOR}_{safe_product_name}.jpeg"
+            filename = f"{self.paths["goes_out"]}/{self.base_filename}_{i+1}_{SECTOR}_{safe_product_name}.jpeg"
             
             img.save(filename, 'JPEG')
             log.info(f"Saved GOES Image: {filename}")

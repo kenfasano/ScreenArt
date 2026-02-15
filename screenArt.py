@@ -1,17 +1,18 @@
+import argparse 
+import json
 import os
+from pathlib import Path
 import sys
-
-# Get the directory where screenArt.py lives
-current_dir = os.path.dirname(os.path.abspath(__file__))
-if current_dir not in sys.path:
-    sys.path.insert(0, current_dir)
+from multiprocessing import freeze_support 
+from typing import Any # Import Any for flexible dicts
 
 import glob
 from pathlib import Path
 import random
 import time
-from . import common
 from . import log
+
+CONFIG="ScreenArt/screenArt.config"
 
 # REF_CHANGE: Import from Generators package
 from .Generators import wiki, nasa, maps, goes, bubbles, lojong, bible, peripheral_drift_illusion, \
@@ -27,28 +28,32 @@ from typing import List, Tuple
 # REF_CHANGE: Renamed namedtuple
 GeneratorConfig = namedtuple("GeneratorConfig", ["source", "should_erase"])
 
+# ScreenArtMain needs a superclass ScreenArt, which will also be the superclass of InputSource, HtmlSource, Text, etc.
+
 class ScreenArtMain():
-    def __init__(self, config: dict):
+    def __init__(self, config: dict[str, Any]):
         random.seed(time.time())
         self.config = config
+        self.paths = config.get("paths", {})
 
         # REF_CHANGE: Renamed input_dirs -> generators
         # REF_CHANGE: ImageSource -> GeneratorConfig
+        gen_in = self.paths["generators_in"]
         self.generators: dict[str, GeneratorConfig] = {
-                "bubbles": GeneratorConfig(source=f"{common.GENERATORS_IN}/Bubbles", should_erase=True),
-                "cubes": GeneratorConfig(source=f"{common.GENERATORS_IN}/cubes", should_erase=True),
-                "nasa": GeneratorConfig(source=f"{common.GENERATORS_IN}/Nasa", should_erase=True),
-                "maps": GeneratorConfig(source=f"{common.GENERATORS_IN}/Maps", should_erase=True),
-                "goes": GeneratorConfig(source=f"{common.GENERATORS_IN}/Goes", should_erase=True),
-                "wiki": GeneratorConfig(source=f"{common.GENERATORS_IN}/Wiki", should_erase=False),
-                "lojong": GeneratorConfig(source=f"{common.GENERATORS_IN}/Lojong", should_erase=False),
-                "bible": GeneratorConfig(source=f"{common.GENERATORS_IN}/Bible", should_erase=True),
-                "peripheraldriftillusion": GeneratorConfig(source=f"{common.GENERATORS_IN}/OpticalIllusions", should_erase=True),
-                "kochSnowflake": GeneratorConfig(source=f"{common.GENERATORS_IN}/KochSnowflake", should_erase=True),
-                "hilbert": GeneratorConfig(source=f"{common.GENERATORS_IN}/Hilbert", should_erase=True),
+                "bubbles": GeneratorConfig(source=f"{gen_in}/Bubbles", should_erase=True),
+                "cubes": GeneratorConfig(source=f"{gen_in}/cubes", should_erase=True),
+                "nasa": GeneratorConfig(source=f"{gen_in}/Nasa", should_erase=True),
+                "maps": GeneratorConfig(source=f"{gen_in}/Maps", should_erase=True),
+                "goes": GeneratorConfig(source=f"{gen_in}/Goes", should_erase=True),
+                "wiki": GeneratorConfig(source=f"{gen_in}/Wiki", should_erase=False),
+                "lojong": GeneratorConfig(source=f"{gen_in}/Lojong", should_erase=False),
+                "bible": GeneratorConfig(source=f"{gen_in}/Bible", should_erase=True),
+                "peripheraldriftillusion": GeneratorConfig(source=f"{gen_in}/OpticalIllusions", should_erase=True),
+                "kochSnowflake": GeneratorConfig(source=f"{gen_in}/KochSnowflake", should_erase=True),
+                "hilbert": GeneratorConfig(source=f"{gen_in}/Hilbert", should_erase=True),
                 }
 
-        self.image_bus = ImageProcessingBus(common.TRANSFORMERS_OUT, common.REJECTED_OUT)
+        self.image_bus = ImageProcessingBus(self.paths["transformers_out"], self.paths["rejected_out"])
 
     def erase_image_dir(self, dir: str):
         for dirpath, _, filenames in os.walk(dir):
@@ -107,9 +112,9 @@ class ScreenArtMain():
 
     @timeit # type: ignore
     def run(self):
-        self.trim_images(common.TRANSFORMERS_OUT, 50)
-        self.trim_images(common.REJECTED_OUT, 0)
-        self.trim_images(common.WIKI_OUT, 10)
+        self.trim_images(self.paths["transformers_out"], 50)
+        self.trim_images(self.paths["rejected_out"], 0)
+        self.trim_images(self.paths["wiki_out"], 10)
 
         keys_to_process = self._get_keys_to_process()
         
@@ -192,13 +197,45 @@ class ScreenArtMain():
         output_lines.append(f"{rejected} rejected")
         final_output = "\n".join(output_lines)
         
-        with open(common.MENUBAR_FILE, "w") as m:
+        with open(self.paths["menubar_file"], "w") as m:
             m.write(final_output)
             log.info(final_output)
 
         print(main_msg) 
 
-def main(config: dict):
+def run_processing():
+    # 1. Set up argparse
+    parser = argparse.ArgumentParser(description="Run the image processing and transformation pipeline.")
+    
+    # CHANGED: Swapped -t to -c (config) to free up -t for test
+    parser.add_argument('-c', '--config', type=str,
+                        help='Override the transformation file specified in the config.')
+    
+    # NEW: Added -t for test csv
+    parser.add_argument('-t', '--test', type=str,
+                        help='Path to a CSV file for test mode (format: trans1,trans2,grade).')
+
+    # Use parse_known_args() to avoid crashing on unrecognized arguments
+    args, _ = parser.parse_known_args()
+
+    # 2. Determine the config file path (command line overrides default)
+    # CHANGED: references args.config instead of args.transformation
+    config_filepath = args.config or CONFIG
+    print(f"{config_filepath=}")
+    config = {}
+    try:
+        with open(config_filepath, 'r') as f:
+            config = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        print(f"Warning: Could not load or parse config file {config_filepath}. Using defaults. Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    # Get the directory where screenArt.py lives
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    print(f"{current_dir}")
+    if current_dir not in sys.path:
+        sys.path.insert(0, current_dir)
+
     s = ScreenArtMain(config)
     try:
         _, elapsed_time = s.run() # type: ignore
@@ -206,6 +243,12 @@ def main(config: dict):
         s.write_outcome(elapsed_time, True, stats)
         exit(0)
     except Exception as e:
+        print(f"An error occurred during run: {e}")
         log.fatal(f"An error occurred during run: {e}")
         s.write_outcome("0.0", False, [])
         exit(1)
+
+if __name__ == "__main__":
+    freeze_support() 
+    log.setup_logging()  # Changed from setup_logging()
+    run_processing()

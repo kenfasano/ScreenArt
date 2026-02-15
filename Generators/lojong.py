@@ -3,17 +3,16 @@ from .. import log
 import os
 import random
 from . import text
+from typing import Any # Import Any for flexible dicts
 
 DEFAULT_FILE_COUNT = 3
 
 class Lojong(text.Text):
-    def __init__(self, config: dict):
-        import common
-
-        self.config = common.get_config(config, "lojong")
+    def __init__(self, config: dict[str, Any]):
+        super().__init__(config, "lojong")
         self.file_count = self.config.get("file_count", DEFAULT_FILE_COUNT) if self.config else DEFAULT_FILE_COUNT
 
-        lojong_directory = f"{common.BASE_PATH}InputSources/Data/Lojong"
+        lojong_directory = f"{self.paths["base_path"]}InputSources/Data/Lojong"
         
         # Initialize lists
         input_file_paths: list[str] = []
@@ -31,12 +30,11 @@ class Lojong(text.Text):
                 input_file_paths.append(f"{lojong_directory}/lojong_slogans_tib.json")
                 languages.append("Tibetan")
 
-            output_base_path = f"{common.GENERATORS_IN}/Lojong"
+            output_base_path = f"{self.paths["generators_in"]}/Lojong"
             output_file_paths.append(f"{output_base_path}/{self.base_filename}_{i}.jpeg")
 
-        super().__init__(input_file_paths, 
+        super().init_fields(input_file_paths, 
                          output_file_paths, 
-                         self.config, 
                          languages)
 
     def format_text(self, lojong_data: list[dict[str, str]]):
@@ -55,7 +53,7 @@ class Lojong(text.Text):
 
         for i, slogan_obj in enumerate(filtered_slogans):
             # If we are in strict point mode, skip mismatches
-            if slogan_obj.get("point") and int(slogan_obj.get("point")) != point:
+            if slogan_obj.get("point") and int(slogan_obj.get("point", 0)) != point:
                 continue
 
             slogan_text = slogan_obj.get("text", "")

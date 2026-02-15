@@ -22,7 +22,7 @@ class ColormapTransformer(RasterTransformer):
         }
 
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import common
+        import ScreenArt.common as common
         """
         Applies a randomly chosen OpenCV colormap to the input image.
         The image is first converted to grayscale if it's a color image.

@@ -8,9 +8,7 @@ from .. import log
 
 class Cubes(drawGenerator.DrawGenerator):
     def __init__(self, config: dict) -> None:
-        super().__init__()
-        self.config = common.get_config(config, "cubes")
-        log.info(f"{self.config}")
+        super().__init__(config, "cubes")
         
         # Standard Configuration
         self.width = int(self.config.get('width', 1920))
@@ -153,6 +151,6 @@ class Cubes(drawGenerator.DrawGenerator):
                 mask_draw.polygon(points, fill=1)
                 placed_count += 1
 
-            filename = f"{common.GENERATORS_IN}/Cubes/{self.base_filename}_{i+1}.jpg"
+            filename = f"{self.paths["generators_in"]}/Cubes/{self.base_filename}_{i+1}.jpg"
             img.save(filename, 'JPEG')
             log.info(f"Saved: {filename}. Mode: {mode}. (Placed {placed_count} cubes)")

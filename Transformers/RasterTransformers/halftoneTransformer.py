@@ -12,7 +12,7 @@ class HalftoneTransformer(RasterTransformer):
         super().__init__()
 
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import common
+        import ScreenArt.common as common
 
         self.config = common.get_config(config, "halftonetransformer")
        

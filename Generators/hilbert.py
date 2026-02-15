@@ -25,9 +25,7 @@ except ImportError:
 
 class Hilbert(drawGenerator.DrawGenerator):
     def __init__(self, config: dict):
-        super().__init__()
-
-        self.config = common.get_config(config, "hilbert")
+        super().__init__(config, "hilbert")
         
         self.width = int(self.config.get('width', 1920))
         self.height = int(self.config.get('height', 1080))
@@ -83,7 +81,7 @@ class Hilbert(drawGenerator.DrawGenerator):
     def draw(self):
         width = self.width
         height = self.height
-        output_dir = f"{common.GENERATORS_IN}/Hilbert"
+        output_dir = f"{self.paths["generators_in"]}/Hilbert"
 
         def random_bool(): return random.choice([True, False])
 

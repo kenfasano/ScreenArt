@@ -15,11 +15,9 @@ books = [
 ]
 
 class Bible(text.Text):
-    def __init__(self, config: dict):
-        import common
-        self.config = common.get_config(config, "bible")
+    def __init__(self, config: dict[str, str]):
+        super().__init__(config, "bible")
         self.file_count = self.config.get("file_count", DEFAULT_FILE_COUNT) if self.config else DEFAULT_FILE_COUNT
-
         input_file_paths: list[str] = []
         output_file_paths: list[str] = []
         self.languages: list[str] = []
@@ -33,13 +31,14 @@ class Bible(text.Text):
             base_filename: str = f"{book_name}_{chapter}"
             self.languages.append(language)
 
-            input_base_path = f"{common.BASE_PATH}InputSources/Bible/{language_book}"
+            input_base_path = f"{self.get_path('base_path')}/InputSources/Bible/{language_book}"
             if not os.path.exists(input_base_path):
                 log.critical(f"No such directory: {input_base_path}")
                 return
-            input_file_paths.append(f"{input_base_path}/{base_filename}.json")
+            else:
+                input_file_paths.append(f"{input_base_path}/{base_filename}.json")
 
-            output_base_path = f"{common.GENERATORS_IN}/Bible"
+            output_base_path = f"{self.paths["generators_in"]}/Bible"
             if not os.path.exists(output_base_path):
                 try:
                     new_directory = Path(output_base_path)
@@ -51,10 +50,7 @@ class Bible(text.Text):
             output_file_paths.append(f"{output_base_path}/{base_filename}.json")
 
         # 3. Use the randomly selected books and chapters 
-        super().__init__(input_file_paths, 
-                         output_file_paths,
-                         self.config, 
-                         self.languages)
+        super().init_fields(input_file_paths, output_file_paths, self.languages)
 
     def get_name_and_language(self, book_item: str) -> tuple[str, str]:
         split_index = -1

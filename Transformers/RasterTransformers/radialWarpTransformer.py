@@ -17,8 +17,8 @@ class RadialWarpTransformer(RasterTransformer):
         self.allowed_styles = ["push", "pull"]
 
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import common
-        import log
+        import ScreenArt.common as common
+        import ScreenArt.log as log
         self.transformer_id = transformer_ids.get(self.__class__.__name__, None)
         self.config = common.get_config(config, "radialwarptransformer")
 

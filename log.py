@@ -2,14 +2,12 @@ import logging
 import os
 import sys
 
-LOG_FILE = "ScreenArt/screenArt.log"
+LOG_FILE = os.path.expanduser("~/Scripts/ScreenArt/screenArt.log")
 
 # --- MOVED SETUP INTO THIS FUNCTION ---
 def setup_logging():
     """Configures the logging system. This should only be called ONCE."""
     
-    print("configuring the logging system...") # This will now run only once
-
     # All your original basicConfig, moved here
     logging.basicConfig(
         handlers=[

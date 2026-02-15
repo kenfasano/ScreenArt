@@ -14,8 +14,7 @@ from urllib.parse import unquote
 
 class Wiki(drawGenerator.DrawGenerator):
     def __init__(self, config: dict) -> None:
-        super().__init__()
-        self.config = common.get_config(config, "wiki")
+        super().__init__(config, "wiki")
         
         self.width = int(self.config.get("width", 1920))
         self.height = int(self.config.get("height", 1080))
@@ -23,7 +22,7 @@ class Wiki(drawGenerator.DrawGenerator):
         self.base_filename = "wiki"
         
         # Define Cache Directory on your SSD
-        self.cache_dir = common.WIKI_CACHE
+        self.cache_dir = self.paths["wiki_cache"]
         if not os.path.exists(self.cache_dir):
             os.makedirs(self.cache_dir)
             log.info(f"Created cache directory: {self.cache_dir}")
@@ -189,7 +188,7 @@ class Wiki(drawGenerator.DrawGenerator):
             if url:
                 img, status_code = self._download_and_process(url)
                 name = self.get_short_name(url)
-                filename = f"{common.GENERATORS_IN}/Wiki/{name}.jpeg"
+                filename = f"{self.paths["generators_in"]}/Wiki/{name}.jpeg"
 
                 if img:
                     img.save(filename, 'JPEG')

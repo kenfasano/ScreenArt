@@ -2,6 +2,7 @@
 import argparse 
 import json
 import os
+from pathlib import Path
 import sys
 from .log import setup_logging
 from . import screenArt
@@ -34,13 +35,12 @@ def run_processing():
         sys.exit(1)
 
     # Get the directory of the current script
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.join(script_dir, '..')
-    sys.path.append(project_root)
+    current_dir = Path(__file__).resolve().parent
+    sys.path.append(str(current_dir))
 
     screenArt.main(config)
 
 if __name__ == '__main__':
     freeze_support() 
     setup_logging()
-    run_processing()
+    jun_processing()

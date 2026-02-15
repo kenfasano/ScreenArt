@@ -12,8 +12,8 @@ class XrayTransformer(RasterTransformer):
         super().__init__()
 
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import common
-        import log
+        import ScreenArt.common as common
+        import ScreenArt.log as log
         self.config = common.get_config(config, "xraytransformer")
 
         if self.config is None:

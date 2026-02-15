@@ -6,8 +6,8 @@ import os
 import cv2 # type: ignore
 from PIL import Image # type: ignore
 from . import drawGenerator
-from .. import common
 from .. import log
+from typing import Any # Import Any for flexible dicts
 
 # Import Transformers
 try:
@@ -22,9 +22,8 @@ class KochSnowflake4(drawGenerator.DrawGenerator):
     Generates Sierpinski Triangles using the Chaos Game (Random Point Cloud).
     The background color is calculated to be the opposite of the fractal's average color.
     """
-    def __init__(self, config: dict | None):
-        super().__init__()
-        self.config = (config.get("kochSnowflake") if config else {}) or {}
+    def __init__(self, config: dict[str, Any]):
+        super().__init__(config, "kochSnowflake")
         
         self.width = int(self.config.get('width', 1920))
         self.height = int(self.config.get('height', 1080))
@@ -112,7 +111,7 @@ class KochSnowflake4(drawGenerator.DrawGenerator):
         return Image.fromarray(arr), opposite_bg
 
     def draw(self):
-        output_dir = f"{common.GENERATORS_IN}/KochSnowflake"
+        output_dir = f"{self.paths["generators_in"]}/KochSnowflake"
         if os.path.exists(output_dir):
             shutil.rmtree(output_dir)
         os.makedirs(output_dir, exist_ok=True)

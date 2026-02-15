@@ -1,5 +1,6 @@
 import random
 from . import drawGenerator
+from typing import Any # Import Any for flexible dicts
 
 # Import the specific implementations
 from .kochSnowflake1 import KochSnowflake1
@@ -13,12 +14,8 @@ class KochSnowflake(drawGenerator.DrawGenerator):
     Does not draw directly. Instead, it randomly delegates the work to 
     KochSnowflake 1, 2, 3, or 4 based on specific probability weights.
     """
-    def __init__(self, config: dict):
-        import common
-
-        super().__init__()
-        # Store config to pass it down to the chosen subclass
-        self.config = common.get_config(config, "kochsnowflake")
+    def __init__(self, config: dict[str, Any]):
+        super().__init__(config, "kochsnowflake")
 
     def draw(self):
         # Define the available generator classes

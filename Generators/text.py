@@ -2,6 +2,7 @@ from abc import abstractmethod
 import random
 import sys
 from PIL import Image, ImageDraw, ImageFont #type: ignore
+from typing import Any # Import Any for flexible dicts
 
 # --- Imports from uploaded files ---
 # NOTE: These imports assume text.py is placed in the same directory 
@@ -20,15 +21,10 @@ USABLE_WIDTH = WIDTH - (2 * BORDER_SIZE)
 USABLE_HEIGHT = HEIGHT - (2 * BORDER_SIZE)
 
 class Text(drawGenerator.DrawGenerator):
-    def __init__(
-            self, 
-            input_file_paths: list[str],
-            output_file_paths: list[str],
-            config,
-            languages: list[str]):
-    
-        super().__init__()
+    def __init__(self, config: dict[str,Any], sub_config_key: str):
+        super().__init__(config, sub_config_key)
 
+    def init_fields(self, input_file_paths: list[str], output_file_paths: list[str], languages: list[str]):
         if not input_file_paths or not output_file_paths:
             log.critical(f"{input_file_paths=}, {output_file_paths=}")
             return
@@ -37,7 +33,6 @@ class Text(drawGenerator.DrawGenerator):
 
         self.input_file_paths = input_file_paths
         self.output_file_paths = output_file_paths
-        self.config = config
         self.languages = languages
 
         self.current_list: list[str] = []
@@ -111,7 +106,7 @@ class Text(drawGenerator.DrawGenerator):
                 ("black", "white")
         ]
 
-        for i in range(len(self.input_file_paths)):
+        for i in range(len(self.input_file_self.paths)):
             background_color, foreground_color = random.choice(colors)
 
             # Create a new blank image
@@ -138,13 +133,13 @@ class Text(drawGenerator.DrawGenerator):
             try:
                 # FIX 2: Handle Output Path Index Error
                 # Lojong defines 2 inputs but only 1 output path. This prevents a crash on the second loop.
-                if i >= len(self.output_file_paths):
+                if i >= len(self.output_file_self.paths):
                     log.error(f"Skipping save for image {i}: No corresponding output file path provided.")
                     continue
 
-                img.save(self.output_file_paths[i], 'JPEG')
+                img.save(self.output_file_self.paths[i], 'JPEG')
             except Exception as e:
-                log.critical(f"Failed to save image {self.output_file_paths[i]}: {e}")
+                log.critical(f"Failed to save image {self.output_file_self.paths[i]}: {e}")
 
                 sys.exit(1)
 

@@ -6,13 +6,14 @@ from typing import Callable
 from .. import common
 from .. import log
 from . import inputSource
+from typing import Any # Import Any for flexible dicts
 
 class HtmlInputSource(inputSource.InputSource):
-    def __init__(self, count: int):
+    def __init__(self, config: dict[str, Any], sub_config_key: str):
+        super().__init__(config, sub_config_key)
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
         }
-        self.count = count
 
     @abstractmethod
     def get_new_images(self, input_source: str) -> int: 
@@ -45,7 +46,7 @@ class HtmlInputSource(inputSource.InputSource):
             filename = os.path.basename(url.split("?")[0])
 
             # Construct the full path to save the file
-            save_path = os.path.join(f"{common.GENERATORS_IN}/{input_source}", filename)
+            save_path = os.path.join(f"{self.paths["generators_in"]}/{input_source}", filename)
 
             # Define a User-Agent header to mimic a web browser
 

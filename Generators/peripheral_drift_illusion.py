@@ -9,10 +9,7 @@ DEFAULT_FILE_COUNT = 3
 
 class PeripheralDriftIllusion(drawGenerator.DrawGenerator):
     def __init__(self, config: dict):
-        import common
-
-        super().__init__()
-        self.config = common.get_config(config, "peripheral_drift_illusion")
+        super().__init__(config, "peripheral_drift_illusion")
         self.file_count = self.config.get("file_count", DEFAULT_FILE_COUNT) if self.config else DEFAULT_FILE_COUNT 
         self.base_filename = "peripheral_drift"
 
@@ -227,5 +224,5 @@ class PeripheralDriftIllusion(drawGenerator.DrawGenerator):
 
             # Save the image if one was created
             if img:
-                this_filename: str = f"{common.GENERATORS_IN}/OpticalIllusions/{self.base_filename}{i+1}.jpeg"
+                this_filename: str = f"{self.paths["generators_in"]}/OpticalIllusions/{self.base_filename}{i+1}.jpeg"
                 img.save(this_filename, 'JPEG')

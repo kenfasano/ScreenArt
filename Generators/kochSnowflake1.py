@@ -6,8 +6,8 @@ import os
 import cv2 # type: ignore
 from PIL import Image, ImageDraw # type: ignore
 from . import drawGenerator
-from .. import common
 from .. import log
+from typing import Any # Import Any for flexible dicts
 
 # 1. Import Linear Transformers
 try:
@@ -21,9 +21,8 @@ class KochSnowflake1(drawGenerator.DrawGenerator):
     """
     Generates Koch Snowflake fractal images with Spiral distortion and Psychedelic coloring.
     """
-    def __init__(self, config: dict | None):
-        super().__init__()
-        self.config = (config.get("kochSnowflake") if config else {}) or {}
+    def __init__(self, config: dict[str, Any]):
+        super().__init__(config)
         
         self.width = int(self.config.get('width', 1920))
         self.height = int(self.config.get('height', 1080))
@@ -117,7 +116,7 @@ class KochSnowflake1(drawGenerator.DrawGenerator):
         return Image.fromarray(result_arr)
 
     def draw(self):
-        output_dir = f"{common.GENERATORS_IN}/KochSnowflake"
+        output_dir = f"{self.paths["generators_in"]}/KochSnowflake"
 
         if os.path.exists(output_dir):
             shutil.rmtree(output_dir)

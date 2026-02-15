@@ -28,7 +28,7 @@ class FluidWarpTransformer(RasterTransformer):
         return indices_y, indices_x
 
     def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import common
+        import ScreenArt.common as common
         self.config = common.get_config(config, "fluidwarptransformer")
 
         # --- Parameter Handling ---

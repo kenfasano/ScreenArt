@@ -4,9 +4,8 @@ import os
 import re
 import shutil
 import urllib.parse
-import log
 from PIL import Image #type: ignore
-from config import *
+from . import config
 
 # --- REGEX FIX ---
 # Changed from r'px[-_ ]+' to r'\d*px[-_ ]+' to capture the number (500) as well
@@ -116,6 +115,7 @@ def fix_file_name(file_name: str) -> str:
     return re.sub(r'[^\w\.]', '', file_name)
 
 def write_response_to_file(response, path) -> bool:
+    from . import log
     try:
         image = response.raw
         with open(path, "wb") as f:
@@ -125,6 +125,7 @@ def write_response_to_file(response, path) -> bool:
         return log.error(f"OSError {e}")
 
 def convert_png_to_jpeg(png_path, jpeg_path):
+    from . import log
     try:
         with Image.open(png_path) as img:
             rgb_img = img.convert('RGB')
