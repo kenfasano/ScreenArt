@@ -26,5 +26,5 @@ git commit -m "$commit_message"
 echo "git pushing to origin main..."
 git push origin main
 
-echo "✅ Done! Your p10k prompt should be clean now."
+echo "✅ Done!"
 

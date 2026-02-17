@@ -28,7 +28,8 @@ class RadialWarpTransformer(RasterTransformer):
         count = self.config.get("count", "?")
         if isinstance(count, int):
             count = count
-        else: count = int(random.uniform(DEFAULT_COUNT // 2, DEFAULT_COUNT * 2))
+        else:
+            count = int(random.uniform(DEFAULT_COUNT // 2, DEFAULT_COUNT * 2))
 
         style = self.config.get("style", "?")
         if isinstance(style, list): 

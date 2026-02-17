@@ -1,5 +1,7 @@
 from abc import ABC
 from typing import Any # Import Any for flexible dicts
+from .. import log
+from PIL import Image
 
 class Base(ABC):
     def __init__(self, config: dict[str, Any], sub_config_key: str):
@@ -8,6 +10,20 @@ class Base(ABC):
         safe_config = config or {}
         self.config = safe_config.get(sub_config_key, {})
         self.paths = safe_config.get("paths", {})
-
+        log.info(f"{self.paths=}")
+        
     def get_path(self, path_key: str) -> str:
         return self.paths.get(path_key, "")
+
+    def save(self, img: Image.Image | None, filename: str) -> bool:
+        if img:
+            try:
+                img.save(filename, 'JPEG')
+                log.info(f"Saved: {filename}")
+                return True
+            except FileNotFoundError as fe:
+                log.error(f"File not found: {filename} {fe}")
+                return False
+        else:
+            log.warning("Image download failed")
+            return False

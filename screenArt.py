@@ -5,16 +5,13 @@ from pathlib import Path
 import sys
 from multiprocessing import freeze_support 
 from typing import Any # Import Any for flexible dicts
-
 import glob
-from pathlib import Path
 import random
 import time
 from . import log
 
 CONFIG="ScreenArt/screenArt.config"
 
-# REF_CHANGE: Import from Generators package
 from .Generators import wiki, nasa, maps, goes, bubbles, lojong, bible, peripheral_drift_illusion, \
         kochSnowflake, hilbert, cubes
 
@@ -32,10 +29,8 @@ class ScreenArtMain():
     def __init__(self, config: dict[str, Any]):
         random.seed(time.time())
         self.config = config
-        self.paths = config.get("paths", {})
+        self.get_expanded_paths()
 
-        # REF_CHANGE: Renamed input_dirs -> generators
-        # REF_CHANGE: ImageSource -> GeneratorConfig
         gen_in = self.paths["generators_in"]
         self.generators: dict[str, GeneratorConfig] = {
                 "bubbles": GeneratorConfig(source=f"{gen_in}/Bubbles", should_erase=True),
@@ -43,7 +38,7 @@ class ScreenArtMain():
                 "nasa": GeneratorConfig(source=f"{gen_in}/Nasa", should_erase=True),
                 "maps": GeneratorConfig(source=f"{gen_in}/Maps", should_erase=True),
                 "goes": GeneratorConfig(source=f"{gen_in}/Goes", should_erase=True),
-                "wiki": GeneratorConfig(source=f"{gen_in}/Wiki", should_erase=False),
+               "wiki": GeneratorConfig(source=f"{gen_in}/Wiki", should_erase=False),
                 "lojong": GeneratorConfig(source=f"{gen_in}/Lojong", should_erase=False),
                 "bible": GeneratorConfig(source=f"{gen_in}/Bible", should_erase=True),
                 "peripheraldriftillusion": GeneratorConfig(source=f"{gen_in}/OpticalIllusions", should_erase=True),
@@ -52,6 +47,30 @@ class ScreenArtMain():
                 }
 
         self.image_bus = ImageProcessingBus(self.paths["transformers_out"], self.paths["rejected_out"])
+
+    def get_expanded_paths(self):
+        raw_paths = self.config.get("paths", {})
+        for key, path_str in raw_paths.items():
+            log.info(f"Raw: {key}={path_str}")
+
+        for key, path_str in raw_paths.items():
+            folder = Path(path_str).expanduser()
+            try:
+                folder.mkdir(parents=True, exist_ok=True)
+                os.chmod(folder, 0o755) 
+
+                raw_paths[key] = str(folder)
+                log.info(f"SUCCESS: {folder} is ready for writing.")
+            except PermissionError:
+                log.critical(f"CRITICAL: System denied permission to create {folder}")
+            except Exception as e:
+                log.critical(f"ERROR: {e}")
+
+            log.info(f"Sanitized: {key}={raw_paths[key]}")
+
+        self.paths = self.config["paths"] = raw_paths
+        for key, path_str in self.paths.items():
+            log.info(f"self.paths: {key}={path_str}")
 
     def erase_image_dir(self, dir: str):
         for dirpath, _, filenames in os.walk(dir):
@@ -195,7 +214,7 @@ class ScreenArtMain():
         output_lines.append(f"{rejected} rejected")
         final_output = "\n".join(output_lines)
         
-        with open(self.paths["menubar_file"], "w") as m:
+        with open(self.paths["results_file_dir"] + "/results.txt", "w") as m:
             m.write(final_output)
             log.info(final_output)
 

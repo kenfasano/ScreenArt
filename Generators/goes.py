@@ -42,7 +42,7 @@ class GoesGenerator(drawGenerator.DrawGenerator):
         self.product_name = "GeoColor"
         self.product_id = "GEOCOLOR"
 
-    def _get_image_url_from_index(self, index_url: str) -> Optional[str]:
+    def get_image_url_from_index(self, index_url: str) -> Optional[str]:
         """
         Parses the NOAA directory listing to find the first .jpg link.
         This usually targets '1200x1200.jpg' based on standard NOAA indexing.
@@ -81,7 +81,7 @@ class GoesGenerator(drawGenerator.DrawGenerator):
         )
         
         # 1. Find the actual file URL
-        image_url = self._get_image_url_from_index(index_url)
+        image_url = self.get_image_url_from_index(index_url)
         if not image_url:
             return None
             

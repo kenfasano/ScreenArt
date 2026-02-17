@@ -1,10 +1,9 @@
 import random
 import requests # type: ignore
-import json
 import os
 import time
 from io import BytesIO
-from typing import Optional, Dict, Any, List
+from typing import Any
 from PIL import Image
 
 from . import drawGenerator
@@ -21,12 +20,6 @@ class Wiki(drawGenerator.DrawGenerator):
         self.file_count = int(self.config.get("file_count", 1))
         self.base_filename = "wiki"
         
-        # Define Cache Directory on your SSD
-        self.cache_dir = self.paths["wiki_cache"]
-        if not os.path.exists(self.cache_dir):
-            os.makedirs(self.cache_dir)
-            log.info(f"Created cache directory: {self.cache_dir}")
-
         # Load Keywords
         keyword_file = self.config.get("keyword_file")
         if keyword_file:
@@ -50,11 +43,8 @@ class Wiki(drawGenerator.DrawGenerator):
             return random.choice(self.keywords)
         return "random"
 
-    def _fetch_fresh_data(self, keyword: str) -> List[Dict]:
-        """Hit the API to get 500 items and save to disk."""
-        log.info(f"Cache miss for '{keyword}'. Fetching from API...")
-        
-        params: Dict[str, Any] = {
+    def fetch_fresh_data(self, keyword: str) -> list[dict]:
+        params: dict[str, Any] = {
             "action": "query",
             "format": "json",
             "prop": "imageinfo",
@@ -94,54 +84,23 @@ class Wiki(drawGenerator.DrawGenerator):
                         if "image" in info.get("mime", "") and "svg" not in info.get("mime", ""):
                             clean_list.append(info)
                 
-                # Save to cache if it's not a "random" search
-                if keyword != "random" and clean_list:
-                    CACHE_PATH = os.path.join(self.cache_dir, f"wiki_{keyword}.json")
-                    with open(CACHE_PATH, 'w') as f:
-                        json.dump(clean_list, f)
-                    log.info(f"Cached {len(clean_list)} items to {CACHE_PATH}")
-                
                 return clean_list
             else:
                 log.warning(f"API Error: {response.status_code}")
-#                self.wiki_log.write(f"[{common.get_timestamp()}] Fetch fresh data: {response.status_code}\n")
                 return []
         except Exception as e:
             log.error(f"Fetch error: {e}")
-#            self.wiki_log.write(f"[{common.get_timestamp()}] Fetch fresh data: fetch error: {e}\n")
             return []
 
-    def _get_image_url_from_cache(self, keyword: str) -> Optional[str]:
-        """Try to load from disk, fallback to API."""
-        CACHE_PATH = os.path.join(self.cache_dir, f"wiki_{keyword}.json")
-        items = []
-
-        # 1. Try to load local cache
-        if keyword != "random" and os.path.exists(CACHE_PATH):
-            try:
-                # OPTIONAL: Check file age. If > 7 days, ignore it to force refresh.
-                file_age = time.time() - os.path.getmtime(CACHE_PATH)
-                if file_age > (86400 * 7): # 7 days
-                    log.info(f"Cache for {keyword} is old ({int(file_age/86400)} days). Refreshing.")
-                    items = [] # Force refresh
-                else:
-                    with open(CACHE_PATH, 'r') as f:
-                        items = json.load(f)
-            except Exception as e:
-                log.warning(f"Cache read error: {e}")
-
-        # 2. If no local items, fetch from API
-        if not items:
-            items = self._fetch_fresh_data(keyword)
-
-        # 3. Pick a random item
+    def get_image_url(self, keyword: str) -> str | None:
+        items = self.fetch_fresh_data(keyword)
         if items:
             choice = random.choice(items)
             return choice.get("thumburl", choice.get("url"))
         
         return None
 
-    def _download_and_process(self, url: str) -> tuple[Optional[Image.Image], int]:
+    def download_and_process(self, url: str) -> tuple[Image.Image | None, int]: #type: ignore
         try:
             # Simple download
             resp = requests.get(url, headers=self.headers, timeout=15)
@@ -178,25 +137,17 @@ class Wiki(drawGenerator.DrawGenerator):
     def draw(self) -> None:
         log.info(f"draw - {self.file_count=}")
 
-#        with open("/Users/kenfasano/Scripts/ScreenArt/wiki.log", "a") as self.wiki_log:
         for _ in range(self.file_count):
             keyword = self._get_random_keyword()
             
             # This now hits the SSD, not the API (mostly)
-            url = self._get_image_url_from_cache(keyword)
+            url = self.get_image_url(keyword)
             
             if url:
-                img, status_code = self._download_and_process(url)
+                img, _ = self.download_and_process(url)
                 name = self.get_short_name(url)
                 filename = f"{self.paths["generators_in"]}/Wiki/{name}.jpeg"
-
-                if img:
-                    img.save(filename, 'JPEG')
-                    log.info(f"Saved: {filename}")
-#                    self.wiki_log.write(f"[{common.get_timestamp()}] {filename} - {status_code}\n")
-                else:
-                    log.warning("Image download failed")
-#                    self.wiki_log.write(f"{filename} - {status_code}\n")
+                self.save(img, filename)
             
             # Still good to sleep briefly between actual image downloads
             time.sleep(1)
