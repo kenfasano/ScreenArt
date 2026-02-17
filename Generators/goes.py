@@ -126,5 +126,5 @@ class GoesGenerator(drawGenerator.DrawGenerator):
             safe_product_name = self.product_name.replace(" ", "_")
             filename = f"{self.paths["goes_out"]}/{self.base_filename}_{i+1}_{SECTOR}_{safe_product_name}.jpeg"
             
-            img.save(filename, 'JPEG')
+            self.save(img, filename)
             log.info(f"Saved GOES Image: {filename}")

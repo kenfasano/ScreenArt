@@ -191,5 +191,5 @@ class NasaMapGenerator(drawGenerator.DrawGenerator):
             
             filename = f"{self.paths["maps_out"]}/{self.base_filename}_{i+1}_{safe_city_name}_{safe_layer_name}.jpeg"
             
-            img.save(filename, 'JPEG')
+            self.save(img, filename)
             log.info(f"Saved NASA Image: {filename}")

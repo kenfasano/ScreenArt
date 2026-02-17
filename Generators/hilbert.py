@@ -180,7 +180,7 @@ class Hilbert(drawGenerator.DrawGenerator):
                     draw_ctx.line(screen_points, fill=solid_color, width=self.stroke_width)
 
             filename = f"{output_dir}/{self.base_filename}_{i+1}.jpg" if self.file_count > 1 else f"{output_dir}/{self.base_filename}.jpg"
-            img.save(filename, 'JPEG')
+            self.save(img, filename)
 
     def _generate_points(self):
         self.points = []

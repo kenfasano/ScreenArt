@@ -152,5 +152,5 @@ class Cubes(drawGenerator.DrawGenerator):
                 placed_count += 1
 
             filename = f"{self.paths["generators_in"]}/Cubes/{self.base_filename}_{i+1}.jpg"
-            img.save(filename, 'JPEG')
+            self.save(img, filename)
             log.info(f"Saved: {filename}. Mode: {mode}. (Placed {placed_count} cubes)")

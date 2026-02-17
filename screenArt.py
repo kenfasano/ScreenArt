@@ -10,7 +10,7 @@ import random
 import time
 from . import log
 
-CONFIG="ScreenArt/screenArt.config"
+CONFIG="ScreenArt/screenArt.conf"
 
 from .Generators import wiki, nasa, maps, goes, bubbles, lojong, bible, peripheral_drift_illusion, \
         kochSnowflake, hilbert, cubes

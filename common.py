@@ -5,7 +5,6 @@ import re
 import shutil
 import urllib.parse
 from PIL import Image #type: ignore
-from . import config
 
 # --- REGEX FIX ---
 # Changed from r'px[-_ ]+' to r'\d*px[-_ ]+' to capture the number (500) as well

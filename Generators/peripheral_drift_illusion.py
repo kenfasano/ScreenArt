@@ -3,7 +3,6 @@ from PIL import Image, ImageDraw #type: ignore
 import math
 import colorsys
 import random
-from .. import common
 
 DEFAULT_FILE_COUNT = 3
 
@@ -224,5 +223,5 @@ class PeripheralDriftIllusion(drawGenerator.DrawGenerator):
 
             # Save the image if one was created
             if img:
-                this_filename: str = f"{self.paths["generators_in"]}/OpticalIllusions/{self.base_filename}{i+1}.jpeg"
-                img.save(this_filename, 'JPEG')
+                filename: str = f"{self.paths["generators_in"]}/OpticalIllusions/{self.base_filename}{i+1}.jpeg"
+                self.save(img, filename)

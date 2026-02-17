@@ -137,7 +137,7 @@ class Text(drawGenerator.DrawGenerator):
                     log.error(f"Skipping save for image {i}: No corresponding output file path provided.")
                     continue
 
-                img.save(self.output_file_self.paths[i], 'JPEG')
+                self.save(img, self.output_file_self.paths[i])
             except Exception as e:
                 log.critical(f"Failed to save image {self.output_file_self.paths[i]}: {e}")
 

@@ -159,4 +159,4 @@ class Bubbles(drawGenerator.DrawGenerator):
             self.draw_bubbles(draw, self.width, self.height, add_highlights=has_reflection)
 
             filename = f"{self.paths["generators_in"]}/Bubbles/{self.base_filename}{i+1}.jpeg"
-            img.save(filename, 'JPEG')
+            self.save(img, filename)

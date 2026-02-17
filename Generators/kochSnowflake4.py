@@ -147,6 +147,6 @@ class KochSnowflake4(drawGenerator.DrawGenerator):
             else:
                 filename = f"{output_dir}/{self.base_filename}_{i+1}.jpg"
             
-            img.save(filename, 'JPEG')
+            self.save(img, filename)
             # Log the calculated background color
             log.info(f"Generated KS4: {filename} (Points: {num_points}, Spiral: {spiral_tightness:.2f}, BG: {bg_color})")
