@@ -6,7 +6,7 @@ from . import common
 from . import log
 
 from pathlib import Path
-from timeit import timeit
+from time_it import time_it
 from typing import Callable, Any, Optional, List, Tuple
 from collections import defaultdict 
 from datetime import datetime
@@ -54,10 +54,10 @@ ALLOWED_LINEAR_TRANSFORMERS = [
 
 # REF_CHANGE: Renamed Constant
 PASS_THROUGH_GENERATORS = [
-    "Cubes",
-    "KochSnowflake",
-    "Hilbert",
-    "Wiki"
+    "cubes",
+    "kochsnowflake",
+    "hilbert",
+    "wiki"
 ]
 
 LINEAR_FILENAME_SUBSTRINGS = []
@@ -99,7 +99,7 @@ class ImageProcessingBus:
         self._rejected: int = 0
         self.transformer_times: defaultdict[str, list[float]] = defaultdict(list)
 
-    @timeit #type: ignore 
+    @time_it #type: ignore 
     def apply(self, config: dict, img: Any, transformer: Any):
         processed_img = img.copy()
         try:
@@ -341,11 +341,10 @@ class ImageProcessingBus:
         return transformers
     
     def process_images(self, config: dict, dir: str) -> None:
-        is_bubbles = "Bubbles" in dir
-        is_cubes = "Cubes" in dir
-        is_koch_snowflake = "Koch" in dir
-        is_hilbert = "Hilbert" in dir
-        #is_space = "Maps" in dir or "NASA" in dir or "GOES" in dir or "Wiki" in dir
+        is_bubbles = "bubbles" in dir
+        is_cubes = "cubes" in dir
+        is_koch_snowflake = "koch" in dir
+        is_hilbert = "hilbert" in dir
 
         source_name = Path(dir).name.lower() 
         source_config = config.get(source_name, {})

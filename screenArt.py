@@ -17,7 +17,7 @@ from .Generators import wiki, nasa, maps, goes, bubbles, lojong, bible, peripher
 
 from .bus import ImageProcessingBus
 
-from timeit import timeit
+from time_it import time_it
 from collections import namedtuple
 from datetime import datetime
 from typing import List, Tuple
@@ -33,17 +33,17 @@ class ScreenArtMain():
 
         gen_in = self.paths["generators_in"]
         self.generators: dict[str, GeneratorConfig] = {
-                "bubbles": GeneratorConfig(source=f"{gen_in}/Bubbles", should_erase=True),
+                "bubbles": GeneratorConfig(source=f"{gen_in}/bubbles", should_erase=True),
                 "cubes": GeneratorConfig(source=f"{gen_in}/cubes", should_erase=True),
-                "nasa": GeneratorConfig(source=f"{gen_in}/Nasa", should_erase=True),
-                "maps": GeneratorConfig(source=f"{gen_in}/Maps", should_erase=True),
-                "goes": GeneratorConfig(source=f"{gen_in}/Goes", should_erase=True),
-               "wiki": GeneratorConfig(source=f"{gen_in}/Wiki", should_erase=False),
-                "lojong": GeneratorConfig(source=f"{gen_in}/Lojong", should_erase=False),
-                "bible": GeneratorConfig(source=f"{gen_in}/Bible", should_erase=True),
-                "peripheraldriftillusion": GeneratorConfig(source=f"{gen_in}/OpticalIllusions", should_erase=True),
-                "kochSnowflake": GeneratorConfig(source=f"{gen_in}/KochSnowflake", should_erase=True),
-                "hilbert": GeneratorConfig(source=f"{gen_in}/Hilbert", should_erase=True),
+                "nasa": GeneratorConfig(source=f"{gen_in}/nasa", should_erase=True),
+                "maps": GeneratorConfig(source=f"{gen_in}/maps", should_erase=True),
+                "goes": GeneratorConfig(source=f"{gen_in}/goes", should_erase=True),
+               "wiki": GeneratorConfig(source=f"{gen_in}/wiki", should_erase=False),
+                "lojong": GeneratorConfig(source=f"{gen_in}/lojong", should_erase=False),
+                "bible": GeneratorConfig(source=f"{gen_in}/bible", should_erase=True),
+                "peripheraldriftillusion": GeneratorConfig(source=f"{gen_in}/opticalillusions", should_erase=True),
+                "kochSnowflake": GeneratorConfig(source=f"{gen_in}/kochsnowflake", should_erase=True),
+                "hilbert": GeneratorConfig(source=f"{gen_in}/hilbert", should_erase=True),
                 }
 
         self.image_bus = ImageProcessingBus(self.paths["transformers_out"], self.paths["rejected_out"])
@@ -127,7 +127,7 @@ class ScreenArtMain():
             
         return keys_to_process
 
-    @timeit # type: ignore
+    @time_it # type: ignore
     def run(self):
         self.trim_images(self.paths["transformers_out"], 50)
         self.trim_images(self.paths["rejected_out"], 0)
@@ -157,7 +157,7 @@ class ScreenArtMain():
                 wiki.Wiki(self.config).draw()
             case "nasa":
                 log.info("Running NASA Generator...")
-                nasa.Nasa(self.config).get_new_images("Nasa")
+                nasa.Nasa(self.config).get_new_images("nasa")
             case "maps":
                 log.info("Running NASA Maps Generator...")
                 maps.NasaMapGenerator(self.config).draw()

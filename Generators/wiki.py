@@ -146,7 +146,7 @@ class Wiki(drawGenerator.DrawGenerator):
             if url:
                 img, _ = self.download_and_process(url)
                 name = self.get_short_name(url)
-                filename = f"{self.paths["generators_in"]}/Wiki/{name}.jpeg"
+                filename = f"{self.paths["generators_in"]}/wiki/{name}.jpeg"
                 self.save(img, filename)
             
             # Still good to sleep briefly between actual image downloads
