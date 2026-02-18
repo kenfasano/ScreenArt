@@ -19,7 +19,9 @@ rsync -rtuv \
     --exclude '_*' \
     --exclude '._*' \
     --exclude '.git' \
+	 --exclude '.gitignore' \
     --exclude '__pycache__' \
+	 --exclude '~/Scripts/ScreenArt/Images/*' \
     ~/Scripts/ScreenArt/ \
     "$DEST_DIR"
 
