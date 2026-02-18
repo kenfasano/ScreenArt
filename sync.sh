@@ -1,13 +1,27 @@
 #!/bin/zsh
 
+# Detect Operating System
+OS="$(uname)"
+
+if [[ "$OS" == "Darwin" ]]; then
+    # macOS path
+    DEST_DIR="/Users/kenfasano/Google Drive/My Drive/shared/Scripts/ScreenArt/"
+elif [[ "$OS" == "Linux" ]]; then
+    # Fedora/Linux path (Adjust this if your mount point differs)
+    DEST_DIR="$HOME/Google Drive/shared/Scripts/ScreenArt/"
+else
+    echo "Unknown OS: $OS"
+    exit 1
+fi
+
 # 1. Synchronize with Google Drive
 rsync -rtuv \
-	--exclude '_*' \
-	--exclude '._*' \
-	--exclude '.git' \
-	--exclude '__pycache__' \
-	~/Scripts/ScreenArt/ \
-   "/home/kenfasano/Google Drive/shared/Scripts/ScreenArt/"
+    --exclude '_*' \
+    --exclude '._*' \
+    --exclude '.git' \
+    --exclude '__pycache__' \
+    ~/Scripts/ScreenArt/ \
+    "$DEST_DIR"
 
 # 2. Ask for the commit message
 echo -n "Enter commit message: "

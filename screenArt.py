@@ -17,7 +17,7 @@ from .Generators import wiki, nasa, maps, goes, bubbles, lojong, bible, peripher
 
 from .bus import ImageProcessingBus
 
-from time_it import time_it
+from time_it import time_it # type: ignore
 from collections import namedtuple
 from datetime import datetime
 from typing import List, Tuple
@@ -50,15 +50,19 @@ class ScreenArtMain():
 
     def get_expanded_paths(self):
         raw_paths = self.config.get("paths", {})
-        for key, path_str in raw_paths.items():
-            log.info(f"Raw: {key}={path_str}")
+        is_darwin = sys.platform == "darwin" # Check if we are on macOS
 
         for key, path_str in raw_paths.items():
+            # 1. Handle the macOS "My Drive" requirement
+            if is_darwin and "Google Drive" in path_str and "My Drive" not in path_str:
+                path_str = path_str.replace("Google Drive", "Google Drive/My Drive")
+
+            # 2. Expand the tilde (~) to /Users/kenfasano or /home/ken
             folder = Path(path_str).expanduser()
+            
             try:
                 folder.mkdir(parents=True, exist_ok=True)
                 os.chmod(folder, 0o755) 
-
                 raw_paths[key] = str(folder)
                 log.info(f"SUCCESS: {folder} is ready for writing.")
             except PermissionError:
@@ -66,12 +70,8 @@ class ScreenArtMain():
             except Exception as e:
                 log.critical(f"ERROR: {e}")
 
-            log.info(f"Sanitized: {key}={raw_paths[key]}")
-
         self.paths = self.config["paths"] = raw_paths
-        for key, path_str in self.paths.items():
-            log.info(f"self.paths: {key}={path_str}")
-
+        
     def erase_image_dir(self, dir: str):
         for dirpath, _, filenames in os.walk(dir):
             for filename in filenames:

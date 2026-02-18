@@ -10,7 +10,6 @@ class Base(ABC):
         safe_config = config or {}
         self.config = safe_config.get(sub_config_key, {})
         self.paths = safe_config.get("paths", {})
-        log.info(f"{self.paths=}")
         
     def get_path(self, path_key: str) -> str:
         return self.paths.get(path_key, "")
