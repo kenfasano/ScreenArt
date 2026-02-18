@@ -1,16 +1,20 @@
-import math
-import random
-import datetime
-from typing import Tuple, Optional
-from PIL import Image  # type: ignore
 from . import drawGenerator
 from .. import log
-from . import utils
-from datetime import datetime, timedelta
-import pytz                          
-from astral.sun import sun           
+from PIL import Image  # type: ignore
 from astral import LocationInfo
+from astral.sun import sun           
+from datetime import datetime, timedelta
+from io import BytesIO
 from typing import Any # Import Any for flexible dicts
+from typing import Optional
+from typing import Tuple, Optional
+from datetime import datetime
+import hashlib
+import math
+import os
+import pytz                          
+import random
+import requests
 
 def is_night_at_location(lat, lon):
     """
@@ -112,6 +116,52 @@ class NasaMapGenerator(drawGenerator.DrawGenerator):
         ytile = int((1.0 - math.asinh(math.tan(math.radians(lat))) / math.pi) / 2.0 * n)
         return xtile, ytile
 
+    def get_cached_image(self, url: str, cache_dir: str = "cache") -> Optional[Image.Image]:
+        """
+        Checks if an image exists in the local cache.
+        If yes: loads it from disk.
+        If no: downloads it, saves it to disk, then loads it.
+        """
+        
+        # 1. Ensure cache directory exists
+        if not os.path.exists(cache_dir):
+            os.makedirs(cache_dir)
+
+        # 2. Create a safe filename from the URL
+        # We use an MD5 hash of the URL to ensure a unique filename 
+        # that doesn't contain illegal filesystem characters.
+        hash_object = hashlib.md5(url.encode())
+        filename = f"{hash_object.hexdigest()}.jpg"
+        filepath = os.path.join(cache_dir, filename)
+
+        # 3. Check if file exists locally
+        if os.path.exists(filepath):
+            try:
+                return Image.open(filepath)
+            except Exception as e:
+                print(f"Error reading cache file {filepath}: {e}")
+                return None
+
+        # 4. If not, download it
+        try:
+            response = requests.get(url, stream=True, timeout=10)
+            if response.status_code == 200:
+                # Open image from bytes
+                img = Image.open(BytesIO(response.content))
+                
+                # Save to cache for next time
+                # We convert to RGB to ensure we can save as JPEG (handling potential RGBA issues)
+                img.convert('RGB').save(filepath)
+                
+                return img
+            else:
+                print(f"Failed to fetch {url} - Status: {response.status_code}")
+                return None
+                
+        except Exception as e:
+            print(f"Error downloading {url}: {e}")
+            return None
+
     def _fetch_tile(self, x: int, y: int) -> Optional[Image.Image]:
         # Heuristic: Use Level9 for everything unless we know it's low res.
         tile_matrix_set = "GoogleMapsCompatible_Level9"
@@ -122,13 +172,18 @@ class NasaMapGenerator(drawGenerator.DrawGenerator):
         if "DayNight" in self.layer_id:
              tile_matrix_set = "GoogleMapsCompatible_Level8"
 
+        # Construct URL
         url = (
             f"https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/"
             f"{self.layer_id}/default/{self.date_str}/{tile_matrix_set}/"
             f"{self.zoom}/{y}/{x}.jpg"
         )
         
-        return utils.get_cached_image(url, cache_dir=f"{self.paths["nasa_cache"]}/{self.layer_id}")
+        try:
+            return utils.get_cached_image(url, cache_dir=f"{self.paths['maps_cache']}/{self.layer_id}")
+        except Exception as e:
+            log.error(f"Failed to fetch tile {x},{y}: {e}")
+            return None
 
     def get_image(self) -> Image.Image:
         """Generates the stitched NASA map for video or file saving."""
@@ -154,25 +209,26 @@ class NasaMapGenerator(drawGenerator.DrawGenerator):
 
     def draw(self) -> None:
         """Cycle through layers and pick a RANDOM CITY for each image."""
-        layer_items = list(LAYERS.items()) # List of (Name, (ID, MaxZoom))
+        layer_items = list(LAYERS.items()) 
         
         for i in range(self.file_count):
             # 1. Pick a Random City
             city_name, coords = random.choice(list(CITIES.items()))
-            self.lat = coords[0]
-            self.lon = coords[1]
+            temp_lat = coords[0]
+            temp_lon = coords[1]
 
             # 2. Select Layer Cyclically
             layer_name, layer_info = layer_items[i % len(layer_items)]
             
-            if layer_name == "Night_Lights":
-                if not is_night_at_location(self.lat, self.lon):
-                    print(f"Skipping {layer_name}: It is currently daylight at this location.")
+            # FIX: Ensure string matches "Night Lights" in your LAYERS dict
+            if layer_name == "Night Lights":
+                if not is_night_at_location(temp_lat, temp_lon):
+                    log.info(f"Skipping {city_name} for Night Lights: It is currently daylight there.")
                     continue
 
-            log.info(f"Rendering {layer_name}: It is night.")
-            # Render image
-            # 3. Update Class State
+            # 3. Update Class State BEFORE calling get_image
+            self.lat = temp_lat
+            self.lon = temp_lon
             self.layer_id = layer_info[0]
             
             # 4. Recalculate Zoom
@@ -183,13 +239,14 @@ class NasaMapGenerator(drawGenerator.DrawGenerator):
             log.info(f"Generating: {city_name} - {layer_name} (Zoom: {self.zoom})")
             
             # 5. Generate & Save
-            img = self.get_image()
+            img = self.get_image() # This now uses the updated self.lat/lon/layer_id
             
             # Sanitized filenames
             safe_layer_name = layer_name.replace(" ", "_").replace("(", "").replace(")", "")
-            safe_city_name = city_name.split(",")[0].replace(" ", "_") # "New York, USA" -> "New_York"
+            safe_city_name = city_name.split(",")[0].replace(" ", "_")
             
-            filename = f"{self.paths["maps_out"]}/{self.base_filename}_{i+1}_{safe_city_name}_{safe_layer_name}.jpeg"
-            
-            self.save(img, filename)
+            # Ensure the directory exists and save
+            filename = f"{self.base_filename}_{i+1}_{safe_city_name}_{safe_layer_name}.jpeg"
+            # Note: self.save usually handles the path joining if using a framework
+            self.save(img, filename) 
             log.info(f"Saved NASA Image: {filename}")
