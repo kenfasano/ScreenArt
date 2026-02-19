@@ -64,7 +64,7 @@ class ScreenArtMain():
                 folder.mkdir(parents=True, exist_ok=True)
                 os.chmod(folder, 0o755) 
                 raw_paths[key] = str(folder)
-                log.info(f"SUCCESS: {folder} is ready for writing.")
+                log.debug("SUCCESS: {folder} is ready for writing.")
             except PermissionError:
                 log.critical(f"CRITICAL: System denied permission to create {folder}")
             except Exception as e:

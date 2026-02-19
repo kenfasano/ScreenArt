@@ -89,7 +89,6 @@ LAYERS = {
 class NasaMapGenerator(drawGenerator.DrawGenerator):
     def __init__(self, config: dict[str, Any]) -> None:
         super().__init__(config, "maps")
-        log.info(f"{self.config=}")
         
         # Standard Configuration
         self.width = int(self.config.get("width", 1920))
@@ -116,51 +115,51 @@ class NasaMapGenerator(drawGenerator.DrawGenerator):
         ytile = int((1.0 - math.asinh(math.tan(math.radians(lat))) / math.pi) / 2.0 * n)
         return xtile, ytile
 
-    def get_cached_image(self, url: str, cache_dir: str = "cache") -> Optional[Image.Image]:
-        """
-        Checks if an image exists in the local cache.
-        If yes: loads it from disk.
-        If no: downloads it, saves it to disk, then loads it.
-        """
-        
-        # 1. Ensure cache directory exists
-        if not os.path.exists(cache_dir):
-            os.makedirs(cache_dir)
-
-        # 2. Create a safe filename from the URL
-        # We use an MD5 hash of the URL to ensure a unique filename 
-        # that doesn't contain illegal filesystem characters.
-        hash_object = hashlib.md5(url.encode())
-        filename = f"{hash_object.hexdigest()}.jpg"
-        filepath = os.path.join(cache_dir, filename)
-
-        # 3. Check if file exists locally
-        if os.path.exists(filepath):
-            try:
-                return Image.open(filepath)
-            except Exception as e:
-                print(f"Error reading cache file {filepath}: {e}")
-                return None
-
-        # 4. If not, download it
-        try:
-            response = requests.get(url, stream=True, timeout=10)
-            if response.status_code == 200:
-                # Open image from bytes
-                img = Image.open(BytesIO(response.content))
-                
-                # Save to cache for next time
-                # We convert to RGB to ensure we can save as JPEG (handling potential RGBA issues)
-                img.convert('RGB').save(filepath)
-                
-                return img
-            else:
-                print(f"Failed to fetch {url} - Status: {response.status_code}")
-                return None
-                
-        except Exception as e:
-            print(f"Error downloading {url}: {e}")
-            return None
+#    def get_cached_image(self, url: str, cache_dir: str = "cache") -> Optional[Image.Image]:
+#        """
+#        Checks if an image exists in the local cache.
+#        If yes: loads it from disk.
+#        If no: downloads it, saves it to disk, then loads it.
+#        """
+#        
+#        # 1. Ensure cache directory exists
+#        if not os.path.exists(cache_dir):
+#            os.makedirs(cache_dir)
+#
+#        # 2. Create a safe filename from the URL
+#        # We use an MD5 hash of the URL to ensure a unique filename 
+#        # that doesn't contain illegal filesystem characters.
+#        hash_object = hashlib.md5(url.encode())
+#        filename = f"{hash_object.hexdigest()}.jpg"
+#        filepath = os.path.join(cache_dir, filename)
+#
+#        # 3. Check if file exists locally
+#        if os.path.exists(filepath):
+#            try:
+#                return Image.open(filepath)
+#            except Exception as e:
+#                print(f"Error reading cache file {filepath}: {e}")
+#                return None
+#
+#        # 4. If not, download it
+#        try:
+#            response = requests.get(url, stream=True, timeout=10)
+#            if response.status_code == 200:
+#                # Open image from bytes
+#                img = Image.open(BytesIO(response.content))
+#                
+#                # Save to cache for next time
+#                # We convert to RGB to ensure we can save as JPEG (handling potential RGBA issues)
+#                img.convert('RGB').save(filepath)
+#                
+#                return img
+#            else:
+#                print(f"Failed to fetch {url} - Status: {response.status_code}")
+#                return None
+#                
+#        except Exception as e:
+#            print(f"Error downloading {url}: {e}")
+#            return None
 
     def _fetch_tile(self, x: int, y: int) -> Optional[Image.Image]:
         # Heuristic: Use Level9 for everything unless we know it's low res.
@@ -180,7 +179,7 @@ class NasaMapGenerator(drawGenerator.DrawGenerator):
         )
         
         try:
-            return utils.get_cached_image(url, cache_dir=f"{self.paths['maps_cache']}/{self.layer_id}")
+            return self.get_cached_image(url, cache_dir=f"{self.paths['maps_cache']}/{self.layer_id}")
         except Exception as e:
             log.error(f"Failed to fetch tile {x},{y}: {e}")
             return None
@@ -223,7 +222,6 @@ class NasaMapGenerator(drawGenerator.DrawGenerator):
             # FIX: Ensure string matches "Night Lights" in your LAYERS dict
             if layer_name == "Night Lights":
                 if not is_night_at_location(temp_lat, temp_lon):
-                    log.info(f"Skipping {city_name} for Night Lights: It is currently daylight there.")
                     continue
 
             # 3. Update Class State BEFORE calling get_image
@@ -235,8 +233,6 @@ class NasaMapGenerator(drawGenerator.DrawGenerator):
             max_zoom = layer_info[1]
             requested_zoom = int(self.config.get('zoom', 4))
             self.zoom = min(requested_zoom, max_zoom)
-            
-            log.info(f"Generating: {city_name} - {layer_name} (Zoom: {self.zoom})")
             
             # 5. Generate & Save
             img = self.get_image() # This now uses the updated self.lat/lon/layer_id

@@ -6,7 +6,6 @@ from typing import Optional
 from PIL import Image
 from . import drawGenerator
 from .. import log
-from .. import common
 from typing import Any # Import Any for flexible dicts
 
 # --- Constants ---
@@ -48,7 +47,6 @@ class GoesGenerator(drawGenerator.DrawGenerator):
         This usually targets '1200x1200.jpg' based on standard NOAA indexing.
         """
         try:
-            log.info(f"Checking index: {index_url}")
             response = requests.get(index_url, timeout=10)
             response.raise_for_status()
             
@@ -87,7 +85,6 @@ class GoesGenerator(drawGenerator.DrawGenerator):
             
         # 2. Download the Image
         try:
-            log.info(f"Fetching GOES image: {image_url}")
             response = requests.get(image_url, timeout=15)
             response.raise_for_status()
             

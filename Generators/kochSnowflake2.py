@@ -143,4 +143,3 @@ class KochSnowflake2(drawGenerator.DrawGenerator):
             self.save(img, filename)
             
             hue_str = ">".join(map(str, current_hues))
-            log.info(f"Generated KS2: {filename} (Iter: {num_transforms}, Spiral: {spiral_tightness:.2f}, Hues: {hue_str}, BG: {bg_color})")

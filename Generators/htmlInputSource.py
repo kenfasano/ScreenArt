@@ -3,7 +3,6 @@ import os
 import time
 import requests
 from typing import Callable
-from .. import common
 from .. import log
 from . import inputSource
 from typing import Any # Import Any for flexible dicts
@@ -28,7 +27,6 @@ class HtmlInputSource(inputSource.InputSource):
             response = requests.get(url, headers=self.headers)
             response.raise_for_status()  # Raise an HTTPError for bad responses (4xx or 5xx)
             html = response.text
-            log.info(f"{response.status_code}")
             return html
         except requests.exceptions.RequestException as e:
             log.error(f"Error reading {url}: {e}")
@@ -63,7 +61,7 @@ class HtmlInputSource(inputSource.InputSource):
                 log.info(f"Download {url} - {response.status_code}")
                 return False
         except requests.exceptions.RequestException as e:
-            log.error(f"An error occurred during the download: {e}")
+            log.warning(f"An error occurred during the download: {e}")
         except Exception as e:
             log.error(f"An unexpected error occurred: {e}")
 

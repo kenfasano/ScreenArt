@@ -69,8 +69,6 @@ class Wiki(drawGenerator.DrawGenerator):
         try:
             response = requests.get(self.api_url, params=params, headers=self.headers, timeout=15)
             if response.status_code == 200:
-#                self.wiki_log.write(f"[{common.get_timestamp()}] Fetch fresh data: {response.status_code}\n")
-
                 data = response.json()
                 pages = data.get("query", {}).get("pages", {})
                 page_list = list(pages.values())
@@ -135,8 +133,6 @@ class Wiki(drawGenerator.DrawGenerator):
         return os.path.splitext(unquote(filename))[0][:15]
 
     def draw(self) -> None:
-        log.info(f"draw - {self.file_count=}")
-
         for _ in range(self.file_count):
             keyword = self._get_random_keyword()
             
