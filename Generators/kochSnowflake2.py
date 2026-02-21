@@ -7,7 +7,6 @@ import cv2
 from PIL import Image, ImageDraw 
 from .drawGenerator import DrawGenerator
 
-# Import Linear Transformers
 try:
     from Transformers.LinearTransformers.sierpinskiTransformer import SierpinskiTransformer
     from Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
@@ -16,9 +15,6 @@ except ImportError:
     from ..Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
 
 class KochSnowflake2(DrawGenerator):
-    """
-    Generates Sierpinski-style fractal images with Spiral distortion and Psychedelic coloring.
-    """
     def __init__(self):
         super().__init__()
         
@@ -27,16 +23,13 @@ class KochSnowflake2(DrawGenerator):
         self.file_count = int(self.config.get('file_count', 5))
         self.base_filename = "koch_snowflake_2"
         
-        # Instantiate Transformers
         self.sierpinski_transformer = SierpinskiTransformer()
         self.spiral_transformer = SpiralTransformer(tightness=0.8) 
 
     def _generate_initial_triangle(self, scale: float) -> np.ndarray:
         cx, cy = self.width / 2, self.height / 2
         radius = min(self.width, self.height) / 2 * scale
-        
         angles = np.deg2rad([270, 30, 150, 270]) 
-        
         x = cx + radius * np.cos(angles)
         y = cy + radius * np.sin(angles) 
         return np.column_stack((x, y))
@@ -79,7 +72,6 @@ class KochSnowflake2(DrawGenerator):
         final_hsv[..., 2] = value_channel 
         
         final_rgb = cv2.cvtColor(final_hsv, cv2.COLOR_HSV2RGB)
-        
         result_arr = np.zeros_like(arr)
         result_arr[:] = bg_color
         result_arr[mask] = final_rgb[mask]
@@ -95,11 +87,9 @@ class KochSnowflake2(DrawGenerator):
         for i in range(self.file_count):
             random.seed(time.perf_counter() + i)
 
-            # Randomize Settings
             num_transforms = random.randint(4, 7) 
             spiral_tightness = random.uniform(0.3, 1.2)
             
-            # Randomize Colors
             num_colors = random.choice([2, 3])
             current_hues = [random.randint(0, 180) for _ in range(num_colors)]
             bg_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
@@ -107,27 +97,22 @@ class KochSnowflake2(DrawGenerator):
             self.spiral_transformer.tightness = spiral_tightness
             current_scale = random.uniform(0.5, 0.8)
             
-            # 1. Start with Triangle
             points = self._generate_initial_triangle(current_scale)
 
-            # 2. Apply Sierpinski Recursion
+            # --- USING NEW .run() CONTRACT ---
             for _ in range(num_transforms):
                 points = self.sierpinski_transformer.run(points) 
-                
-            # 3. Apply Spiral Twist
             points = self.spiral_transformer.run(points) 
 
-            # 4. Rasterize
             img = Image.new('RGB', (self.width, self.height), (0, 0, 0))
             draw = ImageDraw.Draw(img)
             
             poly_coords = [tuple(p) for p in points]
             draw.polygon(poly_coords, fill=(255, 255, 255), outline=None)
 
-            # 5. Apply Mask
             img = self._apply_psychedelic_mask(img, current_hues, bg_color)
 
-            # 6. Save
+            # --- USING NATIVE PIL img.save() ---
             filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
             filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
             

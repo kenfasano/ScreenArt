@@ -15,10 +15,6 @@ except ImportError:
     from ..Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
 
 class KochSnowflake3(DrawGenerator):
-    """
-    Generates Hex-Star fractals (Anti-Snowflake style).
-    Starts with a HEXAGON instead of a triangle.
-    """
     def __init__(self):
         super().__init__()
         
@@ -98,14 +94,11 @@ class KochSnowflake3(DrawGenerator):
             self.spiral_transformer.tightness = spiral_tightness
             current_scale = random.uniform(0.5, 0.8)
             
-            # Start with HEXAGON
             points = self._generate_initial_hexagon(current_scale)
 
-            # Apply Koch
+            # --- USING NEW .run() CONTRACT ---
             for _ in range(num_transforms):
                 points = self.koch_transformer.run(points) 
-                
-            # Apply Spiral Twist
             points = self.spiral_transformer.run(points) 
 
             img = Image.new('RGB', (self.width, self.height), (0, 0, 0))
@@ -116,6 +109,7 @@ class KochSnowflake3(DrawGenerator):
 
             img = self._apply_psychedelic_mask(img, current_hues, bg_color)
 
+            # --- USING NATIVE PIL img.save() ---
             filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
             filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
             

@@ -1,30 +1,20 @@
 import json
 import os
 import random
-from pathlib import Path
-
-# Inherit from your refactored Text generator
 from .text import Text
 
 class Lojong(Text):
     def __init__(self):
-        # 1. Initialize the parent (sets up config, logs, and fonts)
         super().__init__()
         
-        # 2. Grab config safely
         lojong_config = self.config.get("lojong", {})
         self.file_count = lojong_config.get("file_count", 3)
         
-        # Brought over from the old Text.draw()
         self.colors = [
-            ("white", "black"),
-            ("yellow", "blue"),
-            ("orange", "purple"),
-            ("red", "white"),
-            ("green", "white"),
-            ("blue", "white"),
-            ("purple", "white"),
-            ("black", "white")
+            ("white", "black"), ("yellow", "blue"),
+            ("orange", "purple"), ("red", "white"),
+            ("green", "white"), ("blue", "white"),
+            ("purple", "white"), ("black", "white")
         ]
 
     def format_text(self, lojong_data: list[dict[str, str]]) -> list[str]:
@@ -37,12 +27,10 @@ class Lojong(Text):
         ]
 
         if not filtered_slogans:
-            # Fallback: if point not found, just grab random ones
             self.log.warning(f"No slogans found for point {point}, picking random sample.")
             filtered_slogans = random.sample(lojong_data, min(len(lojong_data), 3))
 
         for i, slogan_obj in enumerate(filtered_slogans):
-            # If we are in strict point mode, skip mismatches
             if slogan_obj.get("point") and int(slogan_obj.get("point", 0)) != point:
                 continue
 
@@ -57,7 +45,6 @@ class Lojong(Text):
         return full_text_lines
 
     def _load_json_data(self, file_path: str):
-        """Extracts your robust encoding fallback logic into a clean helper."""
         if not os.path.exists(file_path):
             self.log.error(f"Error: The file '{file_path}' was not found.")
             return None
@@ -66,7 +53,6 @@ class Lojong(Text):
         
         for enc in encodings_to_try:
             try:
-                # errors='replace' prevents the "illegal surrogate" crash
                 with open(file_path, 'r', encoding=enc, errors='replace') as f:
                     return json.load(f)
             except (UnicodeDecodeError, json.JSONDecodeError) as e:
@@ -78,18 +64,15 @@ class Lojong(Text):
         return None
 
     def run(self, *args, **kwargs):
-        """The main execution loop for Lojong."""
         self.log.info(f"Running Lojong Generator (Target: {self.file_count} images)...")
 
-        # 1. Setup paths natively
         out_dir = os.path.join(self.config["paths"]["generators_in"], "lojong")
         os.makedirs(out_dir, exist_ok=True)
         
-        input_base_dir = os.path.join(self.base_path, "InputSources", "Data", "Lojong")
+        # FIXED: Points directly to Generators/Data/Lojong
+        input_base_dir = os.path.join(self.base_path, "Generators", "Data", "Lojong")
 
-        # 2. Main generation loop
         for i in range(self.file_count):
-            # Pick language and file
             if random.choice(["eng", "tib"]) == "eng":
                 filename = "lojong_slogans_eng.json"
                 language = "English"
@@ -99,7 +82,6 @@ class Lojong(Text):
                 
             input_file_path = os.path.join(input_base_dir, filename)
             
-            # Load and format the data
             raw_data = self._load_json_data(input_file_path)
             if not raw_data:
                 continue
@@ -109,10 +91,8 @@ class Lojong(Text):
                 self.log.warning(f"No text extracted from {input_file_path}, skipping.")
                 continue
 
-            # Pick random colors
             bg_color, fg_color = random.choice(self.colors)
             
-            # 3. Use the Text class to generate the canvas
             img = self.generate_text_image(
                 lines_to_draw=lines_to_draw,
                 language=language,
@@ -120,7 +100,6 @@ class Lojong(Text):
                 fg_color=fg_color
             )
             
-            # 4. Save the image natively using PIL
             output_file_path = os.path.join(out_dir, f"lojong_{i}.png")
             try:
                 img.save(output_file_path)

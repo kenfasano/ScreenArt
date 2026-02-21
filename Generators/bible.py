@@ -1,15 +1,12 @@
 import json
 import os
 import random
-from pathlib import Path
 from .text import Text
 
 class Bible(Text):
     def __init__(self):
-        # 1. Initialize the parent (which sets up config, logs, and fonts)
         super().__init__()
         
-        # 2. Grab config safely
         bible_config = self.config.get("bible", {})
         self.file_count = bible_config.get("file_count", 3)
         
@@ -18,21 +15,15 @@ class Bible(Text):
             ["UkrainianPsalms", 150]
         ]
         
-        # Moved from the old Text.draw()
         self.colors = [
-            ("white", "black"),
-            ("yellow", "blue"),
-            ("orange", "purple"),
-            ("red", "white"),
-            ("green", "white"),
-            ("blue", "white"),
-            ("purple", "white"),
-            ("black", "white")
+            ("white", "black"), ("yellow", "blue"),
+            ("orange", "purple"), ("red", "white"),
+            ("green", "white"), ("blue", "white"),
+            ("purple", "white"), ("black", "white")
         ]
 
     def get_name_and_language(self, book_item: str) -> tuple[str, str]:
         split_index = -1
-        # Iterate from the second character (index 1) to find the start of the second word
         for i in range(1, len(book_item)):
             if book_item[i].isupper():
                 split_index = i
@@ -44,7 +35,7 @@ class Bible(Text):
             return (book_name, language)
         else:
             self.log.error(f"'{book_item}' cannot be split into language and book.")
-            return (book_item, "English") # Fallback instead of exiting
+            return (book_item, "English") 
 
     def format_text(self, text_list: list[dict[str, str]]) -> list[str]:
         text_lines: list[str] = []
@@ -57,16 +48,14 @@ class Bible(Text):
         return text_lines
 
     def run(self, *args, **kwargs):
-        """Replaces the old draw/load_list logic. Handles its own looping."""
         self.log.info(f"Running Bible Generator (Target: {self.file_count} images)...")
         
-        # 1. Setup paths natively using inherited properties
         out_dir = os.path.join(self.config["paths"]["generators_in"], "bible")
         os.makedirs(out_dir, exist_ok=True)
         
-        input_base_dir = os.path.join(self.base_path, "InputSources", "Bible")
+        # FIXED: Points directly to Generators/Data
+        input_base_dir = os.path.join(self.base_path, "Generators", "Data")
 
-        # 2. Main generation loop
         for _ in range(self.file_count):
             book = random.choice(self.books)
             language_book = book[0]
@@ -75,9 +64,9 @@ class Bible(Text):
             book_name, language = self.get_name_and_language(language_book)
             base_filename = f"{book_name.lower()}_{chapter}"
             
+            # Joins to Generators/Data/HebrewPsalms/hebrewpsalms_1.json
             input_file_path = os.path.join(input_base_dir, language_book, f"{base_filename}.json")
             
-            # Load the JSON
             if not os.path.exists(input_file_path):
                 self.log.warning(f"Input file not found, skipping: {input_file_path}")
                 continue
@@ -94,10 +83,8 @@ class Bible(Text):
                 self.log.warning(f"No text extracted from {input_file_path}, skipping.")
                 continue
 
-            # Pick random colors
             bg_color, fg_color = random.choice(self.colors)
             
-            # 3. Use the Text class to generate the canvas
             img = self.generate_text_image(
                 lines_to_draw=lines_to_draw,
                 language=language,
@@ -105,7 +92,6 @@ class Bible(Text):
                 fg_color=fg_color
             )
             
-            # 4. Save the image natively using PIL
             output_file_path = os.path.join(out_dir, f"{base_filename}.png")
             try:
                 img.save(output_file_path)
