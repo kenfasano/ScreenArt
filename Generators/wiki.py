@@ -1,26 +1,24 @@
 import random
-import requests # type: ignore
+import requests
 import os
 import time
+import re
 from io import BytesIO
 from typing import Any
 from PIL import Image
-
-from . import drawGenerator
-from .. import common
-from .. import log
 from urllib.parse import unquote
 
-class Wiki(drawGenerator.DrawGenerator):
-    def __init__(self, config: dict) -> None:
-        super().__init__(config, "wiki")
+from .drawGenerator import DrawGenerator
+
+class Wiki(DrawGenerator):
+    def __init__(self):
+        super().__init__()
         
         self.width = int(self.config.get("width", 1920))
         self.height = int(self.config.get("height", 1080))
         self.file_count = int(self.config.get("file_count", 1))
         self.base_filename = "wiki"
         
-        # Load Keywords
         keyword_file = self.config.get("keyword_file")
         if keyword_file:
             try:
@@ -38,7 +36,6 @@ class Wiki(drawGenerator.DrawGenerator):
         }
 
     def _get_random_keyword(self) -> str:
-        # 25% chance of random, 75% chance of specific keyword
         if random.randint(1,4) < 4:
             return random.choice(self.keywords)
         return "random"
@@ -56,14 +53,14 @@ class Wiki(drawGenerator.DrawGenerator):
             params.update({
                 "generator": "random",
                 "grnnamespace": 6,
-                "grnlimit": 20  # Keep random small/fresh
+                "grnlimit": 20 
             })
         else:
             params.update({
                 "generator": "search",
                 "gsrnamespace": 6,
                 "gsrsearch": keyword,
-                "gsrlimit": 500  # REQUEST 500 ITEMS
+                "gsrlimit": 500 
             })
 
         try:
@@ -73,21 +70,18 @@ class Wiki(drawGenerator.DrawGenerator):
                 pages = data.get("query", {}).get("pages", {})
                 page_list = list(pages.values())
                 
-                # Filter useful images immediately
                 clean_list = []
                 for p in page_list:
                     if "imageinfo" in p:
                         info = p["imageinfo"][0]
-                        # Basic validation
                         if "image" in info.get("mime", "") and "svg" not in info.get("mime", ""):
                             clean_list.append(info)
-                
                 return clean_list
             else:
-                log.warning(f"API Error: {response.status_code}")
+                self.log.warning(f"API Error: {response.status_code}")
                 return []
         except Exception as e:
-            log.error(f"Fetch error: {e}")
+            self.log.error(f"Fetch error: {e}")
             return []
 
     def get_image_url(self, keyword: str) -> str | None:
@@ -95,21 +89,20 @@ class Wiki(drawGenerator.DrawGenerator):
         if items:
             choice = random.choice(items)
             return choice.get("thumburl", choice.get("url"))
-        
         return None
 
-    def download_and_process(self, url: str) -> tuple[Image.Image | None, int]: #type: ignore
+    def download_and_process(self, url: str) -> tuple[Image.Image | None, int]:
         try:
-            # Simple download
             resp = requests.get(url, headers=self.headers, timeout=15)
             if resp.status_code == 200:
                 img = Image.open(BytesIO(resp.content)).convert("RGB")
                 return self._aspect_fill(img), resp.status_code
             elif resp.status_code == 429:
-                log.warning("Hit 429 on Image Download. (Search API was spared).")
+                self.log.warning("Hit 429 on Image Download. (Search API was spared).")
                 return None, 429
+            return None, resp.status_code
         except Exception as e:
-            log.warning(f"{e}")
+            self.log.warning(f"{e}")
             return None, -1
 
     def _aspect_fill(self, img: Image.Image) -> Image.Image:
@@ -129,21 +122,28 @@ class Wiki(drawGenerator.DrawGenerator):
         return img.crop((left, top, left + self.width, top + self.height))
 
     def get_short_name(self, url: str) -> str:
-        filename = common.fix_file_name(os.path.basename(url))
-        return os.path.splitext(unquote(filename))[0][:15]
+        filename = unquote(os.path.basename(url))
+        # Safely remove illegal characters without common.py
+        clean_name = re.sub(r'[^\w\-_\. ]', '_', filename)
+        return os.path.splitext(clean_name)[0][:15]
 
-    def draw(self) -> None:
+    def run(self, *args, **kwargs) -> None:
+        out_dir = os.path.join(self.config["paths"]["generators_in"], "wiki")
+        os.makedirs(out_dir, exist_ok=True)
+        
         for _ in range(self.file_count):
             keyword = self._get_random_keyword()
-            
-            # This now hits the SSD, not the API (mostly)
             url = self.get_image_url(keyword)
             
             if url:
                 img, _ = self.download_and_process(url)
-                name = self.get_short_name(url)
-                filename = f"{self.paths["generators_in"]}/wiki/{name}.jpeg"
-                self.save(img, filename)
+                if img:
+                    name = self.get_short_name(url)
+                    filename = os.path.join(out_dir, f"{name}.jpeg")
+                    try:
+                        img.save(filename)
+                        self.log.info(f"Saved Wiki Image: {filename}")
+                    except Exception as e:
+                        self.log.error(f"Failed to save {filename}: {e}")
             
-            # Still good to sleep briefly between actual image downloads
             time.sleep(1)

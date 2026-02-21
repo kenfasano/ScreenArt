@@ -1,11 +1,17 @@
-import cv2 # type: ignore
-import numpy as np # type: ignore
-from .base import RasterTransformer
+import cv2 
+import numpy as np 
+from .rasterTransformer import RasterTransformer
 from typing import Optional, Tuple
 
 DEFAULT_STRENGTH = 1.25
 
 class SwirlWarpTransformer(RasterTransformer):
+    """
+    Applies a swirling distortion effect to an image.
+    """
+    def __init__(self) -> None:
+        super().__init__()
+
     def _compute_falloff(self, r: np.ndarray, R: float) -> np.ndarray:
         if self.falloff == "none":
             f = np.ones_like(r)
@@ -17,34 +23,19 @@ class SwirlWarpTransformer(RasterTransformer):
         cutoff = np.exp(-(np.maximum(r - R, 0.0) ** 2) / (2.0 * (0.25 * R + 1e-6) ** 2))
         return f * cutoff
 
-    def __init__(self) -> None:
-        super().__init__()
-
-    def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import ScreenArt.common as common
-        import ScreenArt.log as log
-
+    def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
         if img_np is None or img_np.ndim < 2:
             raise ValueError("SwirlWarpTransformer.transform: expected HxW or HxWxC image array")
 
-        self.config = common.get_config(config, "swirlwarptransformer")
+        t_config = self.config.get("swirlwarptransformer", {})
 
-        if self.config is None:
-            log.error("config is None for SwirlWarpTransformer!")
-            return img_np 
-
-        # Note: Preserving possible key typo "self.strength" from original code
-        self.strength = self.config.get("self.strength", "?")
-        if isinstance(self.strength, float):
-            self.strength = self.strength
-        else:
+        # Corrected config key from 'self.strength' to 'strength'
+        self.strength = t_config.get("strength")
+        if not isinstance(self.strength, (float, int)):
             self.strength = DEFAULT_STRENGTH
             
         # --- POPULATE METADATA ---
-        self.metadata_dictionary = {
-            "strength": self.strength
-        }
-        # -------------------------
+        self.metadata_dictionary["strength"] = round(float(self.strength), 2)
 
         h, w = img_np.shape[:2]
         self.radius: float = w / 2.0

@@ -1,6 +1,6 @@
-import numpy as np # type: ignore
+import numpy as np
 import random
-from .base import RasterTransformer
+from .rasterTransformer import RasterTransformer
 from scipy.ndimage import map_coordinates # type: ignore
 
 # --- Default min/max values for randomization ---
@@ -17,40 +17,32 @@ class FisheyeTransformer(RasterTransformer):
     def __init__(self):
         super().__init__()
 
-    def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import ScreenArt.common as common
-        import ScreenArt.log as log
-        """
-        Applies the fisheye distortion based on parameters in the config.
-        """
-        self.config = common.get_config(config, "fisheyetransformer")
+    def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
+        t_config = self.config.get("fisheyetransformer", {})
 
         # --- Parameter Handling ---
         # Strength of the distortion
-        self.strength = common.get_config(self.config, "strength")
-        if self.strength is None or isinstance(self.strength, str):
+        self.strength = t_config.get("strength")
+        if self.strength is None or not isinstance(self.strength, (int, float)):
             self.strength = random.uniform(MIN_STRENGTH, MAX_STRENGTH)
 
         # Zoom factor
-        #self.zoom = common.get_config(self.config, "zoom")
-        #if self.zoom is None or isinstance(self.zoom, str):
-        self.zoom = random.uniform(0.5,1.5)
+        self.zoom = t_config.get("zoom")
+        if self.zoom is None or not isinstance(self.zoom, (int, float)):
+            self.zoom = random.uniform(0.5, 1.5)
             
         # Shape of the lens
-        self.shape = common.get_config(self.config, "shape")
-        if self.shape is None or self.shape not in ["circle", "oval"]:
+        self.shape = t_config.get("shape")
+        if self.shape not in ["circle", "oval"]:
             self.shape = random.choice(["circle", "oval"])
             
         # --- POPULATE METADATA ---
-        self.metadata_dictionary = {
-            "strength": self.strength,
-            "zoom": self.zoom,
-            "shape": self.shape
-        }
-        # -------------------------
+        self.metadata_dictionary["strength"] = round(self.strength, 2)
+        self.metadata_dictionary["zoom"] = round(self.zoom, 2)
+        self.metadata_dictionary["shape"] = self.shape
 
         if img_np.ndim < 2 or img_np.ndim > 3:
-            log.error(f"Input image must be 2D or 3D, but got {img_np.ndim} dimensions.")
+            self.log.error(f"Input image must be 2D or 3D, but got {img_np.ndim} dimensions.")
             return img_np
 
         H, W = img_np.shape[:2]
@@ -58,10 +50,8 @@ class FisheyeTransformer(RasterTransformer):
 
         # 1. Determine Radii based on shape
         if self.shape == "oval":
-            # Oval stretches to the full dimensions
             radius_x, radius_y = W / 2, H / 2
         else:
-            # "circle" fits to the smallest dimension
             min_dim = min(H, W)
             radius_x, radius_y = min_dim / 2, min_dim / 2
 

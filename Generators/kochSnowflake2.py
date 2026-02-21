@@ -1,12 +1,11 @@
-import numpy as np # type: ignore
+import numpy as np 
 import random
 import time
 import shutil
 import os
-import cv2 # type: ignore
-from PIL import Image, ImageDraw # type: ignore
-from . import drawGenerator
-from .. import log
+import cv2 
+from PIL import Image, ImageDraw 
+from .drawGenerator import DrawGenerator
 
 # Import Linear Transformers
 try:
@@ -16,12 +15,12 @@ except ImportError:
     from ..Transformers.LinearTransformers.sierpinskiTransformer import SierpinskiTransformer
     from ..Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
 
-class KochSnowflake2(drawGenerator.DrawGenerator):
+class KochSnowflake2(DrawGenerator):
     """
     Generates Sierpinski-style fractal images with Spiral distortion and Psychedelic coloring.
     """
-    def __init__(self, config: dict | None):
-        super().__init__(config if config else {}, "kochSnowflake")
+    def __init__(self):
+        super().__init__()
         
         self.width = int(self.config.get('width', 1920))
         self.height = int(self.config.get('height', 1080))
@@ -36,8 +35,6 @@ class KochSnowflake2(drawGenerator.DrawGenerator):
         cx, cy = self.width / 2, self.height / 2
         radius = min(self.width, self.height) / 2 * scale
         
-        # Triangle pointing UP (270 degrees in image coords where 0 is right, 90 is down)
-        # Angles: Top(270), BottomRight(30), BottomLeft(150)
         angles = np.deg2rad([270, 30, 150, 270]) 
         
         x = cx + radius * np.cos(angles)
@@ -55,7 +52,6 @@ class KochSnowflake2(drawGenerator.DrawGenerator):
         radius = np.sqrt(dx**2 + dy**2)
         angle = np.arctan2(dy, dx)
         
-        # Spiral Pattern
         pattern = angle + (radius * 0.05) 
         factor = (np.sin(pattern) + 1) / 2 
         
@@ -84,16 +80,14 @@ class KochSnowflake2(drawGenerator.DrawGenerator):
         
         final_rgb = cv2.cvtColor(final_hsv, cv2.COLOR_HSV2RGB)
         
-        # Use the random background color
         result_arr = np.zeros_like(arr)
         result_arr[:] = bg_color
         result_arr[mask] = final_rgb[mask]
         
         return Image.fromarray(result_arr)
 
-    def draw(self):
-        output_dir = f"{self.paths["generators_in"]}/KochSnowflake"
-
+    def run(self, *args, **kwargs): 
+        output_dir = os.path.join(self.config["paths"]["generators_in"], "KochSnowflake")
         if os.path.exists(output_dir):
             shutil.rmtree(output_dir)
         os.makedirs(output_dir, exist_ok=True)
@@ -102,7 +96,7 @@ class KochSnowflake2(drawGenerator.DrawGenerator):
             random.seed(time.perf_counter() + i)
 
             # Randomize Settings
-            num_transforms = random.randint(4, 7) # Sierpinski needs more iterations than Koch
+            num_transforms = random.randint(4, 7) 
             spiral_tightness = random.uniform(0.3, 1.2)
             
             # Randomize Colors
@@ -118,28 +112,28 @@ class KochSnowflake2(drawGenerator.DrawGenerator):
 
             # 2. Apply Sierpinski Recursion
             for _ in range(num_transforms):
-                points = self.sierpinski_transformer.apply({}, points) # type: ignore
+                points = self.sierpinski_transformer.run(points) 
                 
             # 3. Apply Spiral Twist
-            points = self.spiral_transformer.apply({}, points) # type: ignore
+            points = self.spiral_transformer.run(points) 
 
             # 4. Rasterize
             img = Image.new('RGB', (self.width, self.height), (0, 0, 0))
             draw = ImageDraw.Draw(img)
             
             poly_coords = [tuple(p) for p in points]
-            # No outline for Sierpinski - it looks cleaner as filled dots/triangles
             draw.polygon(poly_coords, fill=(255, 255, 255), outline=None)
 
             # 5. Apply Mask
             img = self._apply_psychedelic_mask(img, current_hues, bg_color)
 
             # 6. Save
-            if self.file_count == 1:
-                filename = f"{output_dir}/{self.base_filename}.jpg"
-            else:
-                filename = f"{output_dir}/{self.base_filename}_{i+1}.jpg"
+            filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
+            filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
             
-            self.save(img, filename)
-            
-            hue_str = ">".join(map(str, current_hues))
+            try:
+                img.save(filename)
+                hue_str = ">".join(map(str, current_hues))
+                self.log.info(f"Generated KS2: {filename} (Iter: {num_transforms}, Spiral: {spiral_tightness:.2f}, Hues: {hue_str})")
+            except Exception as e:
+                self.log.error(f"Failed to save {filename}: {e}")

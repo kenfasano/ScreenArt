@@ -1,4 +1,4 @@
-from .base import RasterTransformer
+from .rasterTransformer import RasterTransformer
 from .anamorphicTransformer import AnamorphicTransformer
 from .colormapTransformer import ColormapTransformer
 from .dataMoshTransformer import DataMoshTransformer
@@ -9,7 +9,7 @@ from .fluidWarpTransformer import FluidWarpTransformer
 from .fractalWarpTransformer import FractalWarpTransformer
 from .glitchWarpTransformer import GlitchWarpTransformer
 from .halftoneTransformer import HalftoneTransformer
-# from .invertRGBTransformer import InvertRGBTransformer
+from .invertRGBTransformer import InvertRGBTransformer
 from .meltMorphTransformer import MeltMorphTransformer
 from .nullTransformer import NullTransformer
 from .posterizationTransformer import PosterizationTransformer

@@ -1,40 +1,30 @@
-import cv2 # type: ignore
-import numpy as np # type: ignore
+import cv2 
+import numpy as np 
 import random
-from .base import RasterTransformer
-from Transformers.transformer_dictionary import transformer_styles, transformer_ids
+from .rasterTransformer import RasterTransformer
 
 DEFAULT_DOWNSCALE_FACTOR = 0.5 
 
 class WatercolorTransformer(RasterTransformer):
+    """
+    Applies a stylized watercolor filter using OpenCV edge-preserving smoothing.
+    """
     def __init__(self):
         super().__init__()
+        self.allowed_styles = ['monet', 'psychedelic']
 
-    def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import ScreenArt.common as common
-        self.config = common.get_config(config, "watercolortransformer")
-        
-        if self.config is None:
-            self.config = {}
+    def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
+        t_config = self.config.get("watercolortransformer", {})
 
-        self.transformer_id = transformer_ids.get(self.__class__.__name__, None)
-        if self.transformer_id and self.transformer_id in transformer_styles:
-             self.allowed_styles = list(transformer_styles[self.transformer_id].keys())
-        else:
-             self.allowed_styles = ['monet', 'psychedelic']
-
-        self.style_name = self.config.get("style_name", None)
-        if self.style_name is None or self.style_name == "?":
+        self.style_name = t_config.get("style_name")
+        if self.style_name not in self.allowed_styles:
             self.style_name = random.choice(self.allowed_styles)
 
-        scale_factor = self.config.get("scale_factor", DEFAULT_DOWNSCALE_FACTOR)
+        scale_factor = t_config.get("scale_factor", DEFAULT_DOWNSCALE_FACTOR)
         
         # --- POPULATE METADATA ---
-        self.metadata_dictionary = {
-            "style": self.style_name,
-            "scale": scale_factor
-        }
-        # -------------------------
+        self.metadata_dictionary["style"] = self.style_name
+        self.metadata_dictionary["scale"] = scale_factor
         
         if self.style_name == 'monet':
             sigma_s = random.uniform(60 * 0.8, 60 * 1.2)

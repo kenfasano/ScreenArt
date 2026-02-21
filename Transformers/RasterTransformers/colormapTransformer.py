@@ -1,9 +1,13 @@
-from PIL import Image # type: ignore
-import cv2 # type: ignore
-import numpy as np # type: ignore
-from .base import RasterTransformer
+import cv2 
+import random
+import numpy as np 
+from PIL import Image 
+from .rasterTransformer import RasterTransformer
 
 class ColormapTransformer(RasterTransformer):
+    """
+    Applies a randomly chosen (or strictly configured) OpenCV colormap.
+    """
     def __init__(self):
         super().__init__()
         self.color_maps = {
@@ -21,13 +25,9 @@ class ColormapTransformer(RasterTransformer):
             "hot": cv2.COLORMAP_HOT
         }
 
-    def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import ScreenArt.common as common
-        """
-        Applies a randomly chosen OpenCV colormap to the input image.
-        The image is first converted to grayscale if it's a color image.
-        """
-        self.config = common.get_config(config, "colormaptransformer")
+    def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
+        # Access config directly via inheritance
+        t_config = self.config.get("colormaptransformer", {})
 
         # Ensure the image is in a supported format
         if img_np.dtype != np.uint8:
@@ -40,13 +40,15 @@ class ColormapTransformer(RasterTransformer):
         else:
             grayscale_img = img_np
 
-        chosen_colormap_key = np.random.choice(list(self.color_maps.keys()))
+        # Check if the user specified a map in the config, otherwise pick randomly
+        preferred_map = t_config.get("map")
+        if preferred_map in self.color_maps:
+            chosen_colormap_key = preferred_map
+        else:
+            chosen_colormap_key = random.choice(list(self.color_maps.keys()))
         
         # --- POPULATE METADATA ---
-        self.metadata_dictionary = {
-            "map": chosen_colormap_key
-        }
-        # -------------------------
+        self.metadata_dictionary["map"] = chosen_colormap_key
 
         self.chosen_colormap_value = self.color_maps[chosen_colormap_key]
         colored_img = cv2.applyColorMap(grayscale_img, self.chosen_colormap_value)

@@ -1,52 +1,40 @@
-import numpy as np # type: ignore
+import numpy as np 
 import random
-from .base import RasterTransformer
-
-DEFAULT_SHADOW_HEX = "#FFFF00"
-DEFAULT_MID_HEX = "#999999"
-DEFAULT_HILIGHT_HEX = "#0000FF"
+from .rasterTransformer import RasterTransformer
 
 class TritoneTransformer(RasterTransformer):
     """
     Applies a tritone colorization effect to an image.
     """
-
     def __init__(self):
         super().__init__()
 
-    # Helper function to generate a random hex color
-    def get_random_hex(self):
-        # ABSOLUTE IMPORT (Safe)
+    def get_random_hex(self) -> str:
         return '#{:06x}'.format(random.randint(0, 0xFFFFFF))
 
-    def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        from Transformers import hex_to_rgb
-        import ScreenArt.common as common
-        import ScreenArt.log as log
-        
-        # Corrected config key
-        self.config = common.get_config(config, "tritonetransformer")
+    def _hex_to_rgb(self, hex_str: str) -> tuple:
+        """Helper to replace the external hex_to_rgb dependency."""
+        hex_str = hex_str.lstrip('#')
+        if len(hex_str) == 6:
+            return tuple(int(hex_str[i:i+2], 16) for i in (0, 2, 4))
+        return (255, 255, 255) 
 
-        if self.config is None:
-            log.error("config is None for TritoneTransformer!")
-            return img_np 
+    def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
+        t_config = self.config.get("tritonetransformer", {})
 
-        shadow_hex = self.get_random_hex() #self.config.get("shadow_hex", DEFAULT_SHADOW_HEX)
-        mid_hex = self.get_random_hex() #self.config.get("mid_hex", DEFAULT_MID_HEX)
-        hilight_hex = self.get_random_hex() #self.config.get("hilight_hex", DEFAULT_HILIGHT_HEX)
+        shadow_hex = t_config.get("shadow_hex", self.get_random_hex())
+        mid_hex = t_config.get("mid_hex", self.get_random_hex())
+        hilight_hex = t_config.get("hilight_hex", self.get_random_hex())
         
         # --- POPULATE METADATA ---
-        self.metadata_dictionary = {
-            "shadow": shadow_hex,
-            "mid": mid_hex,
-            "highlight": hilight_hex
-        }
-        # -------------------------
+        self.metadata_dictionary["shadow"] = shadow_hex
+        self.metadata_dictionary["mid"] = mid_hex
+        self.metadata_dictionary["highlight"] = hilight_hex
 
-        # Convert hex codes to RGB tuples and store them
-        self.shadow_rgb = hex_to_rgb.convert(shadow_hex)
-        self.mid_rgb = hex_to_rgb.convert(mid_hex)
-        self.highlight_rgb = hex_to_rgb.convert(hilight_hex)
+        # Convert hex codes to RGB tuples natively
+        self.shadow_rgb = self._hex_to_rgb(shadow_hex)
+        self.mid_rgb = self._hex_to_rgb(mid_hex)
+        self.highlight_rgb = self._hex_to_rgb(hilight_hex)
 
         if img_np.ndim < 3 or img_np.shape[2] < 3:
             raise ValueError("Input image must have at least 3 channels (RGB).")

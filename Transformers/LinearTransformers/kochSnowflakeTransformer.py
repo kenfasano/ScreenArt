@@ -1,6 +1,6 @@
 from typing import Union, cast
 import numpy as np # type: ignore
-from ..base import Transformer
+from ..transformer import Transformer
 
 class KochSnowflakeTransformer(Transformer):
     """

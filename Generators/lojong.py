@@ -1,43 +1,33 @@
 import json
-from .. import log
 import os
 import random
-from . import text
-from typing import Any # Import Any for flexible dicts
+from pathlib import Path
 
-DEFAULT_FILE_COUNT = 3
+# Inherit from your refactored Text generator
+from .text import Text
 
-class Lojong(text.Text):
-    def __init__(self, config: dict[str, Any]):
-        super().__init__(config, "lojong")
-        self.file_count = self.config.get("file_count", DEFAULT_FILE_COUNT) if self.config else DEFAULT_FILE_COUNT
-
-        lojong_directory = f"{self.paths["base_path"]}InputSources/Data/Lojong"
+class Lojong(Text):
+    def __init__(self):
+        # 1. Initialize the parent (sets up config, logs, and fonts)
+        super().__init__()
         
-        # Initialize lists
-        input_file_paths: list[str] = []
-        output_file_paths: list[str] = []
-        languages: list[str] = []
-
-        self.base_filename = "lojong"
+        # 2. Grab config safely
+        lojong_config = self.config.get("lojong", {})
+        self.file_count = lojong_config.get("file_count", 3)
         
-        for i in range(self.file_count):
-            # Randomly choose language
-            if random.choice(["eng", "tib"]) == "eng":
-                input_file_paths.append(f"{lojong_directory}/lojong_slogans_eng.json")
-                languages.append("English")
-            else:
-                input_file_paths.append(f"{lojong_directory}/lojong_slogans_tib.json")
-                languages.append("Tibetan")
+        # Brought over from the old Text.draw()
+        self.colors = [
+            ("white", "black"),
+            ("yellow", "blue"),
+            ("orange", "purple"),
+            ("red", "white"),
+            ("green", "white"),
+            ("blue", "white"),
+            ("purple", "white"),
+            ("black", "white")
+        ]
 
-            output_base_path = f"{self.paths["generators_in"]}/Lojong"
-            output_file_paths.append(f"{output_base_path}/{self.base_filename}_{i}.jpeg")
-
-        super().init_fields(input_file_paths, 
-                         output_file_paths, 
-                         languages)
-
-    def format_text(self, lojong_data: list[dict[str, str]]):
+    def format_text(self, lojong_data: list[dict[str, str]]) -> list[str]:
         full_text_lines = []
         point: int = random.randint(1, 7)
         
@@ -48,7 +38,7 @@ class Lojong(text.Text):
 
         if not filtered_slogans:
             # Fallback: if point not found, just grab random ones
-            log.warning(f"No slogans found for point {point}, picking random sample.")
+            self.log.warning(f"No slogans found for point {point}, picking random sample.")
             filtered_slogans = random.sample(lojong_data, min(len(lojong_data), 3))
 
         for i, slogan_obj in enumerate(filtered_slogans):
@@ -66,44 +56,76 @@ class Lojong(text.Text):
 
         return full_text_lines
 
-    def load_list(self, i: int):
-        file_path = self.input_file_paths[i]
-        self.language = self.languages[i]
-        self.current_list = []
-
+    def _load_json_data(self, file_path: str):
+        """Extracts your robust encoding fallback logic into a clean helper."""
         if not os.path.exists(file_path):
-            log.error(f"Error: The file '{file_path}' was not found.")
-            return
+            self.log.error(f"Error: The file '{file_path}' was not found.")
+            return None
 
-        # DEBUG: Read the first 4 bytes to see the actual file signature in the logs
-        try:
-            with open(file_path, 'rb') as f:
-                _ = f.read(4)
-        except Exception:
-            pass
-
-        # Encodings to try. Added utf-16-le specifically because of the 0xff start byte.
         encodings_to_try = ['utf-8', 'utf-16', 'utf-16-le', 'utf-8-sig', 'iso-8859-1']
         
-        data = None
-        loaded_successfully = False
-
         for enc in encodings_to_try:
             try:
-                # CRITICAL FIX: errors='replace' prevents the "illegal surrogate" crash
-                # It will replace corrupted characters with  instead of stopping execution.
+                # errors='replace' prevents the "illegal surrogate" crash
                 with open(file_path, 'r', encoding=enc, errors='replace') as f:
-                    data = json.load(f)
-                
-                loaded_successfully = True
-                break 
+                    return json.load(f)
             except (UnicodeDecodeError, json.JSONDecodeError) as e:
-                log.warning(f"Failed to load {file_path} with {enc}: {e}")
+                self.log.debug(f"Failed to load {file_path} with {enc}: {e}")
             except Exception as e:
-                log.error(f"Unexpected error loading {file_path} with {enc}: {e}")
+                self.log.error(f"Unexpected error loading {file_path} with {enc}: {e}")
+                
+        self.log.critical(f"CRITICAL: Could not load {file_path} with any of the attempted encodings.")
+        return None
 
-        if loaded_successfully and data:
-            self.current_list = self.format_text(data)
-        else:
-            log.critical(f"CRITICAL: Could not load {file_path} with any of the attempted encodings.")
-            self.current_list = []
+    def run(self, *args, **kwargs):
+        """The main execution loop for Lojong."""
+        self.log.info(f"Running Lojong Generator (Target: {self.file_count} images)...")
+
+        # 1. Setup paths natively
+        out_dir = os.path.join(self.config["paths"]["generators_in"], "lojong")
+        os.makedirs(out_dir, exist_ok=True)
+        
+        input_base_dir = os.path.join(self.base_path, "InputSources", "Data", "Lojong")
+
+        # 2. Main generation loop
+        for i in range(self.file_count):
+            # Pick language and file
+            if random.choice(["eng", "tib"]) == "eng":
+                filename = "lojong_slogans_eng.json"
+                language = "English"
+            else:
+                filename = "lojong_slogans_tib.json"
+                language = "Tibetan"
+                
+            input_file_path = os.path.join(input_base_dir, filename)
+            
+            # Load and format the data
+            raw_data = self._load_json_data(input_file_path)
+            if not raw_data:
+                continue
+                
+            lines_to_draw = self.format_text(raw_data)
+            if not lines_to_draw:
+                self.log.warning(f"No text extracted from {input_file_path}, skipping.")
+                continue
+
+            # Pick random colors
+            bg_color, fg_color = random.choice(self.colors)
+            
+            # 3. Use the Text class to generate the canvas
+            img = self.generate_text_image(
+                lines_to_draw=lines_to_draw,
+                language=language,
+                bg_color=bg_color,
+                fg_color=fg_color
+            )
+            
+            # 4. Save the image natively using PIL
+            output_file_path = os.path.join(out_dir, f"lojong_{i}.png")
+            try:
+                img.save(output_file_path)
+                self.log.debug(f"Saved Lojong image: {output_file_path}")
+            except Exception as e:
+                self.log.error(f"Failed to save image {output_file_path}: {e}")
+
+        self.log.info("Lojong Generator finished.")

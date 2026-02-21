@@ -1,5 +1,5 @@
 # 1. Expose the Protocol from the root base.py
-from .base import Transformer
+from .transformer import Transformer
 
 # 2. Expose the RasterTransformer from the SUBDIRECTORY
 #from .RasterTransformers.base import RasterTransformer

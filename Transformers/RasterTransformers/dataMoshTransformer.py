@@ -1,6 +1,6 @@
-import numpy as np # type: ignore
+import numpy as np 
 import random
-from .base import RasterTransformer
+from .rasterTransformer import RasterTransformer
 
 MAX_LIGHT_MOSH_INTENSITY = 0.004
 
@@ -9,20 +9,14 @@ class DataMoshTransformer(RasterTransformer):
     Applies a data mosh effect by displacing pixels based on their relationship
     to areas of high change.
     """
-
     def __init__(self):
         super().__init__() 
 
-    def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import ScreenArt.common as common
-        """
-        Applies the data mosh transformation to the input image using vectorized operations.
-        """
-
-        self.config = common.get_config(config, "datamoshtransformer")
+    def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
+        t_config = self.config.get("datamoshtransformer", {})
 
         # --- Parameter Handling ---
-        mosh_intensity = self.config.get("mosh_intensity", "?") 
+        mosh_intensity = t_config.get("mosh_intensity", "?") 
         if isinstance(mosh_intensity, float):
             self.mosh_intensity = mosh_intensity
         else:
@@ -32,10 +26,7 @@ class DataMoshTransformer(RasterTransformer):
         self.mosh_intensity = max(0.0, min(1.0, self.mosh_intensity))
         
         # --- POPULATE METADATA ---
-        self.metadata_dictionary = {
-            "intensity": self.mosh_intensity
-        }
-        # -------------------------
+        self.metadata_dictionary["intensity"] = self.mosh_intensity
         
         height, width = img_np.shape[:2]
 
@@ -55,7 +46,6 @@ class DataMoshTransformer(RasterTransformer):
         new_y = (y_coords + shift_y) % height
 
         # Use vectorized indexing to map pixels from their new positions to their old ones
-        # Handle 2D (grayscale) or 3D (color) arrays
         if img_np.ndim == 3:
             output_np = img_np[new_y, new_x, :]
         else:

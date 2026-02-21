@@ -1,10 +1,13 @@
-from .base import RasterTransformer # Relative import
-import numpy as np # type: ignore
+import numpy as np
+from .rasterTransformer import RasterTransformer
 
 class NullTransformer(RasterTransformer):
+    """
+    A pass-through transformer that does nothing. Useful for testing or disabling slots.
+    """
     def __init__(self):
         super().__init__()
 
-    def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        return img_np 
-
+    def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
+        self.metadata_dictionary["null"] = True
+        return img_np

@@ -1,5 +1,5 @@
-import numpy as np # type: ignore
-from .base import RasterTransformer
+import numpy as np
+from .rasterTransformer import RasterTransformer
 
 DEFAULT_DOT_SIZE = 3
 
@@ -7,23 +7,17 @@ class HalftoneTransformer(RasterTransformer):
     """
     Applies a halftone or print-style effect to an image.
     """
-
     def __init__(self):
         super().__init__()
 
-    def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import ScreenArt.common as common
-
-        self.config = common.get_config(config, "halftonetransformer")
+    def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
+        t_config = self.config.get("halftonetransformer", {})
        
-        dot_size = self.config.get("dot_size", DEFAULT_DOT_SIZE)
+        dot_size = t_config.get("dot_size", DEFAULT_DOT_SIZE)
         self.dot_size = max(1, dot_size)
         
         # --- POPULATE METADATA ---
-        self.metadata_dictionary = {
-            "size": self.dot_size
-        }
-        # -------------------------
+        self.metadata_dictionary["size"] = self.dot_size
 
         # Convert to grayscale to determine luminosity
         if img_np.ndim == 3:

@@ -1,9 +1,9 @@
-import numpy as np # type: ignore
-import cv2 # type: ignore
+import numpy as np
+import cv2
 import random
-from .base import RasterTransformer
 
-# MOVED IMPORTS INSIDE METHODS TO BREAK CIRCULAR LOOP
+# FIX: Correctly import RasterTransformer from the local file
+from .rasterTransformer import RasterTransformer
 
 DEFAULT_COUNT = 1
 DEFAULT_BRIGHTNESS_THRESHOLD = 95
@@ -15,26 +15,30 @@ class AnamorphicTransformer(RasterTransformer):
     """
     Applies an anamorphic lens flare effect using vectorized row accumulation.
     """
-
     def __init__(self):
         super().__init__()
 
-    def get_random_hex(self):
-        import hex_to_rgb
-        return hex_to_rgb.convert("{:06x}".format(random.randint(0, 0xFFFFFF)))
+    def _hex_to_rgb(self, hex_str: str) -> tuple:
+        """Helper to replace the external hex_to_rgb dependency."""
+        hex_str = hex_str.lstrip('#')
+        if len(hex_str) == 6:
+            return tuple(int(hex_str[i:i+2], 16) for i in (0, 2, 4))
+        return (255, 255, 255) 
 
-    def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        from Transformers import hex_to_rgb
-        import ScreenArt.common as common
-        import ScreenArt.log as log
-        # LAZY IMPORTS: Prevent circular dependency
+    def get_random_rgb(self) -> tuple:
+        """Helper to generate random RGB tuples natively."""
+        return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+
+    # FIX: Adopt the new standard run() contract
+    def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
         
-        self.config = common.get_config(config, "anamorphictransformer")
+        # Access the config directly from the inherited ecosystem
+        t_config = self.config.get("anamorphictransformer", {})
 
         height, width = img_np.shape[:2]
 
         # --- Parameter Setup ---
-        count = self.config.get("count", DEFAULT_COUNT)
+        count = t_config.get("count", DEFAULT_COUNT)
         
         # Helper to ensure list
         def to_list(val, length, default):
@@ -43,34 +47,34 @@ class AnamorphicTransformer(RasterTransformer):
             return [val] * length
 
         # Thresholds
-        thresh_input = self.config.get("brightness_threshold", DEFAULT_BRIGHTNESS_THRESHOLD)
+        thresh_input = t_config.get("brightness_threshold", DEFAULT_BRIGHTNESS_THRESHOLD)
         thresholds = to_list(thresh_input, count, DEFAULT_BRIGHTNESS_THRESHOLD)
 
         # Intensities
-        intensity_input = self.config.get("streak_intensity", DEFAULT_STREAK_INTENSITY)
+        intensity_input = t_config.get("streak_intensity", DEFAULT_STREAK_INTENSITY)
         intensities = to_list(intensity_input, count, DEFAULT_STREAK_INTENSITY)
 
         # --- POPULATE METADATA ---
-        self.metadata_dictionary = {
-            "thresh": thresh_input,
-            "intensity": intensity_input
-        }
+        self.metadata_dictionary["thresh"] = thresh_input
+        self.metadata_dictionary["intensity"] = intensity_input
 
         # Colors
-        colors = self.config.get("streak_colors", None)
-        if colors is None:
-            colors = [self.get_random_hex() for _ in range(count)]
-        else:
-            if len(colors) < count:
-                colors.extend([self.get_random_hex() for _ in range(count - len(colors))])
-            colors = colors[:count]
-        
+        colors = t_config.get("streak_colors", None)
         final_colors = []
-        for c in colors:
-            if isinstance(c, str):
-                final_colors.append(hex_to_rgb.convert(c))
-            else:
-                final_colors.append(c)
+        
+        if colors is None:
+            final_colors = [self.get_random_rgb() for _ in range(count)]
+        else:
+            for c in colors:
+                if isinstance(c, str):
+                    final_colors.append(self._hex_to_rgb(c))
+                else:
+                    final_colors.append(c)
+            
+            # Pad if the config provided too few colors
+            while len(final_colors) < count:
+                final_colors.append(self.get_random_rgb())
+            final_colors = final_colors[:count]
         
         # --- Optimized Processing ---
         if img_np.ndim == 3:
@@ -102,11 +106,11 @@ class AnamorphicTransformer(RasterTransformer):
                 row_accumulator += streak_contribution
 
             except Exception as e:
-                log.error(f"Error in Anamorphic loop {i}: {e}")
+                # FIX: Use the inherited logger
+                self.log.error(f"Error in Anamorphic loop {i}: {e}")
                 continue
 
         streak_overlay = row_accumulator[:, np.newaxis, :]
         output_np = np.clip(img_np.astype(np.float32) + streak_overlay, 0, 255).astype(np.uint8)
 
         return output_np
-

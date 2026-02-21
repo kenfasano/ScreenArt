@@ -1,9 +1,13 @@
-import numpy as np # type: ignore
-from .base import RasterTransformer
+import numpy as np
+from .rasterTransformer import RasterTransformer
 
 class InvertRGBTransformer(RasterTransformer):
-    def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        # Invert the image by subtracting the pixel values from 255.
-        inverted_img_np = 255 - img_np
-        return inverted_img_np
-
+    """
+    Inverts the colors of an RGB image.
+    """
+    def __init__(self):
+        super().__init__()
+        
+    def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
+        self.metadata_dictionary["invert"] = True
+        return 255 - img_np

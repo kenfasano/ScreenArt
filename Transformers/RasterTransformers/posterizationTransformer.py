@@ -1,29 +1,19 @@
-import numpy as np # type: ignore
-from .base import RasterTransformer
+import numpy as np
+from .rasterTransformer import RasterTransformer
 
 class PosterizationTransformer(RasterTransformer):
     """
     Applies a posterization effect to an image.
     """
-
     def __init__(self):
         super().__init__()
 
-    def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import ScreenArt.common as common
-        import ScreenArt.log as log
-        """
-        Applies the posterization transformation to the input image.
-        """
+    def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
         np.random.seed()
 
-        self.config = common.get_config(config, "posterizationtransformer")
+        t_config = self.config.get("posterizationtransformer", {})
 
-        if self.config is None:
-            log.error("config is None for PosterizationTransformer!")
-            return img_np 
-
-        levels = common.get_config(self.config, "levels")
+        levels = t_config.get("levels")
         if isinstance(levels, int):
             self.levels = levels 
         else:
@@ -33,10 +23,7 @@ class PosterizationTransformer(RasterTransformer):
         self.levels = max(2, self.levels)
         
         # --- POPULATE METADATA ---
-        self.metadata_dictionary = {
-            "levels": self.levels
-        }
-        # -------------------------
+        self.metadata_dictionary["levels"] = self.levels
         
         # Create a copy to avoid modifying the original image
         output_np = img_np.copy().astype(np.float32)

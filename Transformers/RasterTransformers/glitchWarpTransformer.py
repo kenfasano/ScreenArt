@@ -1,6 +1,6 @@
-import numpy as np # type: ignore
+import numpy as np
 import random
-from .base import RasterTransformer
+from .rasterTransformer import RasterTransformer
 
 class GlitchWarpTransformer(RasterTransformer):
     """
@@ -10,25 +10,18 @@ class GlitchWarpTransformer(RasterTransformer):
     def __init__(self):
         super().__init__()
 
-    def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import ScreenArt.common as common
+    def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
+        t_config = self.config.get("glitchwarptransformer", {})
 
-        self.config = common.get_config(config, "glitchwarptransformer")
-
-        self.warp_intensity = self.config.get("warp_intensity", None)
-        if self.warp_intensity and isinstance(self.warp_intensity, float):
-            self.warp_intensity = self.warp_intensity
-        else:
+        self.warp_intensity = t_config.get("warp_intensity")
+        if not isinstance(self.warp_intensity, (int, float)):
             self.warp_intensity = random.uniform(0.0, 1.0)
 
         # Clamp the intensity to the valid range [0, 1]
         self.warp_intensity = max(0.0, min(1.0, self.warp_intensity))
         
         # --- POPULATE METADATA ---
-        self.metadata_dictionary = {
-            "intensity": self.warp_intensity
-        }
-        # -------------------------
+        self.metadata_dictionary["intensity"] = round(self.warp_intensity, 2)
 
         # Set the random seed for reproducible glitches
         seed = random.randint(0, 1000000)

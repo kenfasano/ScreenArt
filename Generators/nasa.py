@@ -1,41 +1,34 @@
-from . import htmlInputSource
-from .. import log
-from bs4 import BeautifulSoup #type: ignore
+from .htmlInputSource import HtmlInputSource
+from bs4 import BeautifulSoup 
 
-DEFAULT_FILE_COUNT = 3
+class Nasa(HtmlInputSource):
+    def __init__(self):
+        super().__init__()
+        self.file_count = self.config.get("file_count", 3)
 
-class Nasa(htmlInputSource.HtmlInputSource):
-    def __init__(self, config: dict):
-        super().__init__(config, "wiki")
-
-        self.file_count = self.config.get("file_count", DEFAULT_FILE_COUNT) if self.config else DEFAULT_FILE_COUNT
-
-    def get_new_images(self, input_source: str):
-        number_of_images: int = self.fetch(
+    def run(self, *args, **kwargs):
+        self.log.info("Running NASA APOD Generator...")
+        
+        # Uses the fetch() contract implemented securely in HtmlInputSource
+        number_of_images = self.fetch(
                 get_url=self.get_random_picture_url,
-                input_source=input_source, 
+                input_source="nasa", 
                 min_year=2002, 
                 file_count=self.file_count)
 
-        log.info(f"Nasa got {number_of_images} files")
+        self.log.info(f"Nasa got {number_of_images} files")
         return number_of_images 
 
     def get_random_picture_url(self, min_year: int) -> str:
-        # https://apod.nasa.gov/apod/ap220608.html
         date_str: str = self.get_random_date(min_year).strftime("%y%m%d")
-        random_picture_url =f"https://apod.nasa.gov/apod/ap{date_str}.html"
-        return random_picture_url
+        return f"https://apod.nasa.gov/apod/ap{date_str}.html"
 
     def get_image_url(self, html: str) -> str | None:
         soup = BeautifulSoup(html, "html.parser")
-
-        # Find the first <img> tag
         img_tag = soup.find('img')
 
-        # Get the value of the 'src' attribute
         if img_tag:
-            img_src = f"https://apod.nasa.gov/apod/{img_tag['src']}"
-            return img_src
+            return f"https://apod.nasa.gov/apod/{img_tag['src']}"
         else:
-            log.error("No img tag with srcset attribute found.")
+            self.log.error("No img tag found in APOD html.")
             return None

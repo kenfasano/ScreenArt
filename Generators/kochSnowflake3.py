@@ -1,12 +1,11 @@
-import numpy as np # type: ignore
+import numpy as np 
 import random
 import time
 import shutil
 import os
-import cv2 # type: ignore
-from PIL import Image, ImageDraw # type: ignore
-from . import drawGenerator
-from .. import log
+import cv2 
+from PIL import Image, ImageDraw 
+from .drawGenerator import DrawGenerator
 
 try:
     from Transformers.LinearTransformers.kochSnowflakeTransformer import KochSnowflakeTransformer
@@ -15,13 +14,13 @@ except ImportError:
     from ..Transformers.LinearTransformers.kochSnowflakeTransformer import KochSnowflakeTransformer
     from ..Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
 
-class KochSnowflake3(drawGenerator.DrawGenerator):
+class KochSnowflake3(DrawGenerator):
     """
     Generates Hex-Star fractals (Anti-Snowflake style).
     Starts with a HEXAGON instead of a triangle.
     """
-    def __init__(self, config: dict | None):
-        super().__init__(config if config else {}, "kochSnowflake")
+    def __init__(self):
+        super().__init__()
         
         self.width = int(self.config.get('width', 1920))
         self.height = int(self.config.get('height', 1080))
@@ -34,14 +33,12 @@ class KochSnowflake3(drawGenerator.DrawGenerator):
     def _generate_initial_hexagon(self, scale: float) -> np.ndarray:
         cx, cy = self.width / 2, self.height / 2
         radius = min(self.width, self.height) / 2 * scale
-        # 6 points for hexagon (0 to 2pi), plus close the loop
         angles = np.linspace(0, 2*np.pi, 7) 
         x = cx + radius * np.cos(angles)
         y = cy + radius * np.sin(angles)
         return np.column_stack((x, y))
 
     def _apply_psychedelic_mask(self, img: Image.Image, hues: list[int], bg_color: tuple[int, int, int]) -> Image.Image:
-        # Same mask logic
         arr = np.array(img)
         h, w, _ = arr.shape
         y, x = np.indices((h, w))
@@ -83,8 +80,8 @@ class KochSnowflake3(drawGenerator.DrawGenerator):
         
         return Image.fromarray(result_arr)
 
-    def draw(self):
-        output_dir = f"{self.paths["generators_in"]}/KochSnowflake"
+    def run(self, *args, **kwargs):
+        output_dir = os.path.join(self.config["paths"]["generators_in"], "KochSnowflake")
         if os.path.exists(output_dir):
             shutil.rmtree(output_dir)
         os.makedirs(output_dir, exist_ok=True)
@@ -92,7 +89,6 @@ class KochSnowflake3(drawGenerator.DrawGenerator):
         for i in range(self.file_count):
             random.seed(time.perf_counter() + i)
             
-            # Fewer iterations needed for Hex start (gets complex fast)
             num_transforms = random.randint(2, 4) 
             spiral_tightness = random.uniform(0.3, 1.2)
             num_colors = random.choice([2, 3])
@@ -107,10 +103,10 @@ class KochSnowflake3(drawGenerator.DrawGenerator):
 
             # Apply Koch
             for _ in range(num_transforms):
-                points = self.koch_transformer.apply({}, points) # type: ignore
+                points = self.koch_transformer.run(points) 
                 
             # Apply Spiral Twist
-            points = self.spiral_transformer.apply({}, points) # type: ignore
+            points = self.spiral_transformer.run(points) 
 
             img = Image.new('RGB', (self.width, self.height), (0, 0, 0))
             draw = ImageDraw.Draw(img)
@@ -120,11 +116,12 @@ class KochSnowflake3(drawGenerator.DrawGenerator):
 
             img = self._apply_psychedelic_mask(img, current_hues, bg_color)
 
-            if self.file_count == 1:
-                filename = f"{output_dir}/{self.base_filename}.jpg"
-            else:
-                filename = f"{output_dir}/{self.base_filename}_{i+1}.jpg"
+            filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
+            filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
             
-            self.save(img, filename)
-            hue_str = ">".join(map(str, current_hues))
-            log.info(f"Generated KS3: {filename} (Iter: {num_transforms}, Spiral: {spiral_tightness:.2f}, Hues: {hue_str})")
+            try:
+                img.save(filename)
+                hue_str = ">".join(map(str, current_hues))
+                self.log.info(f"Generated KS3: {filename} (Iter: {num_transforms}, Spiral: {spiral_tightness:.2f}, Hues: {hue_str})")
+            except Exception as e:
+                self.log.error(f"Failed to save {filename}: {e}")

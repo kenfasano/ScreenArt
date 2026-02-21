@@ -1,167 +1,101 @@
-import random
-from . import log
-from typing import Callable, Dict, List, Tuple
+import os
+import cv2 
+import random 
+from pathlib import Path
 
-DEFAULT_TRANSFORMER_COUNT: int = 3
-MIN_TRANSFORMER_COUNT: int = 1
-MAX_TRANSFORMER_COUNT: int = 4
+# Adjust the import path based on your folder structure
+from .screenArt import ScreenArt 
 
-def get_transformer_dicts() -> Tuple[Dict[str, Callable], Dict[str, Callable]]:
-    """
-    Lazily imports transformers and returns a tuple of dictionaries:
-    (raster_transformers_dict, linear_transformers_dict)
-    
-    CRITICAL: This function isolates the imports. Do not move these imports
-    to the top of the file, or the circular dependency error will return.
-    """
-    from Transformers.RasterTransformers import (
-        AnamorphicTransformer,
-        ColormapTransformer,
-        DataMoshTransformer,
-        DuotoneTransformer,
-        FisheyeTransformer,
-        FlipWilsonTransformer,
-        FluidWarpTransformer,
-        FractalWarpTransformer,
-        GlitchWarpTransformer,
-        HalftoneTransformer,
-        # InvertRGBTransformer, # Removed: Causing errors
-        MeltMorphTransformer,
-        NullTransformer,
-        PosterizationTransformer,
-        RadialWarpTransformer,
-        SwirlWarpTransformer,
-        ThreeDExtrusionTransformer,
-        ThermalImagingTransformer,
-        TritoneTransformer,
-        WatercolorTransformer,
-        WheelTransformer,
-        XrayTransformer,
-    )
-
-    # FIXED: Import from the specific module file inside the LinearTransformers folder
-    from Transformers.LinearTransformers.kochSnowflakeTransformer import KochSnowflakeTransformer
-    from Transformers.LinearTransformers.sierpinskiTransformer import SierpinskiTransformer
-    from Transformers.LinearTransformers.smoothingTransformer import SmoothingTransformer
-    from Transformers.LinearTransformers.sinewaveTransformer import SineWaveTransformer
-    from Transformers.LinearTransformers.jitterTransformer import JitterTransformer
-
-    all_linear_transformers: List[Callable] = [
-        KochSnowflakeTransformer,
-        SierpinskiTransformer,
-        SmoothingTransformer,
-        SineWaveTransformer,
-        JitterTransformer
-    ]
-
-    all_raster_transformers: List[Callable] = [
-        AnamorphicTransformer,
-        ColormapTransformer,
-        DataMoshTransformer,
-        DuotoneTransformer,
-        FisheyeTransformer,
-        FlipWilsonTransformer,
-        FluidWarpTransformer,
-        FractalWarpTransformer,
-        GlitchWarpTransformer,
-        HalftoneTransformer,
-        # InvertRGBTransformer,
-        MeltMorphTransformer,
-        NullTransformer,
-        PosterizationTransformer,
-        RadialWarpTransformer,
-        SwirlWarpTransformer,
-        ThermalImagingTransformer,
-        ThreeDExtrusionTransformer,
-        TritoneTransformer,
-        WatercolorTransformer,
-        WheelTransformer,
-        XrayTransformer,
-    ]
-
-    raster_dict = {
-        str(transformer.__name__).lower(): transformer
-        for transformer in all_raster_transformers
-    }
-    
-    linear_dict = {
-        str(transformer.__name__).lower(): transformer
-        for transformer in all_linear_transformers
-    }
-
-    return raster_dict, linear_dict
-
-class Pipeline:
-    def __init__(self, config: dict | None):
-        self.config = config if config is not None else {}
-        self.transformer_count = self.config.get(
-                "transformer_count", random.randint(MIN_TRANSFORMER_COUNT, MAX_TRANSFORMER_COUNT))
+class ImageProcessingPipeline(ScreenArt):
+    def __init__(self):
+        # 1. Inherit singleton config, logger, and OS detection
+        super().__init__("ScreenArt")
         
-        # 1. Fetch the dictionaries (Lazy Load)
-        raster_dict_source, linear_dict_source = get_transformer_dicts()
+        # 2. Grab paths directly from the inherited config
+        self.out_dir = self.config["paths"]["transformers_out"]
+        self.reject_dir = self.config["paths"]["rejected_out"]
+        
+        self.accepted = 0
+        self.rejected = 0
+        self.stats = []
 
-        # 2. Prepare both lists using identical logic
-        self.raster_transformers = self._configure_transformers(raster_dict_source)
-        self.linear_transformers = self._configure_transformers(linear_dict_source)
+    def run(self, source_dir: str, transformers: list = None):
+        """Processes all images in a source directory through a list of transformers."""
+        if transformers is None:
+            transformers = []
+            
+        # Filter for valid image files
+        image_files = [f for f in os.listdir(source_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+        
+        if not image_files:
+            self.log.info(f"No images found in {source_dir} to process.")
+            return
 
-    def _configure_transformers(self, source_dict: Dict[str, Callable]) -> List[Callable]:
+        for filename in image_files:
+            input_path = os.path.join(source_dir, filename)
+            
+            # Read image using OpenCV
+            img_np = cv2.imread(input_path)
+            if img_np is None:
+                self.log.error(f"Failed to read image: {input_path}")
+                continue
+
+            metadata_tags = []
+            
+            # Run the image through the pipeline
+            for transformer in transformers:
+                self.log.debug(f"Applying {transformer.__class__.__name__} to {filename}")
+                
+                # THE NEW STANDARD: call .run()
+                img_np = transformer.run(img_np) 
+                
+                metadata_tags.append(transformer.get_image_metadata())
+
+            # Construct the final filename based on the transformations
+            base_name = Path(filename).stem
+            joined_tags = "_".join(metadata_tags)
+            
+            # 1. Calculate the Grade
+            grade = self._calculate_grade(img_np)
+            
+            # 2. Append the grade to the filename
+            new_filename = f"{base_name}_{joined_tags}_Grade-{grade}.png"
+            
+            # 3. Route and Save
+            self._evaluate_and_save(img_np, new_filename, grade)
+
+    def _calculate_grade(self, img_np) -> str:
         """
-        Applies include/exclude filters, NullTransformer logic, and random sampling
-        to a dictionary of transformers, returning a list of instantiated objects.
+        Analyzes the image array and returns a letter grade: A, B, C, D, or F.
+        PLACEHOLDER: Replace this with your actual OpenCV math.
         """
-        current_transformers_dict = source_dict.copy()
+        # For testing the routing, we randomly assign a grade
+        return random.choice(['A', 'B', 'C', 'D', 'F'])
 
-        # A. Check for an 'include' list and filter if present
-        include_list = self.config.get("include")
-        if include_list:
-            include_list_lower = [str(x).lower() for x in include_list]
-            current_transformers_dict = {
-                name: cls for name, cls in current_transformers_dict.items()
-                if name in include_list_lower
-            }
-
-        # B. Check for an 'exclude' list and filter if present
-        exclude_list = self.config.get("exclude")
-        if exclude_list:
-            exclude_list_lower = [str(x).lower() for x in exclude_list]
-            current_transformers_dict = {
-                name: cls for name, cls in current_transformers_dict.items()
-                if name not in exclude_list_lower
-            }
-
-        # C. Filter out 'NullTransformer' if there is more than one item remaining.
-        if (len(current_transformers_dict) > 1 and 
-        "nulltransformer" in current_transformers_dict):
-            del current_transformers_dict["nulltransformer"]
-
-        # D. Use the filtered dictionary for selection
-        transformers_list = list(current_transformers_dict.items())
+    def _evaluate_and_save(self, img_np, filename: str, grade: str):
+        """Routes the image to the correct folder based on the letter grade."""
         
-        # Handle the case where the dictionary might be empty after filtering
-        if not transformers_list:
-            log.warning("No transformers available in this category after applying filters.")
-            return []
-
-        # Get the available transformer names
-        transformer_population = [name for name, _ in transformers_list]
-        population_size = len(transformer_population)
-
-        if not isinstance(self.transformer_count, int) or self.transformer_count < 0:
-            log.warning(f"Invalid transformer_count '{self.transformer_count}', using default {DEFAULT_TRANSFORMER_COUNT}")
-            # We don't overwrite self.transformer_count here to avoid affecting the next call
-            count_to_use = DEFAULT_TRANSFORMER_COUNT
+        # A, B, and C go to the accepted output directory
+        if grade in ['A', 'B', 'C']:
+            final_path = os.path.join(self.out_dir, filename)
+            self.accepted += 1
+            status = "ACCEPTED"
+            
+        # D and F go to the rejected directory
+        elif grade in ['D', 'F']:
+            final_path = os.path.join(self.reject_dir, filename)
+            self.rejected += 1
+            status = "REJECTED"
+            
         else:
-            count_to_use = self.transformer_count
+            self.log.error(f"Unknown grade '{grade}' generated. Defaulting to Reject.")
+            final_path = os.path.join(self.reject_dir, filename)
+            self.rejected += 1
+            status = "REJECTED"
 
-        num_to_sample = min(count_to_use, population_size)
-        
-        if population_size > 0:
-            chosen_names = random.sample(transformer_population, k=num_to_sample)
-        else:
-            return []
+        # Save the file using the inherited log for output
+        cv2.imwrite(final_path, img_np)
+        self.log.info(f"[{status} - Grade: {grade}] Saved to: {final_path}")
 
-        # Instantiate and return
-        return [source_dict[name]() for name in chosen_names]
-
-    def get_transformers(self):
-        return self.raster_transformers, self.linear_transformers
+    def get_performance_stats(self):
+        return self.stats

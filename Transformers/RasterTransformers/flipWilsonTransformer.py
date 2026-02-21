@@ -1,7 +1,7 @@
-from .base import RasterTransformer
-import numpy as np # type: ignore
+from .rasterTransformer import RasterTransformer
+import numpy as np
 import random
-from PIL import Image, ImageOps # type: ignore
+from PIL import Image, ImageOps
 
 class FlipWilsonTransformer(RasterTransformer):
     """
@@ -10,25 +10,20 @@ class FlipWilsonTransformer(RasterTransformer):
     """
     
     def __init__(self, keep: str | None = None):
-        super().__init__() # Initialize base first to setup metadata_dictionary
+        super().__init__()
 
         keep_options = [
             'left', 'right', 'top', 'bottom',
             'top_left', 'top_right', 'bottom_left', 'bottom_right']
         self.keep = keep or random.choice(keep_options)
         
-        # --- GENERATE PARAMETERS IN INIT ---
-        # We define them here so the metadata is ready immediately for filenames
         self.narrow_factor = random.uniform(0.2, 0.5)
 
         # --- POPULATE METADATA ---
-        self.metadata_dictionary = {
-            "keep": self.keep,
-            "narrow": round(self.narrow_factor, 2)
-        }
-        # -------------------------
+        self.metadata_dictionary["keep"] = self.keep
+        self.metadata_dictionary["narrow"] = round(self.narrow_factor, 2)
 
-    def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
+    def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
         if isinstance(img_np, np.ndarray):
             img = Image.fromarray(img_np)
         elif isinstance(img_np, Image.Image):
@@ -36,7 +31,6 @@ class FlipWilsonTransformer(RasterTransformer):
         else:
             return img_np
 
-        # Use the pre-calculated parameters
         if self.keep == "left":
             self._reflect_horizontal(img, keep_left=True)
         elif self.keep == "right":
@@ -94,7 +88,6 @@ class FlipWilsonTransformer(RasterTransformer):
         w, h = img.size
         img = img.convert("RGBA")
         
-        # Use the stored narrow_factor
         dx = int((w * self.narrow_factor) / 2)
         dy = int((h * self.narrow_factor) / 2)
         

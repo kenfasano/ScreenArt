@@ -1,6 +1,6 @@
-import numpy as np # type: ignore
+import numpy as np
 import random
-from .base import RasterTransformer
+from .rasterTransformer import RasterTransformer
 from scipy.ndimage import gaussian_filter #type: ignore
 from scipy.ndimage import map_coordinates #type: ignore
 
@@ -27,29 +27,25 @@ class FluidWarpTransformer(RasterTransformer):
 
         return indices_y, indices_x
 
-    def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import ScreenArt.common as common
-        self.config = common.get_config(config, "fluidwarptransformer")
+    def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
+        t_config = self.config.get("fluidwarptransformer", {})
 
         # --- Parameter Handling ---
-        self.alpha = common.get_config(self.config, "alpha")
-        if self.alpha is None or isinstance(self.alpha, str):
+        self.alpha = t_config.get("alpha")
+        if self.alpha is None or not isinstance(self.alpha, (int, float)):
             self.alpha = random.uniform(0.01, MAX_ALPHA)
 
-        sigma = self.config.get("sigma", None)
-        if sigma is None or isinstance(sigma, str):
+        sigma = t_config.get("sigma")
+        if sigma is None or not isinstance(sigma, (int, float)):
             self.sigma = random.uniform(0.01, MAX_ALPHA)
         else:
             self.sigma = sigma
             
         # --- POPULATE METADATA ---
-        self.metadata_dictionary = {
-            "alpha": self.alpha,
-            "sigma": self.sigma
-        }
-        # -------------------------
+        self.metadata_dictionary["alpha"] = round(self.alpha, 2)
+        self.metadata_dictionary["sigma"] = round(self.sigma, 2)
             
-        image_type = self.config.get("image_type", "default")
+        image_type = t_config.get("image_type", "default")
         
         if image_type == "text":
             interpolation_order = 0  # Nearest Neighbor (crisp)

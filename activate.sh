@@ -7,7 +7,7 @@ if [[ "$OS" == "Linux" ]]; then
     VENV_PATH="$HOME/.venv_linux/bin/activate"
 elif [[ "$OS" == "Darwin" ]]; then
     # macOS specific path with "My Drive"
-    BASE_PATH="$HOME/Library/CloudStorage/GoogleDrive-kenfasano@hotmail.com/My Drive/shared/Scripts"
+    BASE_PATH="$HOME/Scripts/ScreenArt"
     VENV_PATH="$HOME/Scripts/.venv/bin/activate"
 else
     echo "Unknown OS: $OS"

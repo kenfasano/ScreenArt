@@ -1,29 +1,37 @@
-import numpy as np # type: ignore
+import numpy as np
 import random
+from typing import Optional
+from .linearTransformer import LinearTransformer
 
-class SineWaveTransformer:
-    def __init__(self, amplitude=10.0, frequency=0.05, axis='y'):
-        self.amplitude = amplitude
-        self.frequency = frequency
-        self.axis = axis # 'x', 'y', or 'both'
-
-    def apply(self, config: dict, points: np.ndarray) -> np.ndarray:
-        # Randomize parameters if called without specific config
-        amp = config.get("sine_amplitude", random.uniform(5.0, 30.0))
-        freq = config.get("sine_frequency", random.uniform(0.01, 0.1))
+class SineWaveTransformer(LinearTransformer):
+    """
+    Applies a sine wave ripple across the X, Y, or both axes of a point cloud.
+    """
+    def __init__(self, amplitude: Optional[float] = None, frequency: Optional[float] = None, axis: str = 'y'):
+        super().__init__()
+        self.axis = axis
         
+        # Default to random spreads if specific parameters aren't provided
+        self.amplitude = amplitude if amplitude is not None else random.uniform(5.0, 30.0)
+        self.frequency = frequency if frequency is not None else random.uniform(0.01, 0.1)
+        
+        self.metadata_dictionary["sine_amp"] = round(self.amplitude, 2)
+        self.metadata_dictionary["sine_freq"] = round(self.frequency, 3)
+        self.metadata_dictionary["sine_axis"] = self.axis
+
+    def run(self, pts_array: np.ndarray, *args, **kwargs) -> np.ndarray:
         # Copy to avoid mutating original
-        new_points = points.copy()
+        new_points = pts_array.copy()
         
         x = new_points[:, 0]
         y = new_points[:, 1]
         
-        # If we want to ripple Y, we use X as the input for Sin
-        if self.axis == 'y' or self.axis == 'both':
-            new_points[:, 1] += np.sin(x * freq) * amp
+        # Ripple Y
+        if self.axis in ('y', 'both'):
+            new_points[:, 1] += np.sin(x * self.frequency) * self.amplitude
             
-        # If we want to ripple X, we use Y as the input for Sin
-        if self.axis == 'x' or self.axis == 'both':
-            new_points[:, 0] += np.sin(y * freq) * amp
+        # Ripple X
+        if self.axis in ('x', 'both'):
+            new_points[:, 0] += np.sin(y * self.frequency) * self.amplitude
             
         return new_points

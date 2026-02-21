@@ -1,6 +1,6 @@
-import cv2 # type: ignore
-import numpy as np # type: ignore
-from .base import RasterTransformer
+import cv2
+import numpy as np
+from .rasterTransformer import RasterTransformer
 import random
 
 DEFAULT_SCALE = 1.0
@@ -14,35 +14,29 @@ class FractalWarpTransformer(RasterTransformer):
     def __init__(self):
         super().__init__()
 
-    def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import ScreenArt.log as log
-        import ScreenArt.common as common
-
-        self.config = common.get_config(config, "fractalwarptransformer")
+    def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
+        t_config = self.config.get("fractalwarptransformer", {})
 
         # --- Parameter Handling ---
-        iterations = self.config.get("iterations", DEFAULT_ITERATIONS)
+        iterations = t_config.get("iterations", DEFAULT_ITERATIONS)
         if not isinstance(iterations, int):
              iterations = DEFAULT_ITERATIONS
         
-        scale = self.config.get("scale", None)
+        scale = t_config.get("scale")
         if scale is None or not isinstance(scale, (int, float)):
             scale = random.uniform(0.5, DEFAULT_SCALE * 1.5)
         
-        seed = self.config.get("seed", None)
+        seed = t_config.get("seed")
         if seed is None:
             seed = np.random.randint(0, 1000000)
         np.random.seed(seed)
         
         # --- POPULATE METADATA ---
-        self.metadata_dictionary = {
-            "iter": iterations,
-            "scale": scale,
-            "seed": seed
-        }
-        # -------------------------
+        self.metadata_dictionary["iter"] = iterations
+        self.metadata_dictionary["scale"] = round(scale, 2)
+        self.metadata_dictionary["seed"] = seed
         
-        image_type = self.config.get("image_type", "default")
+        image_type = t_config.get("image_type", "default")
         apply_noise = (image_type != "text")
 
         height, width = img_np.shape[:2]
@@ -89,5 +83,6 @@ class FractalWarpTransformer(RasterTransformer):
             warped = cv2.remap(img_np, map_x, map_y, interpolation=cv2.INTER_LINEAR)
             return warped
         except Exception as e:
-            log.critical(f"Error during FractalWarp remap: {e}")
+            # Replaced global log with self.log
+            self.log.critical(f"Error during FractalWarp remap: {e}")
             return img_np

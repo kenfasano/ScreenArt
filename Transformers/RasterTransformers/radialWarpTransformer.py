@@ -1,9 +1,8 @@
-import cv2 # type: ignore
-import numpy as np # type: ignore
+import cv2 
+import numpy as np 
 import random
 from typing import Optional, TypeAlias
-from .base import RasterTransformer
-from Transformers.transformer_dictionary import transformer_ids
+from .rasterTransformer import RasterTransformer
 
 OptionalInt: TypeAlias = Optional[int] 
 DEFAULT_COUNT = 1
@@ -12,45 +11,39 @@ DEFAULT_STRENGTH = 70.0
 DEFAULT_RADIUS = 0.05 
 
 class RadialWarpTransformer(RasterTransformer):
+    """
+    Applies localized radial push/pull warps to the image.
+    """
     def __init__(self):
         super().__init__()
         self.allowed_styles = ["push", "pull"]
 
-    def apply(self, config: dict, img_np: np.ndarray) -> np.ndarray:
-        import ScreenArt.common as common
-        import ScreenArt.log as log
-        self.transformer_id = transformer_ids.get(self.__class__.__name__, None)
-        self.config = common.get_config(config, "radialwarptransformer")
+    def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
+        t_config = self.config.get("radialwarptransformer", {})
 
         height, width = img_np.shape[:2]
 
         # --- Parameter Handling ---
-        count = self.config.get("count", "?")
-        if isinstance(count, int):
-            count = count
-        else:
+        count = t_config.get("count", "?")
+        if not isinstance(count, int):
             count = int(random.uniform(DEFAULT_COUNT // 2, DEFAULT_COUNT * 2))
 
-        style = self.config.get("style", "?")
-        if isinstance(style, list): 
-            style = style
-        elif isinstance(style, str):
+        style = t_config.get("style", "?")
+        if isinstance(style, str):
             if style == "?": 
                 style = [random.choice(self.allowed_styles) for _ in range(count)]
             else: 
                 style = [style]
-        else: 
+        elif not isinstance(style, list): 
             style = [style]
 
-        strength = self.config.get("strength", "?")
-        if isinstance(strength, list):
-            strength = strength
-        elif isinstance(strength, str):
+        strength = t_config.get("strength", "?")
+        if isinstance(strength, str):
             strength = [random.uniform(DEFAULT_STRENGTH // 2, DEFAULT_STRENGTH * 2) for _ in range(count)]
-        else:
+        elif not isinstance(strength, list):
             strength = [strength]
             
-        center_x = self.config.get("center_x", "?")
+        center_x = t_config.get("center_x", "?")
         if isinstance(center_x, list):
             center_x = [float(v) for v in center_x]
         elif center_x is None or center_x == "?":
@@ -58,15 +51,15 @@ class RadialWarpTransformer(RasterTransformer):
         else: 
             center_x = [float(center_x)]
 
-        center_y = self.config.get("center_y", "?")
-        if isinstance(center_y, list):\
+        center_y = t_config.get("center_y", "?")
+        if isinstance(center_y, list):
             center_y = [float(v) for v in center_y]
         elif center_y is None or center_y == "?":
             center_y = [random.uniform(0.0, 1.0) for _ in range(count)]
         else: 
             center_y = [float(center_y)]
 
-        radius = self.config.get("radius", "?")
+        radius = t_config.get("radius", "?")
         if isinstance(radius, list):
             radius = [float(v) for v in radius]
         elif radius is None or radius == "?":
@@ -75,13 +68,9 @@ class RadialWarpTransformer(RasterTransformer):
             radius = [float(radius)]
 
         # --- POPULATE METADATA ---
-        # Storing the raw inputs (or list inputs) 
-        self.metadata_dictionary = {
-            "style": style,
-            "strength": strength,
-            "radius": radius
-        }
-        # -------------------------
+        self.metadata_dictionary["style"] = style
+        self.metadata_dictionary["strength"] = strength
+        self.metadata_dictionary["radius"] = radius
 
         # Extend lists
         strength = (strength * count)[:count]
@@ -96,7 +85,7 @@ class RadialWarpTransformer(RasterTransformer):
             px_center_y = np.clip([v * height for v in center_y], 0, height - 1).astype(int)
             px_radius = np.clip([v * min(height, width) for v in radius], 1, min(height, width)).astype(int)
         except Exception as e:
-            log.error(f"Could not convert coordinate percentages: {e}")
+            self.log.error(f"Could not convert coordinate percentages: {e}")
             return img_np 
 
         # --- OPTIMIZED WARP LOGIC ---
@@ -141,5 +130,5 @@ class RadialWarpTransformer(RasterTransformer):
             warped = cv2.remap(img_np, map_x, map_y, interpolation=cv2.INTER_LINEAR)
             return warped
         except Exception as e:
-            log.critical(f"Error during final remap: {e}")
+            self.log.critical(f"Error during final remap: {e}")
             return img_np
