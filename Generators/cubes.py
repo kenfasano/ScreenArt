@@ -70,7 +70,7 @@ class Cubes(DrawGenerator):
         img_cx, img_cy = self.width / 2, self.height / 2
         max_dist = math.sqrt(img_cx**2 + img_cy**2) or 1
         
-        out_dir = os.path.join(self.config["paths"]["generators_in"], "Cubes")
+        out_dir = os.path.join(self.config["paths"]["generators_in"], "cubes")
         os.makedirs(out_dir, exist_ok=True)
 
         for i in range(self.file_count):

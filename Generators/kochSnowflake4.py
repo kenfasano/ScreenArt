@@ -88,7 +88,7 @@ class KochSnowflake4(DrawGenerator):
         return Image.fromarray(arr), opposite_bg
 
     def run(self, *args, **kwargs):
-        output_dir = os.path.join(self.config["paths"]["generators_in"], "KochSnowflake")
+        output_dir = os.path.join(self.config["paths"]["generators_in"], "kochsnowflake")
         if os.path.exists(output_dir):
             shutil.rmtree(output_dir)
         os.makedirs(output_dir, exist_ok=True)

@@ -100,7 +100,7 @@ class Bubbles(DrawGenerator):
 
     def run(self, *args, **kwargs): # type: ignore
         out_dir = os.path.join(self.config["paths"
-                                           ]["generators_in"], "Bubbles")
+                                           ]["generators_in"], "bubbles")
         os.makedirs(out_dir, exist_ok=True)
 
         for i in range(self.file_count):

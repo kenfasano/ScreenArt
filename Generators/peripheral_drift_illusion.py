@@ -95,7 +95,7 @@ class PeripheralDriftIllusion(DrawGenerator):
         return img
 
     def run(self, *args, **kwargs):
-        out_dir = os.path.join(self.config["paths"]["generators_in"], "OpticalIllusions")
+        out_dir = os.path.join(self.config["paths"]["generators_in"], "opticalillusions")
         os.makedirs(out_dir, exist_ok=True)
 
         for i in range(self.file_count):

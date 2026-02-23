@@ -56,7 +56,7 @@ class Hilbert(DrawGenerator):
     def run(self, *args, **kwargs):
         width = self.width
         height = self.height
-        output_dir = os.path.join(self.config["paths"]["generators_in"], "Hilbert")
+        output_dir = os.path.join(self.config["paths"]["generators_in"], "hilbert")
 
         def random_bool(): return random.choice([True, False])
 
