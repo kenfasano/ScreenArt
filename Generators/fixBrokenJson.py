@@ -2,7 +2,7 @@ import json
 import os
 
 # Paths extracted from your logs
-base_dir = "/Users/kenfasano/Library/Mobile Documents/com~apple~CloudDocs/Scripts/ScreenArt/InputSources/Data/Lojong"
+base_dir = "/Users/kenfasano/Library/Mobile Documents/com~apple~CloudDocs/Scripts/ScreenArt/Sources/Data/Lojong"
 
 eng_path = os.path.join(base_dir, "lojong_slogans_eng.json")
 tib_path = os.path.join(base_dir, "lojong_slogans_tib.json")

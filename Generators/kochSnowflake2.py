@@ -6,13 +6,8 @@ import os
 import cv2 
 from PIL import Image, ImageDraw 
 from .drawGenerator import DrawGenerator
-
-try:
-    from Transformers.LinearTransformers.sierpinskiTransformer import SierpinskiTransformer
-    from Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
-except ImportError:
-    from ..Transformers.LinearTransformers.sierpinskiTransformer import SierpinskiTransformer
-    from ..Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
+from ..Transformers.LinearTransformers.sierpinskiTransformer import SierpinskiTransformer
+from ..Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
 
 class KochSnowflake2(DrawGenerator):
     def __init__(self):

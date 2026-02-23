@@ -16,7 +16,8 @@ class Wiki(DrawGenerator):
         
         self.width = int(self.config.get("width", 1920))
         self.height = int(self.config.get("height", 1080))
-        self.file_count = int(self.config.get("file_count", 1))
+        self.file_count = int(self.config.get("wiki", {}).get("file_count", 1))
+        self.log.info(f"{self.file_count=}")
         self.base_filename = "wiki"
         
         keyword_file = self.config.get("keyword_file")
@@ -139,7 +140,7 @@ class Wiki(DrawGenerator):
                 img, _ = self.download_and_process(url)
                 if img:
                     name = self.get_short_name(url)
-                    filename = os.path.join(out_dir, f"{name}.jpeg")
+                    filename = os.path.join(out_dir, f"{name}.jpeg").replace("1920px-", "")
                     try:
                         img.save(filename)
                         self.log.info(f"Saved Wiki Image: {filename}")

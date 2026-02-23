@@ -7,18 +7,11 @@ from PIL import Image, ImageDraw
 from .drawGenerator import DrawGenerator
 
 # Import Linear Transformers
-try:
-    from Transformers.LinearTransformers.kochSnowflakeTransformer import KochSnowflakeTransformer
-    from Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
-    from Transformers.LinearTransformers.smoothingTransformer import SmoothingTransformer
-    from Transformers.LinearTransformers.sinewaveTransformer import SineWaveTransformer
-    from Transformers.LinearTransformers.jitterTransformer import JitterTransformer
-except ImportError:
-    from ..Transformers.LinearTransformers.kochSnowflakeTransformer import KochSnowflakeTransformer
-    from ..Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
-    from ..Transformers.LinearTransformers.smoothingTransformer import SmoothingTransformer
-    from ..Transformers.LinearTransformers.sinewaveTransformer import SineWaveTransformer
-    from ..Transformers.LinearTransformers.jitterTransformer import JitterTransformer
+from ..Transformers.LinearTransformers.kochSnowflakeTransformer import KochSnowflakeTransformer
+from ..Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
+from ..Transformers.LinearTransformers.smoothingTransformer import SmoothingTransformer
+from ..Transformers.LinearTransformers.sinewaveTransformer import SineWaveTransformer
+from ..Transformers.LinearTransformers.jitterTransformer import JitterTransformer
 
 class Hilbert(DrawGenerator):
     def __init__(self):
@@ -97,7 +90,7 @@ class Hilbert(DrawGenerator):
             
             # --- Apply Transformers via the NEW Contract API ---
             if use_koch:
-                pts_array = kochSnowflakeTransformer().run(pts_array)
+                pts_array = KochSnowflakeTransformer().run(pts_array)
             if use_spiral:
                 t = SpiralTransformer(tightness=random.uniform(0.5, 1.5))
                 pts_array = t.run(pts_array)

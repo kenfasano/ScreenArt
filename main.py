@@ -13,17 +13,18 @@ from datetime import datetime
 
 # 1. Import your Generators
 from .Generators import (
-    bible,
-    bubbles,
-    cubes,
-    goes,
-    # hilbert,
-    # kochSnowflake,
-    lojong,
-    maps,
-    nasa,
-    peripheral_drift_illusion,
-    wiki )
+#    bible,
+#    bubbles,
+#    cubes,
+#    goes,
+    hilbert,
+    kochSnowflake,
+#    lojong,
+#    maps,
+#    nasa,
+#    peripheral_drift_illusion,
+#    wiki 
+)
 
 # 2. Explicitly Import your Raster Transformers for the Pipeline
 from .Transformers.RasterTransformers import (
@@ -51,6 +52,7 @@ from .Transformers.RasterTransformers import (
     XrayTransformer
 )
 
+from .Transformers.transformer_dictionary import transformer_registry
 from .pipeline import ImageProcessingPipeline
 from time_it import time_it # type: ignore
 
@@ -65,66 +67,40 @@ class ScreenArtMain(ScreenArt):
         
         # 1. GENERATOR CONFIGURATIONS (Where do they output, and should we erase?)
         self.generators: dict[str, GeneratorConfig] = {
-            "bubbles": GeneratorConfig(source=f"{gen_in}/bubbles", should_erase=True),
-            "cubes": GeneratorConfig(source=f"{gen_in}/cubes", should_erase=True),
-            "nasa": GeneratorConfig(source=f"{gen_in}/nasa", should_erase=True),
-            "maps": GeneratorConfig(source=f"{gen_in}/maps", should_erase=True),
-            "goes": GeneratorConfig(source=f"{gen_in}/goes", should_erase=True),
-            "wiki": GeneratorConfig(source=f"{gen_in}/wiki", should_erase=False),
-            "lojong": GeneratorConfig(source=f"{gen_in}/lojong", should_erase=False),
-            "bible": GeneratorConfig(source=f"{gen_in}/bible", should_erase=True),
-            "peripheraldriftillusion": GeneratorConfig(source=f"{gen_in}/opticalillusions", should_erase=True),
-            # "kochSnowflake": GeneratorConfig(source=f"{gen_in}/kochsnowflake", should_erase=True),
-            # "hilbert": GeneratorConfig(source=f"{gen_in}/hilbert", should_erase=True),
+#            "bubbles": GeneratorConfig(source=f"{gen_in}/bubbles", should_erase=True),
+#            "cubes": GeneratorConfig(source=f"{gen_in}/cubes", should_erase=True),
+#            "nasa": GeneratorConfig(source=f"{gen_in}/nasa", should_erase=True),
+#            "maps": GeneratorConfig(source=f"{gen_in}/maps", should_erase=True),
+#            "goes": GeneratorConfig(source=f"{gen_in}/goes", should_erase=True),
+#            "wiki": GeneratorConfig(source=f"{gen_in}/wiki", should_erase=False),
+#            "lojong": GeneratorConfig(source=f"{gen_in}/lojong", should_erase=False),
+#            "bible": GeneratorConfig(source=f"{gen_in}/bible", should_erase=True),
+#            "peripheraldriftillusion": GeneratorConfig(source=f"{gen_in}/opticalillusions", should_erase=True),
+             "kochSnowflake": GeneratorConfig(source=f"{gen_in}/kochsnowflake", should_erase=True),
+             "hilbert": GeneratorConfig(source=f"{gen_in}/hilbert", should_erase=True),
         }
 
         # 2. GENERATOR REGISTRY (Map the string key directly to the Class)
         self.generator_classes = {
-            "wiki": wiki.Wiki,
-            "nasa": nasa.Nasa,
-            "maps": maps.NasaMapGenerator,
-            "goes": goes.GoesGenerator,
-            "bubbles": bubbles.Bubbles,
-            "cubes": cubes.Cubes,
-            "lojong": lojong.Lojong,
-            "bible": bible.Bible,
-            "peripheraldriftillusion": peripheral_drift_illusion.PeripheralDriftIllusion,
-            #            "kochSnowflake": kochSnowflake.KochSnowflake,
-            # "hilbert": hilbert.Hilbert,
+#            "wiki": wiki.Wiki,
+#            "nasa": nasa.Nasa,
+#            "maps": maps.NasaMapGenerator,
+#            "goes": goes.GoesGenerator,
+#            "bubbles": bubbles.Bubbles,
+#            "cubes": cubes.Cubes,
+#            "lojong": lojong.Lojong,
+#            "bible": bible.Bible,
+#            "peripheraldriftillusion": peripheral_drift_illusion.PeripheralDriftIllusion,
+            "kochSnowflake": kochSnowflake.KochSnowflake,
+            "hilbert": hilbert.Hilbert,
         }
 
-        # 3. TRANSFORMER REGISTRY (Maps config strings to Classes)
-        self.transformer_registry = {
-            "anamorphic": AnamorphicTransformer,
-            "colormap": ColormapTransformer,
-            "datamosh": DataMoshTransformer,
-            "duotone": DuotoneTransformer,
-            "fisheye": FisheyeTransformer,
-            "flipwilson": FlipWilsonTransformer,
-            "fluidwarp": FluidWarpTransformer,
-            "fractalwarp": FractalWarpTransformer,
-            "glitchwarp": GlitchWarpTransformer,
-            "halftone": HalftoneTransformer,
-            "invertrgb": InvertRGBTransformer,
-            "meltmorph": MeltMorphTransformer,
-            "null": NullTransformer,
-            "posterization": PosterizationTransformer,
-            "radialwarp": RadialWarpTransformer,
-            "swirlwarp": SwirlWarpTransformer,
-            "thermalimaging": ThermalImagingTransformer,
-            "threedextrusion": ThreeDExtrusionTransformer,
-            "tritone": TritoneTransformer,
-            "watercolor": WatercolorTransformer,
-            "wheel": WheelTransformer,
-            "xray": XrayTransformer,
-        }
-        
         # Pull requested transformers from screenArt.conf, default to colormap
         requested_transformers = self.config.get("transformers", ["colormap"])
         self.active_transformers = []
         
         for t_key in requested_transformers:
-            TransformerClass = self.transformer_registry.get(t_key.lower())
+            TransformerClass = transformer_registry.get(t_key.lower().replace("transformer",""))
             if TransformerClass:
                 self.active_transformers.append(TransformerClass())
             else:
@@ -200,8 +176,14 @@ class ScreenArtMain(ScreenArt):
         # Phase 2: Run Transformers
         for key in keys_to_process:
             dir_path = self.generators[key].source
-            transformer = [random.choice(self.active_transformers)]
-            self.pipeline.run(dir_path, transformers=transformer)
+            # Choose a random number between 1 and 4 (but no more than the total available  )
+            num_to_pick = random.randint(1, min(4, len(self.active_transformers)))
+    
+            # Select unique transformers
+            transformers_to_apply = random.sample(self.active_transformers, num_to_pick)
+            self.pipeline.run(dir_path, transformers=transformers_to_apply)
+
+        self.log.info("----------------------------")
 
         return self
 

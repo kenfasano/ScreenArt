@@ -15,13 +15,14 @@ else
 fi
 
 # 1. Synchronize with Google Drive
+# NOTE: The exclude path is relative to the source directory
 rsync -rtuv \
     --exclude '_*' \
     --exclude '._*' \
     --exclude '.git' \
-	 --exclude '.gitignore' \
+    --exclude '.gitignore' \
     --exclude '__pycache__' \
-	 --exclude '~/Scripts/ScreenArt/Images/*' \
+    --exclude 'Images/' \
     ~/Scripts/ScreenArt/ \
     "$DEST_DIR"
 
@@ -38,7 +39,7 @@ fi
 echo "🚀 Starting sync for ScreenArt..."
 
 # 4. Clear the git cache 
-# This ensures that files newly added to .gitignore (like .jpg) are actually dropped
+# This ensures that files newly added to .gitignore (like Images/) are actually dropped
 git rm -r --cached . > /dev/null 2>&1
 
 # 5. Add all files (respecting the updated .gitignore)
@@ -52,4 +53,3 @@ echo "git pushing to origin main..."
 git push origin main
 
 echo "✅ Done!"
-

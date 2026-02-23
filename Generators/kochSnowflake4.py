@@ -6,14 +6,8 @@ import os
 import cv2 
 from PIL import Image 
 from .drawGenerator import DrawGenerator
-
-# Import Transformers
-try:
-    from Transformers.LinearTransformers.randomSierpinskiTransformer import RandomSierpinskiTransformer
-    from Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
-except ImportError:
-    from ..Transformers.LinearTransformers.randomSierpinskiTransformer import RandomSierpinskiTransformer
-    from ..Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
+from ..Transformers.LinearTransformers.randomSierpinskiTransformer import RandomSierpinskiTransformer
+from ..Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
 
 class KochSnowflake4(DrawGenerator):
     """
@@ -77,8 +71,15 @@ class KochSnowflake4(DrawGenerator):
         hsv_points = np.stack([h_channel, s_channel, v_channel], axis=1).reshape(-1, 1, 3)
         rgb_points = cv2.cvtColor(hsv_points, cv2.COLOR_HSV2RGB).reshape(-1, 3)
         
-        avg_rgb = np.mean(rgb_points, axis=0).astype(int)
-        opposite_bg = tuple(255 - avg_rgb)
+        # Calculate the mean and convert to native Python integers during the subtraction
+        mean_color = np.mean(rgb_points, axis=0)
+        
+        # Explicitly extract R, G, B and convert to native Python integers
+        opposite_bg = (
+            int(255 - mean_color[0]),
+            int(255 - mean_color[1]),
+            int(255 - mean_color[2])
+        )
 
         img = Image.new('RGB', (width, height), opposite_bg)
         arr = np.array(img)

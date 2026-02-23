@@ -1,17 +1,18 @@
-from .htmlInputSource import HtmlInputSource
+from .htmlSource import HtmlSource
 from bs4 import BeautifulSoup 
 
-class Nasa(HtmlInputSource):
+class Nasa(HtmlSource):
     def __init__(self):
         super().__init__()
-        self.file_count = self.config.get("file_count", 3)
+        self.file_count = self.config.get("nasa", {}).get("file_count", 3)
+        self.log.info(f"{self.file_count=}")
 
     def run(self, *args, **kwargs):
         self.log.info("Running NASA APOD Generator...")
         
-        # Uses the fetch() contract implemented securely in HtmlInputSource
+        # Uses the fetch() contract implemented securely in HtmlSource
         number_of_images = self.fetch(
-                get_url=self.get_random_picture_url,
+                self.get_random_picture_url,
                 input_source="nasa", 
                 min_year=2002, 
                 file_count=self.file_count)
@@ -21,14 +22,16 @@ class Nasa(HtmlInputSource):
 
     def get_random_picture_url(self, min_year: int) -> str:
         date_str: str = self.get_random_date(min_year).strftime("%y%m%d")
-        return f"https://apod.nasa.gov/apod/ap{date_str}.html"
+        self.url = f"https://apod.nasa.gov/apod/ap{date_str}.html"
+        return self.url
 
     def get_image_url(self, html: str) -> str | None:
         soup = BeautifulSoup(html, "html.parser")
         img_tag = soup.find('img')
 
         if img_tag:
+            self.log.info(f"Got img tag for {self.url}")
             return f"https://apod.nasa.gov/apod/{img_tag['src']}"
         else:
-            self.log.error("No img tag found in APOD html.")
+            self.log.error(f"No img tag found in APOD html for {self.url}")
             return None

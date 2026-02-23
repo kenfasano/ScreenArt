@@ -6,14 +6,8 @@ import os
 import cv2 
 from PIL import Image, ImageDraw 
 from .drawGenerator import DrawGenerator
-
-# Import Linear Transformers
-try:
-    from Transformers.LinearTransformers.kochSnowflakeTransformer import KochSnowflakeTransformer
-    from Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
-except ImportError:
-    from ..Transformers.LinearTransformers.kochSnowflakeTransformer import KochSnowflakeTransformer
-    from ..Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
+from ..Transformers.LinearTransformers.kochSnowflakeTransformer import KochSnowflakeTransformer
+from ..Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
 
 class KochSnowflake1(DrawGenerator):
     """

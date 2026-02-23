@@ -55,6 +55,7 @@ class Bible(Text):
         
         # FIXED: Points directly to Generators/Data
         input_base_dir = os.path.join(self.base_path, "Generators", "Data")
+        self.log.info(f"{input_base_dir=}")
 
         for _ in range(self.file_count):
             book = random.choice(self.books)

@@ -67,10 +67,12 @@ class Lojong(Text):
         self.log.info(f"Running Lojong Generator (Target: {self.file_count} images)...")
 
         out_dir = os.path.join(self.config["paths"]["generators_in"], "lojong")
+        self.log.info(f"{out_dir=}")
         os.makedirs(out_dir, exist_ok=True)
         
         # FIXED: Points directly to Generators/Data/Lojong
         input_base_dir = os.path.join(self.base_path, "Generators", "Data", "Lojong")
+        self.log.info(f"{input_base_dir=}")
 
         for i in range(self.file_count):
             if random.choice(["eng", "tib"]) == "eng":

@@ -4,15 +4,12 @@ import time
 import shutil
 import os
 import cv2 
-from PIL import Image, ImageDraw 
-from .drawGenerator import DrawGenerator
+from PIL import Image, ImageDraw
 
-try:
-    from Transformers.LinearTransformers.kochSnowflakeTransformer import KochSnowflakeTransformer
-    from Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
-except ImportError:
-    from ..Transformers.LinearTransformers.kochSnowflakeTransformer import KochSnowflakeTransformer
-    from ..Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
+from ScreenArt.Transformers.LinearTransformers.kochSnowflakeTransformer import KochSnowflakeTransformer 
+from .drawGenerator import DrawGenerator
+from ..Transformers.LinearTransformers.kochSnowflakeTransformer import KochSnowflakeTransformer
+from ..Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
 
 class KochSnowflake3(DrawGenerator):
     def __init__(self):
