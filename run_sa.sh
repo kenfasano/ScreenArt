@@ -10,7 +10,7 @@ do
     echo "-----------------------------------"
     
     # Execute your command
-	cd ~/Scripts/ScreenArt && ./activate.sh && cd .. && ~/Scripts/.venv/bin/python3 -m ScreenArt.main
+	 cd ~/Scripts/ScreenArt && ./activate.sh && cd .. && ~/Scripts/.venv/bin/python3 -m ScreenArt.main
     
     # Sleep for 3600 seconds (1 hour) unless it's the very last run
     if [ $i -lt 24 ]; then

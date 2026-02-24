@@ -25,16 +25,23 @@ class DrawGenerator(Generator):
         if not os.path.exists(self.cache_dir):
             os.makedirs(self.cache_dir)
 
-    def get_cached_image(self, url: str) -> Optional[Image.Image]:
+    def get_cached_image(self, url: str, cache_dir: Optional[str] = None) -> Optional[Image.Image]:
         """
         Checks if an image exists in the local cache.
         If yes: loads it from disk.
         If no: downloads it, saves it to disk, then loads it.
         """
+        # Determine which cache directory to use
+        active_cache_dir = cache_dir if cache_dir else self.cache_dir
+        
+        # Ensure the specific cache directory exists
+        if not os.path.exists(active_cache_dir):
+            os.makedirs(active_cache_dir)
+
         # Create a safe filename from the URL
         hash_object = hashlib.md5(url.encode())
         filename = f"{hash_object.hexdigest()}.jpg"
-        filepath = os.path.join(self.cache_dir, filename)
+        filepath = os.path.join(active_cache_dir, filename)
 
         # Check if file exists locally
         if os.path.exists(filepath):
@@ -62,5 +69,5 @@ class DrawGenerator(Generator):
         except Exception as e:
             self.log.error(f"Error downloading {url}: {e}")
             return None
-            
+
     # Note: We do NOT implement run() here, we leave that to the concrete generators

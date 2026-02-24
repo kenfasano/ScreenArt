@@ -20,7 +20,7 @@ from .Generators import (
     hilbert,
     kochSnowflake,
     lojong,
-#    maps,
+    maps,
     nasa,
     peripheral_drift_illusion,
     wiki 
@@ -70,7 +70,7 @@ class ScreenArtMain(ScreenArt):
             "bubbles": GeneratorConfig(source=f"{gen_in}/bubbles", should_erase=True),
             "cubes": GeneratorConfig(source=f"{gen_in}/cubes", should_erase=True),
             "nasa": GeneratorConfig(source=f"{gen_in}/nasa", should_erase=True),
-#            "maps": GeneratorConfig(source=f"{gen_in}/maps", should_erase=True),
+            "maps": GeneratorConfig(source=f"{gen_in}/maps", should_erase=True),
             "goes": GeneratorConfig(source=f"{gen_in}/goes", should_erase=True),
             "wiki": GeneratorConfig(source=f"{gen_in}/wiki", should_erase=False),
             "lojong": GeneratorConfig(source=f"{gen_in}/lojong", should_erase=False),
@@ -84,7 +84,7 @@ class ScreenArtMain(ScreenArt):
         self.generator_classes = {
             "wiki": wiki.Wiki,
             "nasa": nasa.Nasa,
-#            "maps": maps.NasaMapGenerator,
+            "maps": maps.NasaMapGenerator,
             "goes": goes.GoesGenerator,
             "bubbles": bubbles.Bubbles,
             "cubes": cubes.Cubes,

@@ -52,7 +52,9 @@ LAYERS = {
 class NasaMapGenerator(DrawGenerator):
     def __init__(self):
         super().__init__()
-        
+        # OS-agnostic path expansion for the cache directory
+        self.cache_dir = os.path.expanduser(os.path.join("~", "Scripts", "ScreenArt", "Generators", "maps_cache"))
+
         self.width = int(self.config.get("width", 1920))
         self.height = int(self.config.get("height", 1080))
         self.file_count = int(self.config.get("file_count", 1))

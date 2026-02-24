@@ -38,9 +38,10 @@ class Text(DrawGenerator):
         else:
             # Linux (Fedora) Font Paths - Update these to match your Linux font directory
             self.language_fonts = {
-                "Tibetan": os.path.expanduser("~/.local/share/fonts/NotoSerifTibetan-VariableFont_wght.ttf"),
-                "Hebrew": "/usr/share/fonts/truetype/msttcorefonts/Arial.ttf", # Fallback example
-                "English": "/usr/share/fonts/truetype/msttcorefonts/Arial.ttf"
+                # Replace the string below with the exact Jomolhari path you found
+                "Tibetan": "/usr/share/fonts/jomolhari-fonts/Jomolhari-alpha3c-0605331.ttf",
+                "Hebrew": "/usr/share/fonts/google-noto-vf/NotoSansHebrew[wght].ttf",
+                "English": "/usr/share/fonts/liberation-sans-fonts/LiberationSans-Regular.ttf"
             }
 
     def generate_text_image(self, 
