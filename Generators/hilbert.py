@@ -20,6 +20,7 @@ class Hilbert(DrawGenerator):
         self.width = int(self.config.get('width', 1920))
         self.height = int(self.config.get('height', 1080))
         self.file_count = int(self.config.get('file_count', 5))
+        self.log.info(f"{self.file_count=}")
         self.base_filename = "hilbert"
 
         self.order = int(self.config.get("order", random.randint(4, 7)))
@@ -136,7 +137,6 @@ class Hilbert(DrawGenerator):
             filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
             try:
                 img.save(filename)
-                self.log.info(f"Saved Hilbert: {filename}")
             except Exception as e:
                 self.log.error(f"Failed to save {filename}: {e}")
 

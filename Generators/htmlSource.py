@@ -79,18 +79,14 @@ class HtmlSource(Source):
             fails = 0
 
             while fails < MAX_FAILS_IN_LOOP:
-                self.log.info(f"{fetch_count+1}/{file_count},{fails=}")
                 if self.process_url(url, input_source):
                     break
                 fails += 1
                 total_fails += 1
                 time.sleep(3)
 
-            if total_fails > TOTAL_FAILS_ALLOWED:
-                self.log.error(f"Total fails: {total_fails} is greater than {TOTAL_FAILS_ALLOWED}")
+            if total_fails > TOTAL_FAILS_ALLOWED or fails == MAX_FAILS_IN_LOOP:
                 return fetch_count
-            elif fails == MAX_FAILS_IN_LOOP:
-                self.log.error(f"Failed {fails} times: Unable to fetch {url}")
             else:
                 fetch_count += 1
 

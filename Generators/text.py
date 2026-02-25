@@ -88,7 +88,7 @@ class Text(DrawGenerator):
                 y_position += 15
 
             if y_position >= self.height - 50:
-                self.log.warning("Text exceeded canvas height, truncating.")
+                self.log.warning("Text exceeded canvas height: {text_height=}, {y_position=}")
                 break
                 
         return img

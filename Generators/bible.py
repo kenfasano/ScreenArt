@@ -9,6 +9,7 @@ class Bible(Text):
         
         bible_config = self.config.get("bible", {})
         self.file_count = bible_config.get("file_count", 3)
+        self.log.info(f"Bible: {self.file_count=}")
         
         self.books = [
             ["HebrewPsalms", 150],
@@ -96,7 +97,7 @@ class Bible(Text):
             output_file_path = os.path.join(out_dir, f"{base_filename}.png")
             try:
                 img.save(output_file_path)
-                self.log.debug(f"Saved Bible image: {output_file_path}")
+                self.log.info(f"Saved Bible image: {output_file_path}")
             except Exception as e:
                 self.log.error(f"Failed to save image {output_file_path}: {e}")
 

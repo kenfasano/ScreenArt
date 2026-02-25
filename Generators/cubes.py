@@ -120,6 +120,6 @@ class Cubes(DrawGenerator):
             filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}.jpg")
             try:
                 img.save(filename)
-                self.log.info(f"Saved: {filename}. Mode: {mode}. (Placed {placed_count} cubes)")
+                self.log.info(f"Mode: {mode}. {placed_count} cubes")
             except Exception as e:
                 self.log.error(f"Failed to save {filename}: {e}")
