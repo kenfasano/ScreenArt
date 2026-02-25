@@ -86,7 +86,8 @@ class Bubbles(DrawGenerator):
 
         for xi, yi, ri, color in zip(x, y, final_r, colors):
             xi, yi, ri = int(xi), int(yi), int(ri)
-            if ri < 1: ri = 1
+            if ri < 1:
+                ri = 1
             
             draw.ellipse((xi - ri, yi - ri, xi + ri, yi + ri), fill=color, outline=None)
             

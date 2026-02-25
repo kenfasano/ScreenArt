@@ -1,5 +1,4 @@
 # Generators/text.py
-import random
 from PIL import Image, ImageDraw, ImageFont # type: ignore
 from typing import Tuple
 import os
@@ -88,7 +87,7 @@ class Text(DrawGenerator):
                 y_position += 15
 
             if y_position >= self.height - 50:
-                self.log.warning("Text exceeded canvas height: {text_height=}, {y_position=}")
+                self.log.warning(f"Text exceeded canvas height: {text_height=}, {y_position=}")
                 break
                 
         return img

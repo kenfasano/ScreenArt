@@ -99,7 +99,8 @@ class Cubes(DrawGenerator):
                 bbox = (int(min(xs)), int(min(ys)), int(max(xs)) + 1, int(max(ys)) + 1)
                 bbox = (max(0, bbox[0]), max(0, bbox[1]), min(self.width, bbox[2]), min(self.height, bbox[3]))
                 
-                if bbox[2] <= bbox[0] or bbox[3] <= bbox[1]: continue
+                if bbox[2] <= bbox[0] or bbox[3] <= bbox[1]:
+                    continue
                 
                 mask_crop = mask.crop(bbox)
                 local_points = [(p[0] - bbox[0], p[1] - bbox[1]) for p in points]

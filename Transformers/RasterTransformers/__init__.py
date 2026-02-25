@@ -1,4 +1,3 @@
-from .rasterTransformer import RasterTransformer
 from .anamorphicTransformer import AnamorphicTransformer
 from .colormapTransformer import ColormapTransformer
 from .dataMoshTransformer import DataMoshTransformer
@@ -21,4 +20,3 @@ from .tritoneTransformer import TritoneTransformer
 from .watercolorTransformer import WatercolorTransformer
 from .wheelTransformer import WheelTransformer
 from .xrayTransformer import XrayTransformer
-

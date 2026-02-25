@@ -6,7 +6,6 @@ import os
 import cv2 
 from PIL import Image, ImageDraw
 
-from ScreenArt.Transformers.LinearTransformers.kochSnowflakeTransformer import KochSnowflakeTransformer 
 from .drawGenerator import DrawGenerator
 from ..Transformers.LinearTransformers.kochSnowflakeTransformer import KochSnowflakeTransformer
 from ..Transformers.LinearTransformers.spiralTransformer import SpiralTransformer

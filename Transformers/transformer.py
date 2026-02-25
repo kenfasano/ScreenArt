@@ -1,5 +1,4 @@
 from ScreenArt.screenArt import ScreenArt
-import numpy as np # type: ignore
 from abc import abstractmethod
 
 class Transformer(ScreenArt):

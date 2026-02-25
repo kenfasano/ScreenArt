@@ -2,7 +2,6 @@ import numpy as np
 import cv2
 import random
 
-# FIX: Correctly import RasterTransformer from the local file
 from .rasterTransformer import RasterTransformer
 
 DEFAULT_COUNT = 1

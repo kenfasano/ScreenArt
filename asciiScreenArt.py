@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import os
 import time
-import datetime
 import sys
 import random
 import glob
@@ -26,14 +25,8 @@ else:
     BASE_DIR = "/home/kenfasano/Scripts/ScreenArt"
 
 IMG_DIR = os.path.join(BASE_DIR, "Images/TransformedImages")
-LOG_FILE = os.path.join(BASE_DIR, "asciiScreenArt.log")
 WIDTH = os.get_terminal_size().columns - 2
 INTERVAL = 10 
-
-def log_message(msg):
-    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-    with open(LOG_FILE, "a") as f:
-        f.write(f"[{timestamp}] {msg}\n")
 
 def scale_image(image, new_width):
     (original_width, original_height) = image.size
@@ -100,14 +93,12 @@ def run_screensaver(args):
             
             if not filtered_list:
                 if not image_list:
-                    log_message(f"No images found in {IMG_DIR}")
                     time.sleep(5)
                 target_path = random.choice(image_list)
             else:
                 target_path = random.choice(filtered_list)
 
             # 3. Log, Generate and Display
-            log_message(f"Displaying ({prefix}): {os.path.basename(target_path)}")
             new_frame = get_ascii_frame(target_path, selected_ramp)
 
             # 4. Simple Wipe Transition

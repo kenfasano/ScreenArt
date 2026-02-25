@@ -147,7 +147,8 @@ class Hilbert(DrawGenerator):
         self.points.append((0, 0))
         self._hilbert_a(self.order)
         
-        if not self.points: return
+        if not self.points:
+            return
         
         xs = [p[0] for p in self.points]
         ys = [p[1] for p in self.points]
@@ -159,14 +160,19 @@ class Hilbert(DrawGenerator):
         self.points = [((p[0] - min_x) / range_x, (p[1] - min_y) / range_y) for p in self.points]
 
     def _move(self, direction):
-        if direction == 0: self.x += 1 
-        elif direction == 1: self.y += 1 
-        elif direction == 2: self.x -= 1 
-        elif direction == 3: self.y -= 1 
+        if direction == 0: 
+            self.x += 1 
+        elif direction == 1: 
+            self.y += 1 
+        elif direction == 2: 
+            self.x -= 1 
+        elif direction == 3: 
+            self.y -= 1 
         self.points.append((self.x, self.y))
 
     def _hilbert_a(self, depth):
-        if depth <= 0: return
+        if depth <= 0: 
+            return
         self.direction = (self.direction - 1) % 4 
         self._hilbert_b(depth - 1)                
         self._move(self.direction)                
@@ -180,7 +186,8 @@ class Hilbert(DrawGenerator):
         self.direction = (self.direction - 1) % 4 
 
     def _hilbert_b(self, depth):
-        if depth <= 0: return
+        if depth <= 0: 
+            return
         self.direction = (self.direction + 1) % 4 
         self._hilbert_a(depth - 1)                
         self._move(self.direction)                
