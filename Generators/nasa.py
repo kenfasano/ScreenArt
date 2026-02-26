@@ -1,5 +1,6 @@
 from .htmlSource import HtmlSource
 from bs4 import BeautifulSoup 
+import time
 
 class Nasa(HtmlSource):
     def __init__(self):
@@ -9,6 +10,7 @@ class Nasa(HtmlSource):
 
     def run(self, *args, **kwargs):
         self.log.info("Running NASA APOD Generator...")
+        start_time = time.perf_counter()
         
         # Uses the fetch() contract implemented securely in HtmlSource
         number_of_images = self.fetch(
@@ -16,6 +18,10 @@ class Nasa(HtmlSource):
                 input_source="nasa", 
                 min_year=2002, 
                 file_count=self.file_count)
+
+        end_time = time.perf_counter()
+        elapsed_ms = (end_time - start_time) * 1000
+        self.log.info(f"Nasa: {elapsed_ms:.2f}ms")
 
         self.log.info(f"Nasa got {number_of_images} files")
         return number_of_images 

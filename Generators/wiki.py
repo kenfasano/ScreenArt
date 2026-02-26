@@ -129,6 +129,8 @@ class Wiki(DrawGenerator):
         return os.path.splitext(clean_name)[0][:15]
 
     def run(self, *args, **kwargs) -> None:
+        start_time = time.perf_counter()
+
         out_dir = os.path.join(self.config["paths"]["generators_in"], "wiki")
         os.makedirs(out_dir, exist_ok=True)
         
@@ -147,4 +149,6 @@ class Wiki(DrawGenerator):
                     except Exception as e:
                         self.log.error(f"Failed to save {filename}: {e}")
             
-            time.sleep(1)
+        end_time = time.perf_counter()
+        elapsed_ms = (end_time - start_time) * 1000
+        self.log.info(f"Wiki: {elapsed_ms:.2f}ms")

@@ -4,6 +4,7 @@ import random
 import colorsys
 from PIL import Image, ImageDraw
 from .drawGenerator import DrawGenerator
+import time
 
 class Bubbles(DrawGenerator):
     def __init__(self):
@@ -100,6 +101,8 @@ class Bubbles(DrawGenerator):
         self.log.info(f"Generated: {count} bubbles. Mode: {mode}. Highlights: {add_highlights}")
 
     def run(self, *args, **kwargs): # type: ignore
+        start_time = time.perf_counter()
+
         out_dir = os.path.join(self.config["paths"
                                            ]["generators_in"], "bubbles")
         os.makedirs(out_dir, exist_ok=True)
@@ -116,3 +119,7 @@ class Bubbles(DrawGenerator):
                 img.save(filename)
             except Exception as e:
                 self.log.error(f"Failed to save {filename}: {e}")
+
+        end_time = time.perf_counter()
+        elapsed_ms = (end_time - start_time) * 1000
+        self.log.info(f"Bubbles: {elapsed_ms:.2f}ms")

@@ -28,7 +28,7 @@ class ScreenArt(ABC):
 
         # 3. Setup Logging
         # Pull log directory from the config, or fallback to a default logs folder
-        self.log_path = self.config.get("paths", {}).get("log_dir", os.path.join(self.base_path, "logs"))
+        self.log_path = self.config.get("paths", {}).get("log_path", os.path.join(self.base_path, "logs"))
         self._setup_logging()
         self.log = logging.getLogger(self.project_name)
         
@@ -82,7 +82,8 @@ class ScreenArt(ABC):
         if not os.path.exists(self.log_path):
             os.makedirs(self.log_path)
             
-        log_file = os.path.join(self.log_path, f"{datetime.now().strftime('%Y-%m-%d')}.log")
+        # log_file = os.path.join(self.log_path, f"{datetime.now().strftime('%Y-%m-%d')}.log")
+        log_file = self.log_path
         
         logging.basicConfig(
             level=logging.INFO,
