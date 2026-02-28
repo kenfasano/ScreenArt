@@ -23,52 +23,63 @@ def _draw_bubbles_jit(
     colors_rgb,
     add_highlights,
 ):
-    height, width, _ = canvas.shape
-    count = xi.shape[0]
+    height = canvas.shape[0]
+    width  = canvas.shape[1]
+    count  = xi.shape[0]
 
     for i in range(count):
         cx = xi[i]
         cy = yi[i]
-        r = ri[i]
-
-        y_min = max(0, cy - r)
-        y_max = min(height, cy + r + 1)
-        x_min = max(0, cx - r)
-        x_max = min(width, cx + r + 1)
+        r  = ri[i]
 
         r2 = r * r
+
+        # Cache color locally (huge win vs indexing each pixel)
+        c0 = colors_rgb[i, 0]
+        c1 = colors_rgb[i, 1]
+        c2 = colors_rgb[i, 2]
+
+        y_min = 0 if cy - r < 0 else cy - r
+        y_max = height if cy + r + 1 > height else cy + r + 1
+        x_min = 0 if cx - r < 0 else cx - r
+        x_max = width  if cx + r + 1 > width  else cx + r + 1
+
         for y in range(y_min, y_max):
             dy = y - cy
             dy2 = dy * dy
+
+            row = canvas[y]  # avoid 2D indexing cost
+
             for x in range(x_min, x_max):
                 dx = x - cx
                 if dx * dx + dy2 <= r2:
-                    canvas[y, x, 0] = colors_rgb[i, 0]
-                    canvas[y, x, 1] = colors_rgb[i, 1]
-                    canvas[y, x, 2] = colors_rgb[i, 2]
+                    row[x, 0] = c0
+                    row[x, 1] = c1
+                    row[x, 2] = c2
 
         if add_highlights:
-            high_r = max(1, int(r * 0.25))
-            offset = int(r * 0.35)
-            hx = cx - offset
-            hy = cy - offset
-
-            hy_min = max(0, hy - high_r)
-            hy_max = min(height, hy + high_r + 1)
-            hx_min = max(0, hx - high_r)
-            hx_max = min(width, hx + high_r + 1)
-
+            high_r = max(1, r // 4)
             high_r2 = high_r * high_r
+
+            hx = cx - r // 3
+            hy = cy - r // 3
+
+            hy_min = 0 if hy - high_r < 0 else hy - high_r
+            hy_max = height if hy + high_r + 1 > height else hy + high_r + 1
+            hx_min = 0 if hx - high_r < 0 else hx - high_r
+            hx_max = width  if hx + high_r + 1 > width  else hx + high_r + 1
 
             for y in range(hy_min, hy_max):
                 dy = y - hy
                 dy2 = dy * dy
+                row = canvas[y]
+
                 for x in range(hx_min, hx_max):
                     dx = x - hx
                     if dx * dx + dy2 <= high_r2:
-                        canvas[y, x, 0] = 255
-                        canvas[y, x, 1] = 255
-                        canvas[y, x, 2] = 255
+                        row[x, 0] = 255
+                        row[x, 1] = 255
+                        row[x, 2] = 255
 
 class Bubbles(DrawGenerator):
     def __init__(self):
@@ -158,25 +169,55 @@ class Bubbles(DrawGenerator):
         return h, s, v
 
     def draw_bubbles(self, width, height, add_highlights=False):
-        count = random.randint(50, 2000)
-        cx, cy = width / 2, height / 2
+        cx = width / 2
+        cy = height / 2
 
-        x = np.random.uniform(0, width, count)
-        y = np.random.uniform(0, height, count)
+        # --- AREA BUDGET ---
+        target_pixels = width * height * random.uniform(0.4, 0.7)
 
-        dist_x = x - cx
-        dist_y = y - cy
-        distances = np.sqrt(dist_x**2 + dist_y**2)
+        xs = []
+        ys = []
+        rs = []
 
-        max_dist = max(1, np.sqrt(cx**2 + cy**2))
-        norm_dist = distances / max_dist
+        total_area = 0.0
 
-        base_r = self.max_radius - (self.max_radius - self.min_radius) * norm_dist
-        variance_r = np.random.uniform(0.75, 1.25, count)
-        final_r = base_r * variance_r
+        max_dist = max(1, np.sqrt(cx * cx + cy * cy))
+
+        while total_area < target_pixels:
+            x = random.uniform(0, width)
+            y = random.uniform(0, height)
+
+            dx = x - cx
+            dy = y - cy
+            norm_dist = np.sqrt(dx * dx + dy * dy) / max_dist
+
+            base_r = self.max_radius - (self.max_radius - self.min_radius) * norm_dist
+
+            # your aesthetically pleasing skew
+            variance = random.random() ** 2 * 0.5 + 0.75
+            r = int(max(1, base_r * variance))
+
+            xs.append(int(x))
+            ys.append(int(y))
+            rs.append(r)
+
+            total_area += np.pi * r * r
+
+        count = len(rs)
+
+        xi = np.array(xs, dtype=np.int32)
+        yi = np.array(ys, dtype=np.int32)
+        ri = np.array(rs, dtype=np.int32)
 
         mode = random.choice(self.all_modes)
         base_hue = random.random()
+
+        # For mode functions we need norm_dist per bubble
+        dx = xi - cx
+        dy = yi - cy
+        distances = np.sqrt(dx * dx + dy * dy)
+        max_dist = max(1, np.sqrt(cx * cx + cy * cy))
+        norm_dist = distances / max_dist
 
         jitters = np.random.uniform(-0.05, 0.05, count)
         s_rnds = np.random.uniform(-0.1, 0.1, count)
@@ -195,11 +236,6 @@ class Bubbles(DrawGenerator):
 
         colors_rgb = self._hsv_to_rgb_vectorized(h, s, v)
 
-        # Integer centers and radii
-        xi = x.astype(np.int32)
-        yi = y.astype(np.int32)
-        ri = np.maximum(1, final_r.astype(np.int32))
-
         # Canvas
         canvas = np.zeros((height, width, 3), dtype=np.uint8)
 
@@ -211,23 +247,21 @@ class Bubbles(DrawGenerator):
             colors_rgb,
             add_highlights,
         )
-        return Image.fromarray(canvas, 'RGB'), count, mode
+
+        return Image.fromarray(canvas, 'RGB')
 
     def run(self, *args, **kwargs) -> None:
         """
         Multiprocessing generation loop with execution timing.
         """
+
         with self.timer():
             out_dir = os.path.join(self.config["paths"]["generators_in"], "bubbles")
             os.makedirs(out_dir, exist_ok=True)
             for i in range(self.file_count):
-                img, count, mode = self.draw_bubbles(self.width, self.height)
+                img = self.draw_bubbles(self.width, self.height)
                 if img:
                     # Create a unique filename for each image
                     filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}.jpeg")
-                    try:
-                        # Save the image with the specified filename
-                        img.save(filename, quality=95)
-                    except Exception as e:
-                        self.log.error(f"Failed to save {filename}")
-
+                    # Save the image with the specified filename
+                    img.save(filename, quality=95)
