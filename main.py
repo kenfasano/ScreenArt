@@ -44,31 +44,31 @@ class ScreenArtMain(ScreenArt):
         # 1. GENERATOR CONFIGURATIONS (Where do they output, and should we erase?)
         self.generators: dict[str, GeneratorConfig] = {
             "bubbles": GeneratorConfig(source=f"{gen_in}/bubbles", should_erase=True),
-#            "cubes": GeneratorConfig(source=f"{gen_in}/cubes", should_erase=True),
-#            "nasa": GeneratorConfig(source=f"{gen_in}/nasa", should_erase=True),
-#            "maps": GeneratorConfig(source=f"{gen_in}/maps", should_erase=True),
-#            "goes": GeneratorConfig(source=f"{gen_in}/goes", should_erase=True),
-#            "wiki": GeneratorConfig(source=f"{gen_in}/wiki", should_erase=False),
-#            "lojong": GeneratorConfig(source=f"{gen_in}/lojong", should_erase=False),
-#            "bible": GeneratorConfig(source=f"{gen_in}/bible", should_erase=True),
-#            "peripheraldriftillusion": GeneratorConfig(source=f"{gen_in}/opticalillusions", should_erase=True),
-#             "kochSnowflake": GeneratorConfig(source=f"{gen_in}/kochsnowflake", should_erase=True),
-#             "hilbert": GeneratorConfig(source=f"{gen_in}/hilbert", should_erase=True),
+            "cubes": GeneratorConfig(source=f"{gen_in}/cubes", should_erase=True),
+            "nasa": GeneratorConfig(source=f"{gen_in}/nasa", should_erase=True),
+            "maps": GeneratorConfig(source=f"{gen_in}/maps", should_erase=True),
+            "goes": GeneratorConfig(source=f"{gen_in}/goes", should_erase=True),
+            "wiki": GeneratorConfig(source=f"{gen_in}/wiki", should_erase=False),
+            "lojong": GeneratorConfig(source=f"{gen_in}/lojong", should_erase=False),
+            "bible": GeneratorConfig(source=f"{gen_in}/bible", should_erase=True),
+            "peripheraldriftillusion": GeneratorConfig(source=f"{gen_in}/opticalillusions", should_erase=True),
+             "kochSnowflake": GeneratorConfig(source=f"{gen_in}/kochsnowflake", should_erase=True),
+             "hilbert": GeneratorConfig(source=f"{gen_in}/hilbert", should_erase=True),
         }
 
         # 2. GENERATOR REGISTRY (Map the string key directly to the Class)
         self.generator_classes = {
-#            "wiki": wiki.Wiki,
-#            "nasa": nasa.Nasa,
-#            "maps": maps.NasaMapGenerator,
-#            "goes": goes.GoesGenerator,
+            "wiki": wiki.Wiki,
+            "nasa": nasa.Nasa,
+            "maps": maps.NasaMapGenerator,
+            "goes": goes.GoesGenerator,
             "bubbles": bubbles.Bubbles,
-#            "cubes": cubes.Cubes,
-#            "lojong": lojong.Lojong,
-#            "bible": bible.Bible,
-#            "peripheraldriftillusion": peripheral_drift_illusion.PeripheralDriftIllusion,
-#            "kochSnowflake": kochSnowflake.KochSnowflake,
-#            "hilbert": hilbert.Hilbert,
+            "cubes": cubes.Cubes,
+            "lojong": lojong.Lojong,
+            "bible": bible.Bible,
+            "peripheraldriftillusion": peripheral_drift_illusion.PeripheralDriftIllusion,
+            "kochSnowflake": kochSnowflake.KochSnowflake,
+            "hilbert": hilbert.Hilbert,
         }
 
         # Pull requested transformers from screenArt.conf, default to colormap
