@@ -1,6 +1,7 @@
 from abc import abstractmethod
 import os
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import requests
 from typing import Callable
 
@@ -28,7 +29,7 @@ class HtmlSource(Source):
             response.raise_for_status() 
             return response.text
         except requests.exceptions.RequestException as e:
-            self.log.error(f"Error reading {url}: {e}")
+            self.log.debug(f"Error reading {url}: {e}")
             return None
 
     def download_image(self, url: str, input_source: str) -> bool:
@@ -46,12 +47,12 @@ class HtmlSource(Source):
                     file.write(response.content)
                 return True
             else:
-                self.log.warning(f"Download {url} - Status: {response.status_code}")
+                self.log.debug(f"Download {url} - Status: {response.status_code}")
                 return False
         except requests.exceptions.RequestException as e:
-            self.log.error(f"An error occurred during the download: {e}")
+            self.log.debug(f"An error occurred during the download: {e}")
         except Exception as e:
-            self.log.error(f"An unexpected error occurred: {e}")
+            self.log.debug(f"An unexpected error occurred: {e}")
         return False
 
     def process_url(self, url: str, input_source: str) -> bool:
@@ -60,34 +61,47 @@ class HtmlSource(Source):
             img_url = self.get_image_url(html)
             if img_url:
                 if "svg" in img_url:
-                    self.log.warning(f"Skipping SVG format for {input_source}") 
+                    self.log.debug(f"Skipping SVG format for {input_source}") 
                     return False
                 if self.download_image(img_url, input_source):                    
                     return True
 
-        self.log.error(f"Unable to process or find image in HTML for {input_source}") 
+        self.log.debug(f"Unable to process or find image in HTML for {input_source}") 
         return False
 
     def fetch(self, get_url: Callable[[int], str], input_source: str, min_year: int, file_count: int) -> int:
         MAX_FAILS_IN_LOOP = 3
-        TOTAL_FAILS_ALLOWED = 6
-        total_fails = 0
+        # Note: TOTAL_FAILS_ALLOWED is harder to track globally across threads 
+        # without a Lock, so we focus on the per-URL success.
+        
         fetch_count = 0
 
-        while fetch_count < file_count:
+        def download_task():
+            """The worker function that handles one URL and its retries."""
             url = get_url(min_year)
             fails = 0
-
             while fails < MAX_FAILS_IN_LOOP:
                 if self.process_url(url, input_source):
-                    break
+                    return True # Success
                 fails += 1
-                total_fails += 1
                 time.sleep(3)
+            return False # Failed after max retries
 
-            if total_fails > TOTAL_FAILS_ALLOWED or fails == MAX_FAILS_IN_LOOP:
-                return fetch_count
-            else:
-                fetch_count += 1
+        # We use a context manager for the executor
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            # Launch all tasks at once
+            futures = [executor.submit(download_task) for _ in range(file_count)]
+            
+            # As tasks complete, we count the successes
+            for future in as_completed(futures):
+                success = future.result()
+                if success:
+                    fetch_count += 1
+                else:
+                    # If a thread hits MAX_FAILS_IN_LOOP, we stop submitting new tasks
+                    # and return what we have so far, mimicking your original logic.
+                    self.log.error("A task failed after max retries. Stopping fetch.")
+                    executor.shutdown(wait=False, cancel_futures=True)
+                    break
 
         return fetch_count

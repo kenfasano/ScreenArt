@@ -20,7 +20,7 @@ class Hilbert(DrawGenerator):
         self.width = int(self.config.get('width', 1920))
         self.height = int(self.config.get('height', 1080))
         self.file_count = int(self.config.get('file_count', 5))
-        self.log.info(f"{self.file_count=}")
+        self.log.debug(f"{self.file_count=}")
         self.base_filename = "hilbert"
 
         self.order = int(self.config.get("order", random.randint(4, 7)))
@@ -55,90 +55,91 @@ class Hilbert(DrawGenerator):
         return (int(r*255), int(g*255), int(b*255))
 
     def run(self, *args, **kwargs):
-        width = self.width
-        height = self.height
-        output_dir = os.path.join(self.config["paths"]["generators_in"], "hilbert")
+        with self.timer():
+            width = self.width
+            height = self.height
+            output_dir = os.path.join(self.config["paths"]["generators_in"], "hilbert")
 
-        def random_bool(): return random.choice([True, False])
+            def random_bool(): return random.choice([True, False])
 
-        if os.path.exists(output_dir):
-            shutil.rmtree(output_dir)
-        os.makedirs(output_dir, exist_ok=True)
+            if os.path.exists(output_dir):
+                shutil.rmtree(output_dir)
+            os.makedirs(output_dir, exist_ok=True)
 
-        for i in range(self.file_count):
-            self.order = random.randint(4, 6)
-            bg_color, mode = self._generate_high_contrast_bg()
-            use_gradient = random_bool() 
-            
-            solid_color = (255, 255, 255)
-            if not use_gradient:
-                bg_hue = colorsys.rgb_to_hsv(bg_color[0]/255, bg_color[1]/255, bg_color[2]/255)[0]
-                fg_hue = (bg_hue + 0.5) % 1.0
-                fg_val = 1.0 if mode == "dark" else 0.2
-                fr, fg, fb = colorsys.hsv_to_rgb(fg_hue, 0.9, fg_val)
-                solid_color = (int(fr*255), int(fg*255), int(fb*255))
-
-            use_koch = random_bool()
-            use_spiral = random_bool()
-            use_smoother = random_bool()
-            use_rippler = random_bool()
-            use_jitter = random_bool()
-            
-            self.log.debug(f"Generating Hilbert {i+1} (Ord:{self.order}, Grad:{use_gradient}, Spiral:{use_spiral}, Koch:{use_koch})")
-            
-            self._generate_points()
-            pts_array = np.array(self.points) * 1000.0
-            
-            # --- Apply Transformers via the NEW Contract API ---
-            if use_koch:
-                pts_array = KochSnowflakeTransformer().run(pts_array)
-            if use_spiral:
-                t = SpiralTransformer(tightness=random.uniform(0.5, 1.5))
-                pts_array = t.run(pts_array)
-            if use_smoother:
-                t = SmoothingTransformer(iterations=random.randint(2,4), tension=random.uniform(0.15,0.35))
-                pts_array = t.run(pts_array)
-            if use_rippler:
-                pts_array = SineWaveTransformer().run(pts_array)
-            if use_jitter:
-                pts_array = JitterTransformer().run(pts_array)
-
-            img = Image.new('RGB', (width, height), bg_color)
-            draw_ctx = ImageDraw.Draw(img)
-
-            if len(pts_array) > 1:
-                min_x, min_y = np.min(pts_array, axis=0)
-                max_x, max_y = np.max(pts_array, axis=0)
-                range_x = max(1e-5, max_x - min_x)
-                range_y = max(1e-5, max_y - min_y)
-                scale_factor = min(width / range_x, height / range_y) * 0.9
+            for i in range(self.file_count):
+                self.order = random.randint(4, 6)
+                bg_color, mode = self._generate_high_contrast_bg()
+                use_gradient = random_bool() 
                 
-                dest_cx, dest_cy = width / 2, height / 2
-                src_cx, src_cy = (min_x + max_x) / 2, (min_y + max_y) / 2
+                solid_color = (255, 255, 255)
+                if not use_gradient:
+                    bg_hue = colorsys.rgb_to_hsv(bg_color[0]/255, bg_color[1]/255, bg_color[2]/255)[0]
+                    fg_hue = (bg_hue + 0.5) % 1.0
+                    fg_val = 1.0 if mode == "dark" else 0.2
+                    fr, fg, fb = colorsys.hsv_to_rgb(fg_hue, 0.9, fg_val)
+                    solid_color = (int(fr*255), int(fg*255), int(fb*255))
+
+                use_koch = random_bool()
+                use_spiral = random_bool()
+                use_smoother = random_bool()
+                use_rippler = random_bool()
+                use_jitter = random_bool()
                 
-                screen_points = []
-                for px, py in pts_array:
-                    sx = (px - src_cx) * scale_factor + dest_cx
-                    sy = (py - src_cy) * scale_factor + dest_cy
-                    screen_points.append((sx, sy))
+                self.log.debug(f"Generating Hilbert {i+1} (Ord:{self.order}, Grad:{use_gradient}, Spiral:{use_spiral}, Koch:{use_koch})")
+                
+                self._generate_points()
+                pts_array = np.array(self.points) * 1000.0
+                
+                # --- Apply Transformers via the NEW Contract API ---
+                if use_koch:
+                    pts_array = KochSnowflakeTransformer().run(pts_array)
+                if use_spiral:
+                    t = SpiralTransformer(tightness=random.uniform(0.5, 1.5))
+                    pts_array = t.run(pts_array)
+                if use_smoother:
+                    t = SmoothingTransformer(iterations=random.randint(2,4), tension=random.uniform(0.15,0.35))
+                    pts_array = t.run(pts_array)
+                if use_rippler:
+                    pts_array = SineWaveTransformer().run(pts_array)
+                if use_jitter:
+                    pts_array = JitterTransformer().run(pts_array)
 
-                if use_gradient:
-                    for j in range(len(screen_points) - 1):
-                        p1 = screen_points[j]
-                        p2 = screen_points[j+1]
-                        mid_x = (p1[0] + p2[0]) / 2
-                        mid_y = (p1[1] + p2[1]) / 2
-                        seg_color = self._get_gradient_color(mid_x, mid_y, width, height, mode)
-                        draw_ctx.line([p1, p2], fill=seg_color, width=self.stroke_width)
-                else:
-                    draw_ctx.line(screen_points, fill=solid_color, width=self.stroke_width)
+                img = Image.new('RGB', (width, height), bg_color)
+                draw_ctx = ImageDraw.Draw(img)
 
-            filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
-            filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
-            try:
-                img.save(filename)
-            except Exception as e:
-                self.log.error(f"Failed to save {filename}: {e}")
+                if len(pts_array) > 1:
+                    min_x, min_y = np.min(pts_array, axis=0)
+                    max_x, max_y = np.max(pts_array, axis=0)
+                    range_x = max(1e-5, max_x - min_x)
+                    range_y = max(1e-5, max_y - min_y)
+                    scale_factor = min(width / range_x, height / range_y) * 0.9
+                    
+                    dest_cx, dest_cy = width / 2, height / 2
+                    src_cx, src_cy = (min_x + max_x) / 2, (min_y + max_y) / 2
+                    
+                    screen_points = []
+                    for px, py in pts_array:
+                        sx = (px - src_cx) * scale_factor + dest_cx
+                        sy = (py - src_cy) * scale_factor + dest_cy
+                        screen_points.append((sx, sy))
+
+                    if use_gradient:
+                        for j in range(len(screen_points) - 1):
+                            p1 = screen_points[j]
+                            p2 = screen_points[j+1]
+                            mid_x = (p1[0] + p2[0]) / 2
+                            mid_y = (p1[1] + p2[1]) / 2
+                            seg_color = self._get_gradient_color(mid_x, mid_y, width, height, mode)
+                            draw_ctx.line([p1, p2], fill=seg_color, width=self.stroke_width)
+                    else:
+                        draw_ctx.line(screen_points, fill=solid_color, width=self.stroke_width)
+
+                filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
+                filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
+                try:
+                    img.save(filename)
+                except Exception as e:
+                    self.log.debug(f"Failed to save {filename}: {e}")
 
     def _generate_points(self):
         self.points = []

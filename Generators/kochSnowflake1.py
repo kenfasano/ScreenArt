@@ -1,8 +1,8 @@
 import numpy as np 
 import random
-import time
 import shutil
 import os
+import time
 import cv2 
 from PIL import Image, ImageDraw 
 from .drawGenerator import DrawGenerator
@@ -79,52 +79,53 @@ class KochSnowflake1(DrawGenerator):
         return Image.fromarray(result_arr)
 
     def run(self, *args, **kwargs):
-        output_dir = os.path.join(self.config["paths"]["generators_in"], "kochsnowflake")
-        if os.path.exists(output_dir):
-            shutil.rmtree(output_dir)
-        os.makedirs(output_dir, exist_ok=True)
+        with self.timer():
+            output_dir = os.path.join(self.config["paths"]["generators_in"], "kochsnowflake")
+            if os.path.exists(output_dir):
+                shutil.rmtree(output_dir)
+            os.makedirs(output_dir, exist_ok=True)
 
-        for i in range(self.file_count):
-            random.seed(time.perf_counter() + i)
+            for i in range(self.file_count):
+                random.seed(time.perf_counter() + i)
 
-            # 1. Randomize Settings specifically for KS1
-            num_transforms = random.randint(4, 6) 
-            spiral_tightness = random.uniform(0.3, 1.2)
-            
-            num_colors = random.choice([2, 3])
-            current_hues = [random.randint(0, 180) for _ in range(num_colors)]
-            bg_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-            
-            self.spiral_transformer.tightness = spiral_tightness
-            current_scale = random.uniform(0.5, 0.8)
-            
-            # 2. Start with Triangle
-            points = self._generate_initial_triangle(current_scale)
-
-            # 3. Apply Koch Recursion
-            for _ in range(num_transforms):
-                points = self.koch_transformer.run(points) 
+                # 1. Randomize Settings specifically for KS1
+                num_transforms = random.randint(4, 6) 
+                spiral_tightness = random.uniform(0.3, 1.2)
                 
-            # 4. Apply Spiral Twist
-            points = self.spiral_transformer.run(points) 
+                num_colors = random.choice([2, 3])
+                current_hues = [random.randint(0, 180) for _ in range(num_colors)]
+                bg_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+                
+                self.spiral_transformer.tightness = spiral_tightness
+                current_scale = random.uniform(0.5, 0.8)
+                
+                # 2. Start with Triangle
+                points = self._generate_initial_triangle(current_scale)
 
-            # 5. Rasterize
-            img = Image.new('RGB', (self.width, self.height), (0, 0, 0))
-            draw = ImageDraw.Draw(img)
-            
-            poly_coords = [tuple(p) for p in points]
-            draw.polygon(poly_coords, fill=(255, 255, 255), outline=(128, 128, 128))
+                # 3. Apply Koch Recursion
+                for _ in range(num_transforms):
+                    points = self.koch_transformer.run(points) 
+                    
+                # 4. Apply Spiral Twist
+                points = self.spiral_transformer.run(points) 
 
-            # 6. Apply Mask
-            img = self._apply_psychedelic_mask(img, current_hues, bg_color)
+                # 5. Rasterize
+                img = Image.new('RGB', (self.width, self.height), (0, 0, 0))
+                draw = ImageDraw.Draw(img)
+                
+                poly_coords = [tuple(p) for p in points]
+                draw.polygon(poly_coords, fill=(255, 255, 255), outline=(128, 128, 128))
 
-            # 7. Save
-            filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
-            filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
-            
-            try:
-                img.save(filename)
-                hue_str = ">".join(map(str, current_hues))
-                self.log.info(f"Generated KS1: {filename} (Iter: {num_transforms}, Spiral: {spiral_tightness:.2f}, Hues: {hue_str})")
-            except Exception as e:
-                self.log.error(f"Failed to save {filename}: {e}")
+                # 6. Apply Mask
+                img = self._apply_psychedelic_mask(img, current_hues, bg_color)
+
+                # 7. Save
+                filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
+                filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
+                
+                try:
+                    img.save(filename)
+                    hue_str = ">".join(map(str, current_hues))
+                    self.log.debug(f"Generated KS1: {filename} (Iter: {num_transforms}, Spiral: {spiral_tightness:.2f}, Hues: {hue_str})")
+                except Exception as e:
+                    self.log.debug(f"Failed to save {filename}: {e}")

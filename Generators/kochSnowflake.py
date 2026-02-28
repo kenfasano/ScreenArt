@@ -16,7 +16,7 @@ class KochSnowflake(DrawGenerator):
         super().__init__()
 
     def run(self, *args, **kwargs):
-        self.log.info("Running Master KochSnowflake Generator...")
+        self.log.debug("Running Master KochSnowflake Generator...")
         
         generators = [KochSnowflake1, KochSnowflake2, KochSnowflake3, KochSnowflake4]
         weights = [3, 4, 5, 6]

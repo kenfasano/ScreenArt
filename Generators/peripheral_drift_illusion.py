@@ -95,50 +95,51 @@ class PeripheralDriftIllusion(DrawGenerator):
         return img
 
     def run(self, *args, **kwargs):
-        out_dir = os.path.join(self.config["paths"]["generators_in"], "opticalillusions")
-        os.makedirs(out_dir, exist_ok=True)
+        with self.timer():
+            out_dir = os.path.join(self.config["paths"]["generators_in"], "opticalillusions")
+            os.makedirs(out_dir, exist_ok=True)
 
-        for i in range(self.file_count):
-            turns: int = 6 + random.randint(1,6)
-            hue_offset: float = (i * 0.125 * random.randint(1,7)) % 1.0 
-            
-            choice = random.randint(1,4)
-            img: Image.Image | None = None 
+            for i in range(self.file_count):
+                turns: int = 6 + random.randint(1,6)
+                hue_offset: float = (i * 0.125 * random.randint(1,7)) % 1.0 
+                
+                choice = random.randint(1,4)
+                img: Image.Image | None = None 
 
-            match choice:
-                case 1:
-                    img = self.create_spinning_optical_illusion(
-                        width=800, height=800, num_circles_x=2, num_circles_y=2,
-                        base_radius=180, num_segments_per_turn=45, num_turns=turns,
-                        hue_start_offset=hue_offset, hue_cycles=3.0, 
-                        bg_color_top=(50 + (i*20), 20, 60), bg_color_bottom=(10, 5, 15)
-                    )
-                case 2:
-                    img = self.create_spinning_optical_illusion(
-                        width=800, height=800, num_circles_x=2, num_circles_y=2,
-                        base_radius=120, num_segments_per_turn=40, num_turns=3,              
-                        spiral_tightness=1.0, hue_start_offset=0.0, hue_cycles=2.0,           
-                        bg_color_top=(80, 60, 20), bg_color_bottom=(20, 10, 0)
-                    )
-                case 3:
-                    img = self.create_spinning_optical_illusion(
-                        width=800, height=800, num_circles_x=3, num_circles_y=3,
-                        base_radius=80, num_segments_per_turn=50, num_turns=4,              
-                        spiral_tightness=0.8, hue_start_offset=0.125, hue_cycles=2.0,           
-                        bg_color_top=(20, 30, 70), bg_color_bottom=(5, 10, 20)
-                    )
-                case 4:
-                    img = self.create_spinning_optical_illusion(
-                        width=800, height=800, num_circles_x=1, num_circles_y=1,
-                        base_radius=250, num_segments_per_turn=60, num_turns=2,              
-                        spiral_tightness=1.0, hue_start_offset=0.25, hue_cycles=2.0,           
-                        bg_color_top=(70, 20, 20), bg_color_bottom=(20, 5, 5)
-                    )
+                match choice:
+                    case 1:
+                        img = self.create_spinning_optical_illusion(
+                            width=800, height=800, num_circles_x=2, num_circles_y=2,
+                            base_radius=180, num_segments_per_turn=45, num_turns=turns,
+                            hue_start_offset=hue_offset, hue_cycles=3.0, 
+                            bg_color_top=(50 + (i*20), 20, 60), bg_color_bottom=(10, 5, 15)
+                        )
+                    case 2:
+                        img = self.create_spinning_optical_illusion(
+                            width=800, height=800, num_circles_x=2, num_circles_y=2,
+                            base_radius=120, num_segments_per_turn=40, num_turns=3,              
+                            spiral_tightness=1.0, hue_start_offset=0.0, hue_cycles=2.0,           
+                            bg_color_top=(80, 60, 20), bg_color_bottom=(20, 10, 0)
+                        )
+                    case 3:
+                        img = self.create_spinning_optical_illusion(
+                            width=800, height=800, num_circles_x=3, num_circles_y=3,
+                            base_radius=80, num_segments_per_turn=50, num_turns=4,              
+                            spiral_tightness=0.8, hue_start_offset=0.125, hue_cycles=2.0,           
+                            bg_color_top=(20, 30, 70), bg_color_bottom=(5, 10, 20)
+                        )
+                    case 4:
+                        img = self.create_spinning_optical_illusion(
+                            width=800, height=800, num_circles_x=1, num_circles_y=1,
+                            base_radius=250, num_segments_per_turn=60, num_turns=2,              
+                            spiral_tightness=1.0, hue_start_offset=0.25, hue_cycles=2.0,           
+                            bg_color_top=(70, 20, 20), bg_color_bottom=(20, 5, 5)
+                        )
 
-            if img:
-                filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}.jpeg")
-                try:
-                    img.save(filename)
-                    self.log.info(f"Saved Optical Illusion: {filename}")
-                except Exception as e:
-                    self.log.error(f"Failed to save {filename}: {e}")
+                if img:
+                    filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}.jpeg")
+                    try:
+                        img.save(filename)
+                        self.log.debug(f"Saved Optical Illusion: {filename}")
+                    except Exception as e:
+                        self.log.debug(f"Failed to save {filename}: {e}")

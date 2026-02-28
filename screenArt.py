@@ -6,6 +6,8 @@ from pathlib import Path
 from datetime import datetime
 from abc import ABC, abstractmethod
 from typing import Any, Optional
+import time
+from contextlib import contextmanager
 
 class ScreenArt(ABC):
     # Class-level singleton storage for the configuration
@@ -27,11 +29,26 @@ class ScreenArt(ABC):
         self._expand_and_ensure_paths()
 
         # 3. Setup Logging
+        self._setup_logging()
+
+    def _setup_logging(self):
+        """Configures standard logging to both file and console."""
         # Pull log directory from the config, or fallback to a default logs folder
         self.log_path = self.config.get("paths", {}).get("log_path", os.path.join(self.base_path, "logs"))
-        self._setup_logging()
+        self.log_file = os.path.join(self.log_path, "screenArt.log")
+
+        # Ensure the directory exists before creating the handler
+        os.makedirs(self.log_path, exist_ok=True)
+
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s',
+            handlers=[
+                logging.FileHandler(self.log_file),
+                logging.StreamHandler(sys.stdout)
+            ]
+        )
         self.log = logging.getLogger(self.project_name)
-        
         self.log.debug(f"ScreenArt superclass initialized on {self.os_type}. Paths expanded.")
 
     def _setup_config(self) -> dict[str, Any]:
@@ -77,23 +94,6 @@ class ScreenArt(ABC):
         # Update the config dictionary with the fully resolved absolute paths
         self.config["paths"] = raw_paths
 
-    def _setup_logging(self):
-        """Configures standard logging to both file and console."""
-        if not os.path.exists(self.log_path):
-            os.makedirs(self.log_path)
-            
-        # log_file = os.path.join(self.log_path, f"{datetime.now().strftime('%Y-%m-%d')}.log")
-        log_file = self.log_path
-        
-        logging.basicConfig(
-            level=logging.INFO,
-            format='%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s',
-            handlers=[
-                logging.FileHandler(log_file),
-                logging.StreamHandler(sys.stdout)
-            ]
-        )
-
     def get_output_filename(self, extension="png"):
         """Generates a timestamped filename for generic art output."""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -107,6 +107,26 @@ class ScreenArt(ABC):
         elif self.os_type == "darwin":
             return {"wallpaper_cmd": "osascript", "shell": "zsh"}
         return {"wallpaper_cmd": None, "shell": "sh"}
+
+    @contextmanager
+    def timer(self, custom_name=None, unit="ms"):
+        """Context manager to time a block of code and log the duration."""
+        start_time = time.perf_counter()
+        
+        try:
+            yield 
+        finally:
+            end_time = time.perf_counter()
+            elapsed_seconds = end_time - start_time
+            
+            log_name = custom_name or self.__class__.__name__
+            
+            # Format based on the requested unit
+            if unit == "s":
+                self.log.info(f"{log_name}: {elapsed_seconds:.2f}s")
+            else:
+                elapsed_ms = elapsed_seconds * 1000
+                self.log.info(f"{log_name}: {elapsed_ms:.2f}ms")
 
     @abstractmethod
     def run(self, *args, **kwargs) -> Any:

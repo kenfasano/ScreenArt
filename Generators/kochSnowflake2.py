@@ -1,8 +1,8 @@
 import numpy as np 
 import random
-import time
 import shutil
 import os
+import time
 import cv2 
 from PIL import Image, ImageDraw 
 from .drawGenerator import DrawGenerator
@@ -74,46 +74,47 @@ class KochSnowflake2(DrawGenerator):
         return Image.fromarray(result_arr)
 
     def run(self, *args, **kwargs): 
-        output_dir = os.path.join(self.config["paths"]["generators_in"], "kochsnowflake")
-        if os.path.exists(output_dir):
-            shutil.rmtree(output_dir)
-        os.makedirs(output_dir, exist_ok=True)
+        with self.timer():
+            output_dir = os.path.join(self.config["paths"]["generators_in"], "kochsnowflake")
+            if os.path.exists(output_dir):
+                shutil.rmtree(output_dir)
+            os.makedirs(output_dir, exist_ok=True)
 
-        for i in range(self.file_count):
-            random.seed(time.perf_counter() + i)
+            for i in range(self.file_count):
+                random.seed(time.perf_counter() + i)
 
-            num_transforms = random.randint(4, 7) 
-            spiral_tightness = random.uniform(0.3, 1.2)
-            
-            num_colors = random.choice([2, 3])
-            current_hues = [random.randint(0, 180) for _ in range(num_colors)]
-            bg_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-            
-            self.spiral_transformer.tightness = spiral_tightness
-            current_scale = random.uniform(0.5, 0.8)
-            
-            points = self._generate_initial_triangle(current_scale)
+                num_transforms = random.randint(4, 7) 
+                spiral_tightness = random.uniform(0.3, 1.2)
+                
+                num_colors = random.choice([2, 3])
+                current_hues = [random.randint(0, 180) for _ in range(num_colors)]
+                bg_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+                
+                self.spiral_transformer.tightness = spiral_tightness
+                current_scale = random.uniform(0.5, 0.8)
+                
+                points = self._generate_initial_triangle(current_scale)
 
-            # --- USING NEW .run() CONTRACT ---
-            for _ in range(num_transforms):
-                points = self.sierpinski_transformer.run(points) 
-            points = self.spiral_transformer.run(points) 
+                # --- USING NEW .run() CONTRACT ---
+                for _ in range(num_transforms):
+                    points = self.sierpinski_transformer.run(points) 
+                points = self.spiral_transformer.run(points) 
 
-            img = Image.new('RGB', (self.width, self.height), (0, 0, 0))
-            draw = ImageDraw.Draw(img)
-            
-            poly_coords = [tuple(p) for p in points]
-            draw.polygon(poly_coords, fill=(255, 255, 255), outline=None)
+                img = Image.new('RGB', (self.width, self.height), (0, 0, 0))
+                draw = ImageDraw.Draw(img)
+                
+                poly_coords = [tuple(p) for p in points]
+                draw.polygon(poly_coords, fill=(255, 255, 255), outline=None)
 
-            img = self._apply_psychedelic_mask(img, current_hues, bg_color)
+                img = self._apply_psychedelic_mask(img, current_hues, bg_color)
 
-            # --- USING NATIVE PIL img.save() ---
-            filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
-            filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
-            
-            try:
-                img.save(filename)
-                hue_str = ">".join(map(str, current_hues))
-                self.log.info(f"Generated KS2: {filename} (Iter: {num_transforms}, Spiral: {spiral_tightness:.2f}, Hues: {hue_str})")
-            except Exception as e:
-                self.log.error(f"Failed to save {filename}: {e}")
+                # --- USING NATIVE PIL img.save() ---
+                filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
+                filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
+                
+                try:
+                    img.save(filename)
+                    hue_str = ">".join(map(str, current_hues))
+                    self.log.debug(f"Generated KS2: {filename} (Iter: {num_transforms}, Spiral: {spiral_tightness:.2f}, Hues: {hue_str})")
+                except Exception as e:
+                    self.log.debug(f"Failed to save {filename}: {e}")

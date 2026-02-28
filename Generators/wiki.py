@@ -1,7 +1,7 @@
 import random
 import requests
 import os
-import time
+from concurrent.futures import ThreadPoolExecutor
 import re
 from io import BytesIO
 from typing import Any
@@ -17,7 +17,7 @@ class Wiki(DrawGenerator):
         self.width = int(self.config.get("width", 1920))
         self.height = int(self.config.get("height", 1080))
         self.file_count = int(self.config.get("wiki", {}).get("file_count", 1))
-        self.log.info(f"{self.file_count=}")
+        self.log.debug(f"{self.file_count=}")
         self.base_filename = "wiki"
         
         keyword_file = self.config.get("keyword_file")
@@ -79,10 +79,10 @@ class Wiki(DrawGenerator):
                             clean_list.append(info)
                 return clean_list
             else:
-                self.log.warning(f"API Error: {response.status_code}")
+                self.log.debug(f"API Error: {response.status_code}")
                 return []
         except Exception as e:
-            self.log.error(f"Fetch error: {e}")
+            self.log.debug(f"Fetch error: {e}")
             return []
 
     def get_image_url(self, keyword: str) -> str | None:
@@ -99,11 +99,11 @@ class Wiki(DrawGenerator):
                 img = Image.open(BytesIO(resp.content)).convert("RGB")
                 return self._aspect_fill(img), resp.status_code
             elif resp.status_code == 429:
-                self.log.warning("Hit 429 on Image Download. (Search API was spared).")
+                self.log.debug("Hit 429 on Image Download. (Search API was spared).")
                 return None, 429
             return None, resp.status_code
         except Exception as e:
-            self.log.warning(f"{e}")
+            self.log.debug(f"{e}")
             return None, -1
 
     def _aspect_fill(self, img: Image.Image) -> Image.Image:
@@ -129,26 +129,27 @@ class Wiki(DrawGenerator):
         return os.path.splitext(clean_name)[0][:15]
 
     def run(self, *args, **kwargs) -> None:
-        start_time = time.perf_counter()
+        with self.timer():
+            out_dir = os.path.join(self.config["paths"]["generators_in"], "wiki")
+            os.makedirs(out_dir, exist_ok=True)
 
-        out_dir = os.path.join(self.config["paths"]["generators_in"], "wiki")
-        os.makedirs(out_dir, exist_ok=True)
-        
-        for _ in range(self.file_count):
-            keyword = self._get_random_keyword()
-            url = self.get_image_url(keyword)
-            
-            if url:
-                img, _ = self.download_and_process(url)
-                if img:
-                    name = self.get_short_name(url)
-                    filename = os.path.join(out_dir, f"{name}.jpeg").replace("1920px-", "")
-                    try:
-                        img.save(filename)
-                        self.log.info(f"Saved Wiki Image: {filename}")
-                    except Exception as e:
-                        self.log.error(f"Failed to save {filename}: {e}")
-            
-        end_time = time.perf_counter()
-        elapsed_ms = (end_time - start_time) * 1000
-        self.log.info(f"Wiki: {elapsed_ms:.2f}ms")
+            def process_single_image(_):
+                """Worker function for a single iteration of the loop"""
+                keyword = self._get_random_keyword()
+                url = self.get_image_url(keyword)
+                
+                if url:
+                    img, _ = self.download_and_process(url)
+                    if img:
+                        name = self.get_short_name(url)
+                        filename = os.path.join(out_dir, f"{name}.jpeg").replace("1920px-", "")
+                        try:
+                            img.save(filename)
+                            self.log.debug(f"Saved Wiki Image: {filename}")
+                        except Exception as e:
+                            self.log.debug(f"Failed to save {filename}: {e}")
+
+            # Use ThreadPoolExecutor to run iterations in parallel
+            # max_workers=5 to 10 is usually a safe starting point for network tasks
+            with ThreadPoolExecutor(max_workers=10) as executor:
+                executor.map(process_single_image, range(self.file_count))

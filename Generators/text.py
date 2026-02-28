@@ -63,7 +63,7 @@ class Text(DrawGenerator):
         try:
             font = ImageFont.truetype(font_path, max_font_size)
         except IOError:
-            self.log.error(f"Failed to load font {font_path}. Using default.")
+            self.log.debug(f"Failed to load font {font_path}. Using default.")
             font = ImageFont.load_default()
 
         y_position = self.border_size
@@ -87,7 +87,7 @@ class Text(DrawGenerator):
                 y_position += 15
 
             if y_position >= self.height - 50:
-                self.log.warning(f"Text exceeded canvas height: {text_height=}, {y_position=}")
+                self.log.debug(f"Text exceeded canvas height: {text_height=}, {y_position=}")
                 break
                 
         return img
@@ -95,7 +95,7 @@ class Text(DrawGenerator):
     def get_max_font_size(self, font_path: str, text_list: list[str]) -> Tuple[int, list[str]]:
         """Calculates the maximum font size that fits the text within the usable area."""
         if not text_list:
-             self.log.error("No text lines provided to font scaler.")
+             self.log.debug("No text lines provided to font scaler.")
              return 10, ["Error: No text loaded."]
 
         max_size_full = self._find_max_size_for_block(text_list, font_path)

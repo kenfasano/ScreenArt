@@ -4,10 +4,11 @@
 # -r: raw input, -p: prompt text
 print -n "Enter output filename (default: log_durations.txt): "
 read -r log_durations_out
+log_durations_out="logs/log_durations/${log_durations_out}"
 
 # 2. Set default if the user just pressed Enter
 if [[ -z "$log_durations_out" ]]; then
-    log_durations_out="log_durations.txt"
+    log_durations_out="logs/log_durations/log_durations.txt"
 fi
 
 # 3. Run awk and pipe to tee

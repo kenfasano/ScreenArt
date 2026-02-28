@@ -49,12 +49,12 @@ class DrawGenerator(Generator):
                 self.log.debug(f"Loaded cached image from {filepath}")
                 return Image.open(filepath)
             except Exception as e:
-                self.log.error(f"Error reading cache file {filepath}: {e}")
+                self.log.debug(f"Error reading cache file {filepath}: {e}")
                 return None
 
         # If not, download it
         try:
-            self.log.info(f"Downloading new image to cache: {url}")
+            self.log.debug(f"Downloading new image to cache: {url}")
             response = requests.get(url, stream=True, timeout=10)
             
             if response.status_code == 200:
@@ -63,11 +63,11 @@ class DrawGenerator(Generator):
                 self.log.debug(f"Saved downloaded image to {filepath}")
                 return img
             else:
-                self.log.error(f"Failed to fetch {url} - Status: {response.status_code}")
+                self.log.debug(f"Failed to fetch {url} - Status: {response.status_code}")
                 return None
                 
         except Exception as e:
-            self.log.error(f"Error downloading {url}: {e}")
+            self.log.debug(f"Error downloading {url}: {e}")
             return None
 
     # Note: We do NOT implement run() here, we leave that to the concrete generators

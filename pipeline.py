@@ -28,7 +28,7 @@ class ImageProcessingPipeline(ScreenArt):
         image_files = [f for f in os.listdir(source_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
         
         if not image_files:
-            self.log.info(f"No images found in {source_dir} to process.")
+            self.log.debug(f"No images found in {source_dir} to process.")
             return
 
         for filename in image_files:
@@ -95,7 +95,7 @@ class ImageProcessingPipeline(ScreenArt):
 
         # Save the file using the inherited log for output
         cv2.imwrite(final_path, img_np)
-        self.log.info(f"[{status} - Grade: {grade}] Saved to: {final_path}")
+        self.log.debug(f"[{status} - Grade: {grade}] Saved to: {final_path}")
 
     def get_performance_stats(self):
         return self.stats

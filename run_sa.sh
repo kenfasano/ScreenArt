@@ -1,22 +1,39 @@
 #!/bin/bash
 
-echo "Starting 24-hour ScreenArt loop..."
+# --- 1. Set Defaults ---
+num_times=24
+sleep_seconds=3600
 
-# Loop exactly 24 times
-for i in {1..24}
+# --- 2. Parse Command Line Arguments ---
+# n: (num_times), s: (sleep_seconds)
+while getopts "n:s:" opt; do
+  case ${opt} in
+    n) num_times=${OPTARG} ;;
+    s) sleep_seconds=${OPTARG} ;;
+    *) echo "Usage: $0 [-n num_times] [-s sleep_seconds]" >&2
+       exit 1 ;;
+  esac
+done
+
+echo "Starting ScreenArt loop with ${num_times} iterations and ${sleep_seconds}s sleep..."
+
+# --- 3. Run Loop ---
+# Using (( )) for C-style loop to handle the variable num_times
+for (( i=1; i<=${num_times}; i++ ))
 do
     echo "-----------------------------------"
-    echo "Run $i of 24 - $(date)"
+    echo "Run ${i} of ${num_times} - $(date)"
     echo "-----------------------------------"
     
     # Execute your command
-	 cd ~/Scripts/ScreenArt && ./activate.sh && cd .. && ~/Scripts/.venv/bin/python3 -m ScreenArt.main
+    cd ~/Scripts
+	 source .venv/bin/activate && .venv/bin/python3 -m ScreenArt.main
     
-    # Sleep for 3600 seconds (1 hour) unless it's the very last run
-    if [ $i -lt 24 ]; then
-        echo "Waiting for 1 hour..."
-        sleep 3600
+    # Sleep unless it's the very last run
+    if [ "${i}" -lt "${num_times}" ]; then
+        echo "$i/$num_times: Waiting for $sleep_seconds seconds..."
+        sleep "${sleep_seconds}"
     fi
 done
 
-echo "24-hour cycle complete!"
+echo "${num_times}-run cycle complete!"
