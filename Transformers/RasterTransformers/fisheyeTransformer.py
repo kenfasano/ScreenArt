@@ -73,7 +73,7 @@ class FisheyeTransformer(RasterTransformer):
         r_in = r_out / (1 + self.strength * r_out)
         
         # 6. Calculate scaling factor and apply zoom
-        scale_factor = np.where(r_out == 0, 1.0, r_in / r_out)
+        scale_factor = np.divide(r_in, r_out, out=np.ones_like(r_in), where=r_out != 0)
         scale_factor /= self.zoom
 
         norm_x_in = norm_x * scale_factor

@@ -18,11 +18,12 @@ awk '
     split($(NF-1), parts, "@")
     seconds = parts[1]
     sub(/s$/, "", seconds)
-    
-    global_count++
-    global_sum += seconds
-    if (global_count == 1 || seconds < global_min) global_min = seconds
-    if (global_count == 1 || seconds > global_max) global_max = seconds
+	 if (seconds != "00") {
+		 global_count++
+		 global_sum += seconds
+		 if (global_count == 1 || seconds < global_min) global_min = seconds
+		 if (global_count == 1 || seconds > global_max) global_max = seconds
+	}			
 }
 
 # --- Route 2: The "Generator: 123.45ms" logic ---
