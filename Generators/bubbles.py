@@ -8,9 +8,9 @@ from numpy.typing import NDArray
 from typing import Callable, Tuple
 from .drawGenerator import DrawGenerator
 
-HSVArrays = Tuple[NDArray[np.float64], NDArray[np.float64], NDArray[np.float64]]
+HSVArrays = Tuple[NDArray[np.float32], NDArray[np.float32], NDArray[np.float32]]
 ModeFunc = Callable[
-    [float, NDArray[np.float64], NDArray[np.float64], NDArray[np.float64], NDArray[np.float64]],
+    [float, NDArray[np.float32], NDArray[np.float32], NDArray[np.float32], NDArray[np.float32]],
     HSVArrays,
 ]
 
@@ -106,9 +106,9 @@ class Bubbles(DrawGenerator):
 
     def _hsv_to_rgb_vectorized(
         self,
-        h: NDArray[np.float64],
-        s: NDArray[np.float64],
-        v: NDArray[np.float64],
+        h: NDArray[np.float32],
+        s: NDArray[np.float32],
+        v: NDArray[np.float32],
     ) -> NDArray[np.uint8]:
         """
         Processes thousands of colors simultaneously using NumPy matrix math.
@@ -132,10 +132,10 @@ class Bubbles(DrawGenerator):
     def _mode_radial_flip(
         self,
         base_hue: float,
-        norm_dist: NDArray[np.float64],
-        jitters: NDArray[np.float64],
-        s_rnds: NDArray[np.float64],
-        v_rnds: NDArray[np.float64],
+        norm_dist: NDArray[np.float32],
+        jitters: NDArray[np.float32],
+        s_rnds: NDArray[np.float32],
+        v_rnds: NDArray[np.float32],
     ) -> HSVArrays:
         h = (base_hue + (norm_dist * 0.5)) % 1.0
         s = 0.8 + s_rnds
@@ -145,10 +145,10 @@ class Bubbles(DrawGenerator):
     def _mode_radial_rainbow(
         self,
         base_hue: float,
-        norm_dist: NDArray[np.float64],
-        jitters: NDArray[np.float64],
-        s_rnds: NDArray[np.float64],
-        v_rnds: NDArray[np.float64],
+        norm_dist: NDArray[np.float32],
+        jitters: NDArray[np.float32],
+        s_rnds: NDArray[np.float32],
+        v_rnds: NDArray[np.float32],
     ) -> HSVArrays:
         h = (base_hue + norm_dist) % 1.0
         s = 0.8 + s_rnds
@@ -158,10 +158,10 @@ class Bubbles(DrawGenerator):
     def _mode_fire(
         self,
         base_hue: float,
-        norm_dist: NDArray[np.float64],
-        jitters: NDArray[np.float64],
-        s_rnds: NDArray[np.float64],
-        v_rnds: NDArray[np.float64],
+        norm_dist: NDArray[np.float32],
+        jitters: NDArray[np.float32],
+        s_rnds: NDArray[np.float32],
+        v_rnds: NDArray[np.float32],
     ) -> HSVArrays:
         h = np.minimum(0.15, np.abs(jitters) * 1.5)
         s = 0.8 + np.abs(s_rnds)
@@ -180,9 +180,11 @@ class Bubbles(DrawGenerator):
         rs = []
 
         total_area = 0.0
-
         max_dist = max(1, np.sqrt(cx * cx + cy * cy))
 
+        # ---------------------------
+        # Generate bubbles
+        # ---------------------------
         while total_area < target_pixels:
             x = random.uniform(0, width)
             y = random.uniform(0, height)
@@ -191,9 +193,11 @@ class Bubbles(DrawGenerator):
             dy = y - cy
             norm_dist = np.sqrt(dx * dx + dy * dy) / max_dist
 
-            base_r = self.max_radius - (self.max_radius - self.min_radius) * norm_dist
+            # 90% cap for aesthetics
+            effective_max = self.max_radius * 0.9
+            base_r = effective_max - (effective_max - self.min_radius) * norm_dist
 
-            # your aesthetically pleasing skew
+            # aesthetically skewed randomness
             variance = random.random() ** 2 * 0.5 + 0.75
             r = int(max(1, base_r * variance))
 
@@ -205,18 +209,22 @@ class Bubbles(DrawGenerator):
 
         count = len(rs)
 
+        # ---------------------------
+        # Convert to numpy
+        # ---------------------------
         xi = np.array(xs, dtype=np.int32)
         yi = np.array(ys, dtype=np.int32)
         ri = np.array(rs, dtype=np.int32)
 
+        # ---------------------------
+        # Compute color data
+        # ---------------------------
         mode = random.choice(self.all_modes)
         base_hue = random.random()
 
-        # For mode functions we need norm_dist per bubble
         dx = xi - cx
         dy = yi - cy
         distances = np.sqrt(dx * dx + dy * dy)
-        max_dist = max(1, np.sqrt(cx * cx + cy * cy))
         norm_dist = distances / max_dist
 
         jitters = np.random.uniform(-0.05, 0.05, count)
@@ -236,7 +244,19 @@ class Bubbles(DrawGenerator):
 
         colors_rgb = self._hsv_to_rgb_vectorized(h, s, v)
 
-        # Canvas
+        # ---------------------------
+        # Small → Large sort
+        # ---------------------------
+        order = np.argsort(ri)
+
+        xi = xi[order]
+        yi = yi[order]
+        ri = ri[order]
+        colors_rgb = colors_rgb[order]
+
+        # ---------------------------
+        # Render
+        # ---------------------------
         canvas = np.zeros((height, width, 3), dtype=np.uint8)
 
         _draw_bubbles_jit(

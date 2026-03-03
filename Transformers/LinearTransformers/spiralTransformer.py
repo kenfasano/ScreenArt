@@ -19,7 +19,7 @@ class SpiralTransformer(LinearTransformer):
             return pts_array
         
         # Calculate center of the shape to twist around it
-        center = np.mean(pts_array, axis=0)
+        center = pts_array.mean(0)
         centered = pts_array - center
         
         # Convert to Polar Coordinates

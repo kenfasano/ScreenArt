@@ -2,9 +2,8 @@ import numpy as np
 import random
 import shutil
 import os
-import time
 import cv2 
-from PIL import Image, ImageDraw 
+from PIL import Image
 from .drawGenerator import DrawGenerator
 from ..Transformers.LinearTransformers.kochSnowflakeTransformer import KochSnowflakeTransformer
 from ..Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
@@ -25,25 +24,34 @@ class KochSnowflake1(DrawGenerator):
         self.koch_transformer = KochSnowflakeTransformer()
         self.spiral_transformer = SpiralTransformer(tightness=0.8) 
 
+        self._precompute_radial_fields()
+
     def _generate_initial_triangle(self, scale: float) -> np.ndarray:
         cx, cy = self.width / 2, self.height / 2
         radius = min(self.width, self.height) / 2 * scale
         angles = np.deg2rad([90, 210, 330, 90]) 
         x = cx + radius * np.cos(angles)
         y = cy - radius * np.sin(angles)
-        return np.column_stack((x, y))
+        return np.column_stack((x, y)).astype(np.float32)
 
-    def _apply_psychedelic_mask(self, img: Image.Image, hues: list[int], bg_color: tuple[int, int, int]) -> Image.Image:
-        arr = np.array(img)
-        h, w, _ = arr.shape
+    def _precompute_radial_fields(self):
+        h, w = self.height, self.width
         y, x = np.indices((h, w))
-        
+
         cx, cy = w / 2, h / 2
         dx = x - cx
         dy = y - cy
-        radius = np.sqrt(dx**2 + dy**2)
-        angle = np.arctan2(dy, dx)
+
+        self._radius = np.sqrt(dx**2 + dy**2)
+        self._angle = np.arctan2(dy, dx)
+
+    def _apply_psychedelic_mask(self, img,  hues: list[int], bg_color: tuple[int, int, int]) -> Image.Image:
+        arr = np.array(img)
+        h, w, _ = arr.shape
         
+        radius = self._radius
+        angle = self._angle
+
         pattern = angle + (radius * 0.05) 
         factor = (np.sin(pattern) + 1) / 2 
         
@@ -72,10 +80,8 @@ class KochSnowflake1(DrawGenerator):
         
         final_rgb = cv2.cvtColor(final_hsv, cv2.COLOR_HSV2RGB)
         
-        result_arr = np.zeros_like(arr)
-        result_arr[:] = bg_color
-        result_arr[mask] = final_rgb[mask]
-        
+        result_arr = np.full_like(arr, bg_color)
+        result_arr[mask] = final_rgb[mask] 
         return Image.fromarray(result_arr)
 
     def run(self, *args, **kwargs):
@@ -86,8 +92,6 @@ class KochSnowflake1(DrawGenerator):
             os.makedirs(output_dir, exist_ok=True)
 
             for i in range(self.file_count):
-                random.seed(time.perf_counter() + i)
-
                 # 1. Randomize Settings specifically for KS1
                 num_transforms = random.randint(4, 6) 
                 spiral_tightness = random.uniform(0.3, 1.2)
@@ -110,11 +114,9 @@ class KochSnowflake1(DrawGenerator):
                 points = self.spiral_transformer.run(points) 
 
                 # 5. Rasterize
-                img = Image.new('RGB', (self.width, self.height), (0, 0, 0))
-                draw = ImageDraw.Draw(img)
-                
-                poly_coords = [tuple(p) for p in points]
-                draw.polygon(poly_coords, fill=(255, 255, 255), outline=(128, 128, 128))
+                img = np.zeros((self.height, self.width, 3), dtype=np.uint8)
+                poly = points.astype(np.int32)
+                cv2.fillPoly(img, [poly], (255, 255, 255)) 
 
                 # 6. Apply Mask
                 img = self._apply_psychedelic_mask(img, current_hues, bg_color)

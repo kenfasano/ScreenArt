@@ -16,7 +16,7 @@ while getopts "n:s:" opt; do
 done
 
 echo "Starting ScreenArt loop with ${num_times} iterations and ${sleep_seconds}s sleep..."
-
+rm "~/Scripts/ScreenArt/logs/screenArt.log"
 # --- 3. Run Loop ---
 # Using (( )) for C-style loop to handle the variable num_times
 for (( i=1; i<=${num_times}; i++ ))

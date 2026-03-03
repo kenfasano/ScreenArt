@@ -11,6 +11,13 @@ class KochSnowflakeTransformer(LinearTransformer):
         # Tag for the filename metadata
         self.metadata_dictionary["type"] = "KochSnowflake"
 
+        # Pre-calculate rotation matrix for +60 degrees (pi/3)
+        theta = np.pi / 3
+        self.rotation_matrix = np.array([
+            [np.cos(theta), -np.sin(theta)],
+            [np.sin(theta),  np.cos(theta)]
+        ])
+
     def run(self, pts_array: np.ndarray, *args, **kwargs) -> np.ndarray:
         """
         Applies one iteration of the Koch curve subdivision to the input points.
@@ -19,13 +26,6 @@ class KochSnowflakeTransformer(LinearTransformer):
         """
         if pts_array.shape[0] < 2:
             return pts_array
-
-        # Pre-calculate rotation matrix for +60 degrees (pi/3)
-        theta = np.pi / 3
-        rotation_matrix = np.array([
-            [np.cos(theta), -np.sin(theta)],
-            [np.sin(theta),  np.cos(theta)]
-        ])
 
         # Get start (p1) and end (p5) points of each existing segment
         p1 = pts_array[:-1]
@@ -40,7 +40,7 @@ class KochSnowflakeTransformer(LinearTransformer):
         
         # Calculate p3 (Peak of the triangle)
         segment_third = diff / 3.0
-        rotated_vec = segment_third @ rotation_matrix.T
+        rotated_vec = segment_third @ self.rotation_matrix.T
         p3 = p2 + rotated_vec
 
         # Stack points in order: p1, p2, p3, p4

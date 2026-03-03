@@ -129,7 +129,7 @@ class ScreenArtMain(ScreenArt):
         """Dynamically instantiates and runs a generator from the registry."""
         GeneratorClass = self.generator_classes.get(key)
         if GeneratorClass:
-            self.log.info(f"Running {key.capitalize()} Generator...")
+            self.log.debug(f"Running {key.capitalize()} Generator...")
             GeneratorClass().run() 
         else:
             self.log.warning(f"Generator class for key '{key}' not mapped in registry.")

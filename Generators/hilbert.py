@@ -1,5 +1,4 @@
 import os
-import shutil
 import random
 import colorsys
 import numpy as np 
@@ -59,12 +58,9 @@ class Hilbert(DrawGenerator):
             width = self.width
             height = self.height
             output_dir = os.path.join(self.config["paths"]["generators_in"], "hilbert")
+            os.makedirs(output_dir, exist_ok=True)
 
             def random_bool(): return random.choice([True, False])
-
-            if os.path.exists(output_dir):
-                shutil.rmtree(output_dir)
-            os.makedirs(output_dir, exist_ok=True)
 
             for i in range(self.file_count):
                 self.order = random.randint(4, 6)
@@ -88,7 +84,8 @@ class Hilbert(DrawGenerator):
                 self.log.debug(f"Generating Hilbert {i+1} (Ord:{self.order}, Grad:{use_gradient}, Spiral:{use_spiral}, Koch:{use_koch})")
                 
                 self._generate_points()
-                pts_array = np.array(self.points) * 1000.0
+                pts_array = np.asarray(self.points, dtype=np.float32)
+                pts_array *= 1000.0
                 
                 # --- Apply Transformers via the NEW Contract API ---
                 if use_koch:
@@ -117,11 +114,14 @@ class Hilbert(DrawGenerator):
                     dest_cx, dest_cy = width / 2, height / 2
                     src_cx, src_cy = (min_x + max_x) / 2, (min_y + max_y) / 2
                     
-                    screen_points = []
-                    for px, py in pts_array:
-                        sx = (px - src_cx) * scale_factor + dest_cx
-                        sy = (py - src_cy) * scale_factor + dest_cy
-                        screen_points.append((sx, sy))
+                    # Translate + scale in one vectorized op
+                    centered = pts_array - np.array([src_cx, src_cy], dtype=np.float32)
+                    scaled = centered * scale_factor
+                    translated = scaled + np.array([dest_cx, dest_cy], dtype=np.float32)
+
+                    screen_points = translated.tolist()
+                    if len(screen_points) > 8000:
+                        use_gradient = False
 
                     if use_gradient:
                         for j in range(len(screen_points) - 1):
@@ -137,7 +137,8 @@ class Hilbert(DrawGenerator):
                 filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
                 filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
                 try:
-                    img.save(filename)
+                    img.save(filename, format="JPEG", quality=95, subsampling=0)
+                    img.close()
                 except Exception as e:
                     self.log.debug(f"Failed to save {filename}: {e}")
 

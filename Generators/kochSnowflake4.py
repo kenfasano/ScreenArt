@@ -3,7 +3,6 @@ import random
 import shutil
 import os
 import cv2 
-import time
 from PIL import Image 
 from .drawGenerator import DrawGenerator
 from ..Transformers.LinearTransformers.randomSierpinskiTransformer import RandomSierpinskiTransformer
@@ -25,6 +24,8 @@ class KochSnowflake4(DrawGenerator):
         self.chaos_transformer = RandomSierpinskiTransformer(num_points=100000)
         self.spiral_transformer = SpiralTransformer(tightness=0.8) 
 
+        self._precompute_radial_fields()
+
     def _generate_initial_vertices(self, scale: float) -> np.ndarray:
         cx, cy = self.width / 2, self.height / 2
         radius = min(self.width, self.height) / 2 * scale
@@ -35,57 +36,67 @@ class KochSnowflake4(DrawGenerator):
         y = cy + radius * np.sin(angles) 
         return np.column_stack((x, y))
 
-    def _create_image_with_opposite_bg(self, width: int, height: int, points: np.ndarray, hues: list[int]) -> tuple[Image.Image, tuple]:
-        cx, cy = width / 2, height / 2
-        
-        valid_mask = (points[:,0] >= 0) & (points[:,0] < width) & (points[:,1] >= 0) & (points[:,1] < height)
-        valid_points = points[valid_mask].astype(int)
-        
-        if valid_points.size == 0:
-            return Image.new('RGB', (width, height), (0,0,0)), (0,0,0)
+    def _precompute_radial_fields(self):
+        h, w = self.height, self.width
+        y, x = np.indices((h, w))
 
-        px, py = valid_points[:, 0], valid_points[:, 1]
-        dx, dy = px - cx, py - cy
-        radii = np.sqrt(dx**2 + dy**2)
+        cx, cy = w / 2, h / 2
+        dx = x - cx
+        dy = y - cy
+
+        self._radius = np.sqrt(dx**2 + dy**2)
+        self._angle = np.arctan2(dy, dx)
+
+    def _create_image_with_opposite_bg(self, width, height, points, hues):
+        cx, cy = width / 2, height / 2
+
+        valid = (
+            (points[:,0] >= 0) &
+            (points[:,0] < width) &
+            (points[:,1] >= 0) &
+            (points[:,1] < height)
+        )
+
+        pts = points[valid]
+        if pts.size == 0:
+            return np.zeros((height, width, 3), dtype=np.uint8), (0,0,0)
+
+        px = pts[:,0].astype(np.int32)
+        py = pts[:,1].astype(np.int32)
+
+        dx = px - cx
+        dy = py - cy
+
+        radii = np.sqrt(dx*dx + dy*dy)
         angles = np.arctan2(dy, dx)
-        
+
         pattern = angles + (radii * 0.05)
-        factor = (np.sin(pattern) + 1) / 2
-        
+        factor = (np.sin(pattern) + 1) * 0.5
+
         if len(hues) == 2:
             h1, h2 = hues
             point_hues = h1 + (h2 - h1) * factor
-        elif len(hues) >= 3:
-            h1, h2, h3 = hues[:3]
-            point_hues = np.zeros_like(factor)
-            mask1 = factor < 0.5
-            mask2 = ~mask1
-            point_hues[mask1] = h1 + (h2 - h1) * factor[mask1] * 2
-            point_hues[mask2] = h2 + (h3 - h2) * (factor[mask2] - 0.5) * 2
         else:
-            point_hues = factor * 180
-            
-        h_channel = point_hues.astype(np.uint8)
-        s_channel, v_channel = np.full_like(h_channel, 200), np.full_like(h_channel, 255)
-        
-        hsv_points = np.stack([h_channel, s_channel, v_channel], axis=1).reshape(-1, 1, 3)
-        rgb_points = cv2.cvtColor(hsv_points, cv2.COLOR_HSV2RGB).reshape(-1, 3)
-        
-        # Calculate the mean and convert to native Python integers during the subtraction
-        mean_color = np.mean(rgb_points, axis=0)
-        
-        # Explicitly extract R, G, B and convert to native Python integers
-        opposite_bg = (
-            int(255 - mean_color[0]),
-            int(255 - mean_color[1]),
-            int(255 - mean_color[2])
-        )
+            h1, h2, h3 = hues[:3]
+            mask = factor < 0.5
+            point_hues = np.empty_like(factor)
+            point_hues[mask] = h1 + (h2 - h1) * (factor[mask] * 2)
+            point_hues[~mask] = h2 + (h3 - h2) * ((factor[~mask] - 0.5) * 2)
 
-        img = Image.new('RGB', (width, height), opposite_bg)
-        arr = np.array(img)
-        arr[py, px] = rgb_points
-        
-        return Image.fromarray(arr), opposite_bg
+        hsv = np.zeros((len(point_hues), 1, 3), dtype=np.uint8)
+        hsv[:,0,0] = point_hues.astype(np.uint8)
+        hsv[:,0,1] = 200
+        hsv[:,0,2] = 255
+
+        rgb = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB).reshape(-1,3)
+
+        mean_color = rgb.mean(axis=0)
+        bg = tuple((255 - mean_color).astype(np.uint8))
+
+        img = np.full((height, width, 3), bg, dtype=np.uint8)
+        img[py, px] = rgb
+
+        return img, bg
 
     def run(self, *args, **kwargs):
         with self.timer():
@@ -95,8 +106,6 @@ class KochSnowflake4(DrawGenerator):
             os.makedirs(output_dir, exist_ok=True)
 
             for i in range(self.file_count):
-                random.seed(time.perf_counter() + i)
-
                 spiral_tightness = random.uniform(0.5, 2.0) 
                 num_points = random.choice([50000, 100000, 200000])
                 
@@ -112,13 +121,14 @@ class KochSnowflake4(DrawGenerator):
                 cloud = self.chaos_transformer.run(vertices) 
                 cloud = self.spiral_transformer.run(cloud) 
                 
-                img, bg_color = self._create_image_with_opposite_bg(self.width, self.height, cloud, current_hues)
-
                 filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
                 filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
                 
+                img, bg_color = self._create_image_with_opposite_bg(self.width, self.height, cloud, current_hues)
+                img_arr, bg_color = self._create_image_with_opposite_bg(self.width, self.height, cloud, current_hues)
+
                 try:
-                    img.save(filename)
+                    Image.fromarray(img_arr).save(filename)
                     self.log.debug(f"Generated KS4: {filename} (Points: {num_points}, Spiral: {spiral_tightness:.2f}, BG: {bg_color})")
                 except Exception as e:
                     self.log.debug(f"Failed to save {filename}: {e}")
