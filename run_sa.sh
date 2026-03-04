@@ -31,7 +31,7 @@ do
     
     # Sleep unless it's the very last run
     if [ "${i}" -lt "${num_times}" ]; then
-        echo "$i/$num_times: Waiting for $sleep_seconds seconds..."
+        echo "$i/$num_times: Waiting for $sleep_seconds second(s)..."
         sleep "${sleep_seconds}"
     fi
 done

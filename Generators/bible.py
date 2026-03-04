@@ -3,101 +3,106 @@ import os
 import random
 from .text import Text
 
+def _parse_language_book(lang_book: str) -> tuple[str, str]:
+    """Split 'UkrainianPsalms' → ('Psalms', 'Ukrainian') at the second uppercase letter."""
+    for i in range(1, len(lang_book)):
+        if lang_book[i].isupper():
+            return lang_book[i:], lang_book[:i]
+    return lang_book, "English"
+
+
 class Bible(Text):
+    BOOKS = [
+        ("HebrewPsalms", 150),
+        ("UkrainianPsalms", 150),
+    ]
+    COLORS = [
+        ("white", "black"), ("yellow", "blue"),
+        ("orange", "purple"), ("red", "white"),
+        ("green", "white"), ("blue", "white"),
+        ("purple", "white"), ("black", "white"),
+    ]
+
     def __init__(self):
         super().__init__()
-        
-        bible_config = self.config.get("bible", {})
-        self.file_count = bible_config.get("file_count", 3)
+        self.input_base_dir = os.path.join(self.base_path, "Generators", "Data")
+        self.out_dir = os.path.join(self.config["paths"]["generators_in"], "bible")
+        os.makedirs(self.out_dir, exist_ok=True)
+
+        self.file_count = self.config.get("bible", {}).get("file_count", 3)
         self.log.debug(f"Bible: {self.file_count=}")
-        
-        self.books = [
-            ["HebrewPsalms", 150],
-            ["UkrainianPsalms", 150]
+
+        # Precompute (book_name, language) — avoids per-call string scanning
+        self._book_meta = {
+            lang_book: _parse_language_book(lang_book)
+            for lang_book, _ in self.BOOKS
+        }
+
+    @staticmethod
+    def _format_text(verse_list: list[dict]) -> list[str]:
+        """Convert verse dicts to display strings."""
+        return [
+            f"{v['number']}. {v['text']}" if v.get('number') else v['text']
+            for v in verse_list
         ]
-        
-        self.colors = [
-            ("white", "black"), ("yellow", "blue"),
-            ("orange", "purple"), ("red", "white"),
-            ("green", "white"), ("blue", "white"),
-            ("purple", "white"), ("black", "white")
-        ]
 
-    def get_name_and_language(self, book_item: str) -> tuple[str, str]:
-        split_index = -1
-        for i in range(1, len(book_item)):
-            if book_item[i].isupper():
-                split_index = i
-                break
+    def _load_psalm(self, lang_book: str, chapter: int) -> list[str] | None:
+        """Load and format a psalm file. Returns None on any failure."""
+        book_name, _ = self._book_meta[lang_book]
+        path = os.path.join(
+            self.input_base_dir, lang_book,
+            f"{book_name.lower()}_{chapter}.json"
+        )
+        try:
+            with open(path, encoding='utf-8') as f:
+                return self._format_text(json.load(f))
+        except FileNotFoundError:
+            self.log.debug(f"Psalm file not found: {path}")
+        except Exception as e:
+            self.log.debug(f"Failed to load {path}: {e}")
+        return None
 
-        if split_index != -1:
-            book_name = book_item[split_index:]
-            language = book_item[:split_index] or "English"
-            return (book_name, language)
-        else:
-            self.log.debug(f"'{book_item}' cannot be split into language and book.")
-            return (book_item, "English") 
+    def warm_cache(self) -> None:
+        """Pre-compute and persist font sizes for all psalms in all books.
+        Call once manually after adding or changing psalm data.
+        """
+        self.log.info("Warming font size cache...")
+        count = 0
+        for lang_book, chapter_count in self.BOOKS:
+            for chapter in range(1, chapter_count + 1):
+                lines = self._load_psalm(lang_book, chapter)
+                if lines:
+                    _, language = self._book_meta[lang_book]
+                    font_path = self.language_fonts.get(language, self.language_fonts["English"])
+                    self._find_max_font_size(font_path, lines)
+                    count += 1
+        self.log.info(f"Cache warmed with {count} entries.")
 
-    def format_text(self, text_list: list[dict[str, str]]) -> list[str]:
-        text_lines: list[str] = []
-        for verse_obj in text_list:
-            if verse_obj.get('number'):
-                formatted_line = f"{verse_obj['number']}. {verse_obj['text']}" 
-            else:
-                formatted_line = f"{verse_obj['text']}" 
-            text_lines.append(formatted_line)
-        return text_lines
-
-    def run(self, *args, **kwargs):
-        with self.timer(): 
-            out_dir = os.path.join(self.config["paths"]["generators_in"], "bible")
-            os.makedirs(out_dir, exist_ok=True)
-            
-            # FIXED: Points directly to Generators/Data
-            input_base_dir = os.path.join(self.base_path, "Generators", "Data")
-            self.log.debug(f"{input_base_dir=}")
-
+    def run(self, *args, **kwargs) -> None:
+        with self.timer():
             for _ in range(self.file_count):
-                book = random.choice(self.books)
-                language_book = book[0]
-                chapter = random.randint(1, book[1])
-                
-                book_name, language = self.get_name_and_language(language_book)
-                base_filename = f"{book_name.lower()}_{chapter}"
-                
-                # Joins to Generators/Data/HebrewPsalms/hebrewpsalms_1.json
-                input_file_path = os.path.join(input_base_dir, language_book, f"{base_filename}.json")
-                
-                if not os.path.exists(input_file_path):
-                    self.log.debug(f"Input file not found, skipping: {input_file_path}")
-                    continue
+                lang_book, chapter_count = random.choice(self.BOOKS)
+                chapter = random.randint(1, chapter_count)
 
-                try:
-                    with open(input_file_path, 'r', encoding='utf-8') as f:
-                        dictionary_list = json.load(f)
-                        lines_to_draw = self.format_text(dictionary_list)
-                except Exception as e:
-                    self.log.debug(f"Failed to load or parse JSON {input_file_path}: {e}")
-                    continue
-                    
-                if not lines_to_draw:
-                    self.log.debug(f"No text extracted from {input_file_path}, skipping.")
-                    continue
+                lines = self._load_psalm(lang_book, chapter)
 
-                bg_color, fg_color = random.choice(self.colors)
-                
+                if not lines:
+                    self.log.debug(f"No lines for {lang_book} ch.{chapter}, skipping.")
+                    continue  # skip this iteration, not the whole run
+
+                book_name, language = self._book_meta[lang_book]
+                bg_color, fg_color = random.choice(self.COLORS)
+
                 img = self.generate_text_image(
-                    lines_to_draw=lines_to_draw,
+                    lines_to_draw=lines,
                     language=language,
                     bg_color=bg_color,
-                    fg_color=fg_color
+                    fg_color=fg_color,
                 )
-                
-                output_file_path = os.path.join(out_dir, f"{base_filename}.png")
-                try:
-                    img.save(output_file_path)
-                    self.log.debug(f"Saved Bible image: {output_file_path}")
-                except Exception as e:
-                    self.log.debug(f"Failed to save image {output_file_path}: {e}")
 
-            self.log.debug("Bible Generator finished.")
+                out_path = os.path.join(self.out_dir, f"{book_name.lower()}_{chapter}.png")
+                try:
+                    img.save(out_path, compress_level=1)
+                    self.log.debug(f"Saved: {out_path}")
+                except Exception as e:
+                    self.log.debug(f"Failed to save {out_path}: {e}")
