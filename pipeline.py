@@ -99,5 +99,8 @@ class ImageProcessingPipeline(ScreenArt):
         cv2.imwrite(final_path, img_np)
         self.log.debug(f"[{status} - Grade: {grade}] Saved to: {final_path}")
 
-    def get_performance_stats(self):
+    def get_accepted_rejected(self) -> str:
+        return f"Accepted: {self.accepted}\nRejected: {self.rejected}"
+
+    def get_performance_stats(self) -> dict[str, list[float]]:
         return self.stats

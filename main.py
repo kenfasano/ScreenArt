@@ -8,7 +8,7 @@ from typing import List, Tuple
 import glob
 import random
 import time
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 from datetime import datetime
 
 # 1. Import your Generators
@@ -129,7 +129,9 @@ class ScreenArtMain(ScreenArt):
         GeneratorClass = self.generator_classes.get(key)
         if GeneratorClass:
             self.log.debug(f"Running {key.capitalize()} Generator...")
-            GeneratorClass().run() 
+            with self.timer() as t:
+                GeneratorClass().run() 
+            self.generator_stats[key].append(t.elapsed)
         else:
             self.log.warning(f"Generator class for key '{key}' not mapped in registry.")
 
@@ -143,6 +145,8 @@ class ScreenArtMain(ScreenArt):
             keys_to_process = self._get_keys_to_process()
             
             # Phase 1: Run Generators
+
+            self.generator_stats: defaultdict[str, list[float]] = defaultdict(list)
             for key in keys_to_process:
                 gen_config = self.generators[key]
                 if gen_config.should_erase:
@@ -163,46 +167,70 @@ class ScreenArtMain(ScreenArt):
         self.log.debug("----------------------------")
         return elapsed
 
-    def write_outcome(self, elapsed_time: str, ok: bool, stats: dict[str, list[int]]):
-        formatted_datetime = datetime.now().strftime('%H:%M')
-        mark = "✓" if ok else "❌"
-        ms_value = int(float(elapsed_time))
+    def _format_stats(self, stats: dict[str, list[float]], strip_word: str = "") -> list[str]:
+        """Sorts, calculates, and formats metrics from a stats dictionary."""
+        formatted_lines = []
+        
+        if not stats:
+            return formatted_lines
 
-        main_msg = f"{ms_value:02d}s@{formatted_datetime} {mark}"
-        output_lines = [main_msg]
+        # Sort by average time, descending
+        sorted_stats = sorted(
+            stats.items(), 
+            key=lambda item: sum(item[1]) / len(item[1]) if item[1] else 0, 
+            reverse=True
+        )
 
-        if stats:
-            sorted_stats = sorted(
-                stats.items(), 
-                key=lambda item: sum(item[1]) / len(item[1]) if item[1] else 0, 
-                reverse=True
-            )
-            output_lines.append(f"{self.pipeline.accepted} accepted")
-            output_lines.append(f"{self.pipeline.rejected} rejected")
-            output_lines.append("---")
-
-            for name, times in sorted_stats:
-                # Prevent division by zero if a list somehow ends up empty
-                if not times:
-                    continue
-                
+        for name, times in sorted_stats:
+            if not times:
+                continue
+            
+            if len(times) > 1:
                 # Calculate the metrics
                 min_time = round(min(times))
                 max_time = round(max(times))
                 avg_time = round(sum(times) / len(times))
                 
-                # Format the numbers (e.g., rounded to 2 decimal places)
-                formatted_stats = (
-                    f"Min: {min_time:4d}ms | "
-                    f"Avg: {avg_time:4d}ms | "
-                    f"Max: {max_time:4d}ms"
+                # Format the numbers
+                formatted_times = (
+                    f"Min: {min_time:5d}ms | "
+                    f"Avg: {avg_time:5d}ms | "
+                    f"Max: {max_time:5d}ms"
                 )
-                
-                # Clean up the name and append to output
-                clean_name = name.replace("Transformer", "")
-                output_lines.append(f"{clean_name:16s}: {formatted_stats}")        
+            else:
+                formatted_times = f"{round(times[0]):5d}ms"
 
-        output_lines.append("===")
+            # Clean up the name and append to output
+            clean_name = name.replace(strip_word, "") if strip_word else name
+            formatted_lines.append(f"{clean_name:24s}: {formatted_times}")
+            
+        return formatted_lines
+
+    def write_outcome(self, elapsed_time: str, ok: bool, accepted_rejected: str, pipeline_stats: dict[str, list[float]] | None):
+        formatted_datetime = datetime.now().strftime('%H:%M')
+        mark = "✓" if ok else "❌"
+        ms_value = int(float(elapsed_time))
+
+        main_msg = f"{ms_value:02d}s@{formatted_datetime} {mark}\n{accepted_rejected}"
+        output_lines = [main_msg]
+        output_lines.append("---") # Optional separator between sections
+
+        # 1. Process and append the Generator Stats
+        if self.generator_stats:
+            # Use extend() to add the returned list of strings to our main output
+            output_lines.extend(self._format_stats(self.generator_stats, strip_word="Generator"))
+            output_lines.append("---") # Optional separator between sections
+
+        # 2. Process and append the Pipeline Stats
+        if pipeline_stats:
+            # Add the pipeline-specific data first
+            output_lines.append(f"{self.pipeline.accepted} accepted")
+            output_lines.append(f"{self.pipeline.rejected} rejected")
+            output_lines.append("---")
+            
+            # Process the pipeline transformer stats
+            output_lines.extend(self._format_stats(pipeline_stats, strip_word="Transformer"))
+      
         final_output = "\n".join(output_lines)
         
         results_file = os.path.join(self.config["paths"]["results_file_dir"], "results.txt")
@@ -215,17 +243,18 @@ def run_main():
     parser = argparse.ArgumentParser(description="Run the image processing and transformation pipeline.")
     parser.add_argument('-c', '--config', type=str, help='Override the transformation file specified in the config.')
     parser.add_argument('-t', '--test', type=str, help='Path to a CSV file for test mode.')
-    args, _ = parser.parse_known_args()
+    parser.parse_known_args()
 
     s = ScreenArtMain()
     try:
         elapsed = s.run() or ""
-        stats = s.pipeline.get_performance_stats()
-        s.write_outcome(elapsed, True, stats)
+        accepted_rejected = s.pipeline.get_accepted_rejected()
+        pipeline_stats = s.pipeline.get_performance_stats()
+        s.write_outcome(elapsed, True, accepted_rejected, pipeline_stats)
         sys.exit(0)
     except Exception as e:
         s.log.error(f"An error occurred during run: {e}")
-        s.write_outcome("0.0", False, [])
+        s.write_outcome("0.0", False, "", None)
         sys.exit(1)
 
 if __name__ == "__main__":
