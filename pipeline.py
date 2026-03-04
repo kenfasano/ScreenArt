@@ -2,6 +2,7 @@ import os
 import cv2 
 import random 
 from pathlib import Path
+from collections import defaultdict
 
 # Adjust the import path based on your folder structure
 from .screenArt import ScreenArt 
@@ -17,12 +18,10 @@ class ImageProcessingPipeline(ScreenArt):
         
         self.accepted = 0
         self.rejected = 0
-        self.stats = []
+        self.stats: defaultdict[str, list[float]] = defaultdict(list)
 
-    def run(self, source_dir: str, transformers: list = None):
+    def run(self, source_dir: str, transformers: list):
         """Processes all images in a source directory through a list of transformers."""
-        if transformers is None:
-            transformers = []
             
         # Filter for valid image files
         image_files = [f for f in os.listdir(source_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
@@ -44,12 +43,15 @@ class ImageProcessingPipeline(ScreenArt):
             
             # Run the image through the pipeline
             for transformer in transformers:
-                self.log.debug(f"Applying {transformer.__class__.__name__} to {filename}")
-                
-                # THE NEW STANDARD: call .run()
-                img_np = transformer.run(img_np) 
-                
-                metadata_tags.append(transformer.get_image_metadata())
+                t_name = transformer.__class__.__name__
+                with self.timer(custom_name=t_name) as t:
+                    self.log.debug(f"Applying {transformer.__class__.__name__} to {filename}")
+                    
+                    # THE NEW STANDARD: call .run()
+                    img_np = transformer.run(img_np) 
+                    
+                    metadata_tags.append(transformer.get_image_metadata())
+                self.stats[t_name].append(t.elapsed)
 
             # Construct the final filename based on the transformations
             base_name = Path(filename).stem

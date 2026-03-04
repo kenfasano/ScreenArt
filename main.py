@@ -30,7 +30,6 @@ from .Generators import (
 
 from .Transformers.transformer_dictionary import transformer_registry
 from .pipeline import ImageProcessingPipeline
-from time_it import time_it # type: ignore
 
 GeneratorConfig = namedtuple("GeneratorConfig", ["source", "should_erase"])
 
@@ -134,36 +133,37 @@ class ScreenArtMain(ScreenArt):
         else:
             self.log.warning(f"Generator class for key '{key}' not mapped in registry.")
 
-    @time_it # type: ignore
-    def run(self):
-        self.trim_images(self.config["paths"]["transformers_out"], 50)
-        self.trim_images(self.config["paths"]["rejected_out"], 0)
-        self.trim_images(self.config["paths"]["wiki_out"], 10)
+    def run(self) -> str:
+        elapsed = None
+        with self.timer("Total", "s") as t:
+            self.trim_images(self.config["paths"]["transformers_out"], 50)
+            self.trim_images(self.config["paths"]["rejected_out"], 0)
+            self.trim_images(self.config["paths"]["wiki_out"], 10)
 
-        keys_to_process = self._get_keys_to_process()
+            keys_to_process = self._get_keys_to_process()
+            
+            # Phase 1: Run Generators
+            for key in keys_to_process:
+                gen_config = self.generators[key]
+                if gen_config.should_erase:
+                    self.erase_image_dir(gen_config.source)
+                self.run_generator(key)
+
+            # Phase 2: Run Transformers
+            for key in keys_to_process:
+                dir_path = self.generators[key].source
+                # Choose a random number between 1 and 4 (but no more than the total available  )
+                num_to_pick = random.randint(1, min(4, len(self.active_transformers)))
         
-        # Phase 1: Run Generators
-        for key in keys_to_process:
-            gen_config = self.generators[key]
-            if gen_config.should_erase:
-                self.erase_image_dir(gen_config.source)
-            self.run_generator(key)
+                # Select unique transformers
+                transformers_to_apply = random.sample(self.active_transformers, num_to_pick)
+                self.pipeline.run(dir_path, transformers=transformers_to_apply)
 
-        # Phase 2: Run Transformers
-        for key in keys_to_process:
-            dir_path = self.generators[key].source
-            # Choose a random number between 1 and 4 (but no more than the total available  )
-            num_to_pick = random.randint(1, min(4, len(self.active_transformers)))
-    
-            # Select unique transformers
-            transformers_to_apply = random.sample(self.active_transformers, num_to_pick)
-            self.pipeline.run(dir_path, transformers=transformers_to_apply)
-
+        elapsed = str(t.elapsed)
         self.log.debug("----------------------------")
+        return elapsed
 
-        return self
-
-    def write_outcome(self, elapsed_time: str, ok: bool, stats: List[Tuple[str, float]]):
+    def write_outcome(self, elapsed_time: str, ok: bool, stats: dict[str, list[int]]):
         formatted_datetime = datetime.now().strftime('%H:%M')
         mark = "✓" if ok else "❌"
         ms_value = int(float(elapsed_time))
@@ -172,14 +172,37 @@ class ScreenArtMain(ScreenArt):
         output_lines = [main_msg]
 
         if stats:
-            for name, avg_time in stats:
-                formatted_avg = f"{int(avg_time * 1000)}ms"
+            sorted_stats = sorted(
+                stats.items(), 
+                key=lambda item: sum(item[1]) / len(item[1]) if item[1] else 0, 
+                reverse=True
+            )
+            output_lines.append(f"{self.pipeline.accepted} accepted")
+            output_lines.append(f"{self.pipeline.rejected} rejected")
+            output_lines.append("---")
+
+            for name, times in sorted_stats:
+                # Prevent division by zero if a list somehow ends up empty
+                if not times:
+                    continue
+                
+                # Calculate the metrics
+                min_time = round(min(times))
+                max_time = round(max(times))
+                avg_time = round(sum(times) / len(times))
+                
+                # Format the numbers (e.g., rounded to 2 decimal places)
+                formatted_stats = (
+                    f"Min: {min_time:4d}ms | "
+                    f"Avg: {avg_time:4d}ms | "
+                    f"Max: {max_time:4d}ms"
+                )
+                
+                # Clean up the name and append to output
                 clean_name = name.replace("Transformer", "")
-                output_lines.append(f"{clean_name}: {formatted_avg}")
-        
-        output_lines.append("---")
-        output_lines.append(f"{self.pipeline.accepted} accepted")
-        output_lines.append(f"{self.pipeline.rejected} rejected")
+                output_lines.append(f"{clean_name:16s}: {formatted_stats}")        
+
+        output_lines.append("===")
         final_output = "\n".join(output_lines)
         
         results_file = os.path.join(self.config["paths"]["results_file_dir"], "results.txt")
@@ -196,9 +219,9 @@ def run_main():
 
     s = ScreenArtMain()
     try:
-        _, elapsed_time = s.run() # type: ignore
+        elapsed = s.run() or ""
         stats = s.pipeline.get_performance_stats()
-        s.write_outcome(elapsed_time, True, stats)
+        s.write_outcome(elapsed, True, stats)
         sys.exit(0)
     except Exception as e:
         s.log.error(f"An error occurred during run: {e}")

@@ -9,6 +9,11 @@ from typing import Any, Optional
 import time
 from contextlib import contextmanager
 
+
+class TimeResult:
+    def __init__(self):
+        self.elapsed = 0.0
+
 class ScreenArt(ABC):
     # Class-level singleton storage for the configuration
     _global_config: Optional[dict[str, Any]] = None
@@ -111,22 +116,25 @@ class ScreenArt(ABC):
     @contextmanager
     def timer(self, custom_name=None, unit="ms"):
         """Context manager to time a block of code and log the duration."""
+        result = TimeResult()
         start_time = time.perf_counter()
         
-        try:
-            yield 
-        finally:
-            end_time = time.perf_counter()
-            elapsed_seconds = end_time - start_time
+        # Yield the object so the 'as' variable can reference it
+        yield result
+        
+        end_time = time.perf_counter()
+        elapsed_seconds = end_time - start_time
+        
+        # Calculate and store in the object
+        if unit == "s":
+            result.elapsed = round(elapsed_seconds, 2)
+            display = f"{result.elapsed}s"
+        else:
+            result.elapsed = round(elapsed_seconds * 1000, 2)
+            display = f"{result.elapsed}ms"
             
-            log_name = custom_name or self.__class__.__name__
-            
-            # Format based on the requested unit
-            if unit == "s":
-                self.log.info(f"{log_name}: {elapsed_seconds:.2f}s")
-            else:
-                elapsed_ms = elapsed_seconds * 1000
-                self.log.info(f"{log_name}: {elapsed_ms:.2f}ms")
+        log_name = custom_name or self.__class__.__name__
+        self.log.info(f"{log_name}: {display}")
 
     @abstractmethod
     def run(self, *args, **kwargs) -> Any:
