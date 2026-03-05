@@ -162,34 +162,33 @@ class Wiki(DrawGenerator):
     # --------------------------------------------------------
 
     def run(self, *args, **kwargs) -> None:
-        with self.timer():
-            out_dir = os.path.join(self.config["paths"]["generators_in"], "wiki")
-            os.makedirs(out_dir, exist_ok=True)
+        out_dir = os.path.join(self.config["paths"]["generators_in"], "wiki")
+        os.makedirs(out_dir, exist_ok=True)
 
-            items = self.fetch_fresh_data()
-            if not items:
+        items = self.fetch_fresh_data()
+        if not items:
+            return
+
+        selected = random.sample(
+            items,
+            min(self.file_count, len(items))
+        )
+
+        def download_worker(info: dict):
+            url = info.get("thumburl", info.get("url"))
+            if not url:
                 return
 
-            selected = random.sample(
-                items,
-                min(self.file_count, len(items))
-            )
+            img = self.download_and_process(url)
+            if img:
+                name = self.get_short_name(url)
+                filename = os.path.join(out_dir, f"{name}.jpeg").replace("1920px-", "")
+                try:
+                    img.save(filename)
+                    self.log.debug(f"Saved Wiki Image: {filename}")
+                except Exception as e:
+                    self.log.debug(f"Failed saving {filename}: {e}")
 
-            def download_worker(info: dict):
-                url = info.get("thumburl", info.get("url"))
-                if not url:
-                    return
-
-                img = self.download_and_process(url)
-                if img:
-                    name = self.get_short_name(url)
-                    filename = os.path.join(out_dir, f"{name}.jpeg").replace("1920px-", "")
-                    try:
-                        img.save(filename)
-                        self.log.debug(f"Saved Wiki Image: {filename}")
-                    except Exception as e:
-                        self.log.debug(f"Failed saving {filename}: {e}")
-
-            # Parallel downloads (I/O bound)
-            with ThreadPoolExecutor(max_workers=12) as executor:
-                executor.map(download_worker, selected)
+        # Parallel downloads (I/O bound)
+        with ThreadPoolExecutor(max_workers=12) as executor:
+            executor.map(download_worker, selected)

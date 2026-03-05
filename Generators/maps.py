@@ -128,36 +128,35 @@ class NasaMapGenerator(DrawGenerator):
         return stitched_map.resize((self.width, self.height), Image.Resampling.LANCZOS)
 
     def run(self, *args, **kwargs) -> None:
-        with self.timer():
-            out_dir = os.path.join(self.config["paths"]["generators_in"], "maps")
-            os.makedirs(out_dir, exist_ok=True)
+        out_dir = os.path.join(self.config["paths"]["generators_in"], "maps")
+        os.makedirs(out_dir, exist_ok=True)
             
-            layer_items = list(LAYERS.items()) 
+        layer_items = list(LAYERS.items()) 
             
-            for i in range(self.file_count):
-                city_name, coords = random.choice(list(CITIES.items()))
-                temp_lat, temp_lon = coords[0], coords[1]
-                layer_name, layer_info = layer_items[i % len(layer_items)]
+        for i in range(self.file_count):
+            city_name, coords = random.choice(list(CITIES.items()))
+            temp_lat, temp_lon = coords[0], coords[1]
+            layer_name, layer_info = layer_items[i % len(layer_items)]
                 
-                if layer_name == "Night Lights" and not self._is_night_at_location(temp_lat, temp_lon):
-                    continue
+            if layer_name == "Night Lights" and not self._is_night_at_location(temp_lat, temp_lon):
+                continue
 
-                self.lat = temp_lat
-                self.lon = temp_lon
-                self.layer_id = layer_info[0]
+            self.lat = temp_lat
+            self.lon = temp_lon
+            self.layer_id = layer_info[0]
                 
-                max_zoom = layer_info[1]
-                requested_zoom = int(self.config.get('zoom', 4))
-                self.zoom = min(requested_zoom, max_zoom)
+            max_zoom = layer_info[1]
+            requested_zoom = int(self.config.get('zoom', 4))
+            self.zoom = min(requested_zoom, max_zoom)
                 
-                img = self.get_image() 
+            img = self.get_image() 
                 
-                safe_layer_name = layer_name.replace(" ", "_").replace("(", "").replace(")", "")
-                safe_city_name = city_name.split(",")[0].replace(" ", "_")
-                filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}_{safe_city_name}_{safe_layer_name}.jpeg")
+            safe_layer_name = layer_name.replace(" ", "_").replace("(", "").replace(")", "")
+            safe_city_name = city_name.split(",")[0].replace(" ", "_")
+            filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}_{safe_city_name}_{safe_layer_name}.jpeg")
                 
-                try:
-                    img.save(filename)
-                    self.log.debug(f"Saved NASA Map Image: {filename}")
-                except Exception as e:
-                    self.log.debug(f"Failed to save {filename}: {e}")
+            try:
+                img.save(filename)
+                self.log.debug(f"Saved NASA Map Image: {filename}")
+            except Exception as e:
+                self.log.debug(f"Failed to save {filename}: {e}")

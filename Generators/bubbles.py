@@ -275,13 +275,12 @@ class Bubbles(DrawGenerator):
         Multiprocessing generation loop with execution timing.
         """
 
-        with self.timer():
-            out_dir = os.path.join(self.config["paths"]["generators_in"], "bubbles")
-            os.makedirs(out_dir, exist_ok=True)
-            for i in range(self.file_count):
-                img = self.draw_bubbles(self.width, self.height)
-                if img:
-                    # Create a unique filename for each image
-                    filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}.jpeg")
-                    # Save the image with the specified filename
-                    img.save(filename, quality=95)
+        out_dir = os.path.join(self.config["paths"]["generators_in"], "bubbles")
+        os.makedirs(out_dir, exist_ok=True)
+        for i in range(self.file_count):
+            img = self.draw_bubbles(self.width, self.height)
+            if img:
+                # Create a unique filename for each image
+                filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}.jpeg")
+                # Save the image with the specified filename
+                img.save(filename, quality=95)

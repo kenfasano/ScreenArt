@@ -79,30 +79,29 @@ class Bible(Text):
         self.log.debug(f"Cache warmed with {count} entries.")
 
     def run(self, *args, **kwargs) -> None:
-        with self.timer():
-            for _ in range(self.file_count):
-                lang_book, chapter_count = random.choice(self.BOOKS)
-                chapter = random.randint(1, chapter_count)
+        for _ in range(self.file_count):
+            lang_book, chapter_count = random.choice(self.BOOKS)
+            chapter = random.randint(1, chapter_count)
 
-                lines = self._load_psalm(lang_book, chapter)
+            lines = self._load_psalm(lang_book, chapter)
 
-                if not lines:
-                    self.log.debug(f"No lines for {lang_book} ch.{chapter}, skipping.")
-                    continue  # skip this iteration, not the whole run
+            if not lines:
+                self.log.debug(f"No lines for {lang_book} ch.{chapter}, skipping.")
+                continue  # skip this iteration, not the whole run
 
-                book_name, language = self._book_meta[lang_book]
-                bg_color, fg_color = random.choice(self.COLORS)
+            book_name, language = self._book_meta[lang_book]
+            bg_color, fg_color = random.choice(self.COLORS)
 
-                img = self.generate_text_image(
-                    lines_to_draw=lines,
-                    language=language,
-                    bg_color=bg_color,
-                    fg_color=fg_color,
-                )
+            img = self.generate_text_image(
+                lines_to_draw=lines,
+                language=language,
+                bg_color=bg_color,
+                fg_color=fg_color,
+            )
 
-                out_path = os.path.join(self.out_dir, f"{book_name.lower()}_{chapter}.png")
-                try:
-                    img.save(out_path, compress_level=1)
-                    self.log.debug(f"Saved: {out_path}")
-                except Exception as e:
-                    self.log.debug(f"Failed to save {out_path}: {e}")
+            out_path = os.path.join(self.out_dir, f"{book_name.lower()}_{chapter}.png")
+            try:
+                img.save(out_path, compress_level=1)
+                self.log.debug(f"Saved: {out_path}")
+            except Exception as e:
+                self.log.debug(f"Failed to save {out_path}: {e}")

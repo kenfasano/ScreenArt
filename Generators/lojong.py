@@ -99,31 +99,30 @@ class Lojong(Text):
         self.log.debug(f"Lojong cache warmed with {count} entries.")
 
     def run(self, *args, **kwargs) -> None:
-        with self.timer():
-            available = list(self._data.keys())
-            if not available:
-                self.log.critical("No Lojong data loaded; aborting run.")
-                return
+        available = list(self._data.keys())
+        if not available:
+            self.log.critical("No Lojong data loaded; aborting run.")
+            return
 
-            for i in range(self.file_count):
-                language = random.choice(available)
-                lines = self._pick_lines(language)
-                if not lines:
-                    self.log.debug(f"No lines for {language}, skipping.")
-                    continue
+        for i in range(self.file_count):
+            language = random.choice(available)
+            lines = self._pick_lines(language)
+            if not lines:
+                self.log.debug(f"No lines for {language}, skipping.")
+                continue
 
-                bg_color, fg_color = random.choice(self.COLORS)
+            bg_color, fg_color = random.choice(self.COLORS)
 
-                img = self.generate_text_image(
-                    lines_to_draw=lines,
-                    language=language,
-                    bg_color=bg_color,
-                    fg_color=fg_color,
-                )
+            img = self.generate_text_image(
+                lines_to_draw=lines,
+                language=language,
+                bg_color=bg_color,
+                fg_color=fg_color,
+            )
 
-                out_path = os.path.join(self.out_dir, f"lojong_{i}.png")
-                try:
-                    img.save(out_path, compress_level=1)
-                    self.log.debug(f"Saved: {out_path}")
-                except Exception as e:
-                    self.log.debug(f"Failed to save {out_path}: {e}")
+            out_path = os.path.join(self.out_dir, f"lojong_{i}.png")
+            try:
+                img.save(out_path, compress_level=1)
+                self.log.debug(f"Saved: {out_path}")
+            except Exception as e:
+                self.log.debug(f"Failed to save {out_path}: {e}")

@@ -69,18 +69,17 @@ class Nasa(Source):
         return self._download_image(img_url) if img_url else False
 
     def run(self, *args, **kwargs):
-        with self.timer():
-            # Generate extra candidates upfront so missing-image pages don't stall us
-            candidates = [self._apod_url() for _ in range(self.file_count * self.CANDIDATE_MULTIPLIER)]
-            fetched = 0
+        # Generate extra candidates upfront so missing-image pages don't stall us
+        candidates = [self._apod_url() for _ in range(self.file_count * self.CANDIDATE_MULTIPLIER)]
+        fetched = 0
 
-            with ThreadPoolExecutor(max_workers=self.MAX_WORKERS) as executor:
-                futures = {executor.submit(self._fetch_one, url): url for url in candidates}
-                for future in as_completed(futures):
-                    if future.result():
-                        fetched += 1
-                    if fetched >= self.file_count:
-                        executor.shutdown(wait=False, cancel_futures=True)
-                        break
+        with ThreadPoolExecutor(max_workers=self.MAX_WORKERS) as executor:
+            futures = {executor.submit(self._fetch_one, url): url for url in candidates}
+            for future in as_completed(futures):
+                if future.result():
+                    fetched += 1
+                if fetched >= self.file_count:
+                    executor.shutdown(wait=False, cancel_futures=True)
+                    break
 
-            return fetched
+        return fetched

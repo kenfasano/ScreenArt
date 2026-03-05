@@ -77,42 +77,41 @@ class KochSnowflake3(DrawGenerator):
         return result
 
     def run(self, *args, **kwargs):
-        with self.timer():
-            output_dir = os.path.join(self.config["paths"]["generators_in"], "kochsnowflake")
-            if os.path.exists(output_dir):
-                shutil.rmtree(output_dir)
-            os.makedirs(output_dir, exist_ok=True)
+        output_dir = os.path.join(self.config["paths"]["generators_in"], "kochsnowflake")
+        if os.path.exists(output_dir):
+            shutil.rmtree(output_dir)
+        os.makedirs(output_dir, exist_ok=True)
 
-            for i in range(self.file_count):
-                num_transforms = random.randint(2, 4) 
-                spiral_tightness = random.uniform(0.3, 1.2)
-                num_colors = random.choice([2, 3])
-                current_hues = [random.randint(0, 180) for _ in range(num_colors)]
-                bg_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+        for i in range(self.file_count):
+            num_transforms = random.randint(2, 4) 
+            spiral_tightness = random.uniform(0.3, 1.2)
+            num_colors = random.choice([2, 3])
+            current_hues = [random.randint(0, 180) for _ in range(num_colors)]
+            bg_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
                 
-                self.spiral_transformer.tightness = spiral_tightness
-                current_scale = random.uniform(0.5, 0.8)
+            self.spiral_transformer.tightness = spiral_tightness
+            current_scale = random.uniform(0.5, 0.8)
                 
-                points = self._generate_initial_hexagon(current_scale)
+            points = self._generate_initial_hexagon(current_scale)
 
-                # --- USING NEW .run() CONTRACT ---
-                for _ in range(num_transforms):
-                    points = self.koch_transformer.run(points) 
-                points = self.spiral_transformer.run(points) 
+            # --- USING NEW .run() CONTRACT ---
+            for _ in range(num_transforms):
+                points = self.koch_transformer.run(points) 
+            points = self.spiral_transformer.run(points) 
 
-                img = np.zeros((self.height, self.width, 3), dtype=np.uint8)
-                poly = points.astype(np.int32)
-                cv2.fillPoly(img, [poly], (255, 255, 255)) 
+            img = np.zeros((self.height, self.width, 3), dtype=np.uint8)
+            poly = points.astype(np.int32)
+            cv2.fillPoly(img, [poly], (255, 255, 255)) 
 
-                img = self._apply_psychedelic_mask(img, current_hues, bg_color)
+            img = self._apply_psychedelic_mask(img, current_hues, bg_color)
 
-                # --- USING NATIVE PIL img.save() ---
-                filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
-                filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
+            # --- USING NATIVE PIL img.save() ---
+            filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
+            filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
                 
-                try:
-                    Image.fromarray(img).save(filename)
-                    hue_str = ">".join(map(str, current_hues))
-                    self.log.debug(f"Generated KS3: {filename} (Iter: {num_transforms}, Spiral: {spiral_tightness:.2f}, Hues: {hue_str})")
-                except Exception as e:
-                    self.log.debug(f"Failed to save {filename}: {e}")
+            try:
+                Image.fromarray(img).save(filename)
+                hue_str = ">".join(map(str, current_hues))
+                self.log.debug(f"Generated KS3: {filename} (Iter: {num_transforms}, Spiral: {spiral_tightness:.2f}, Hues: {hue_str})")
+            except Exception as e:
+                self.log.debug(f"Failed to save {filename}: {e}")

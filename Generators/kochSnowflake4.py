@@ -99,36 +99,35 @@ class KochSnowflake4(DrawGenerator):
         return img, bg
 
     def run(self, *args, **kwargs):
-        with self.timer():
-            output_dir = os.path.join(self.config["paths"]["generators_in"], "kochsnowflake")
-            if os.path.exists(output_dir):
-                shutil.rmtree(output_dir)
-            os.makedirs(output_dir, exist_ok=True)
+        output_dir = os.path.join(self.config["paths"]["generators_in"], "kochsnowflake")
+        if os.path.exists(output_dir):
+            shutil.rmtree(output_dir)
+        os.makedirs(output_dir, exist_ok=True)
 
-            for i in range(self.file_count):
-                spiral_tightness = random.uniform(0.5, 2.0) 
-                num_points = random.choice([50000, 100000, 200000])
+        for i in range(self.file_count):
+            spiral_tightness = random.uniform(0.5, 2.0) 
+            num_points = random.choice([50000, 100000, 200000])
                 
-                num_colors = random.choice([2, 3])
-                current_hues = [random.randint(0, 180) for _ in range(num_colors)]
+            num_colors = random.choice([2, 3])
+            current_hues = [random.randint(0, 180) for _ in range(num_colors)]
                 
-                self.chaos_transformer.num_points = num_points
-                self.spiral_transformer.tightness = spiral_tightness
+            self.chaos_transformer.num_points = num_points
+            self.spiral_transformer.tightness = spiral_tightness
                 
-                scale = random.uniform(0.6, 0.9)
-                vertices = self._generate_initial_vertices(scale)
+            scale = random.uniform(0.6, 0.9)
+            vertices = self._generate_initial_vertices(scale)
                 
-                cloud = self.chaos_transformer.run(vertices) 
-                cloud = self.spiral_transformer.run(cloud) 
+            cloud = self.chaos_transformer.run(vertices) 
+            cloud = self.spiral_transformer.run(cloud) 
                 
-                filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
-                filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
+            filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
+            filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
                 
-                img, bg_color = self._create_image_with_opposite_bg(self.width, self.height, cloud, current_hues)
-                img_arr, bg_color = self._create_image_with_opposite_bg(self.width, self.height, cloud, current_hues)
+            img, bg_color = self._create_image_with_opposite_bg(self.width, self.height, cloud, current_hues)
+            img_arr, bg_color = self._create_image_with_opposite_bg(self.width, self.height, cloud, current_hues)
 
-                try:
-                    Image.fromarray(img_arr).save(filename)
-                    self.log.debug(f"Generated KS4: {filename} (Points: {num_points}, Spiral: {spiral_tightness:.2f}, BG: {bg_color})")
-                except Exception as e:
-                    self.log.debug(f"Failed to save {filename}: {e}")
+            try:
+                Image.fromarray(img_arr).save(filename)
+                self.log.debug(f"Generated KS4: {filename} (Points: {num_points}, Spiral: {spiral_tightness:.2f}, BG: {bg_color})")
+            except Exception as e:
+                self.log.debug(f"Failed to save {filename}: {e}")

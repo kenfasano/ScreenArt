@@ -70,22 +70,21 @@ class GoesGenerator(DrawGenerator):
         return Image.new('RGB', (self.width, self.height), (0, 0, 0))
 
     def run(self, *args, **kwargs) -> None:
-        with self.timer(): 
-            out_dir = os.path.join(self.config["paths"]["generators_in"], "goes")
-            os.makedirs(out_dir, exist_ok=True)
+        out_dir = os.path.join(self.config["paths"]["generators_in"], "goes")
+        os.makedirs(out_dir, exist_ok=True)
             
-            product_items = list(PRODUCTS.items())
+        product_items = list(PRODUCTS.items())
             
-            for i in range(self.file_count):
-                self.product_name, self.product_id = random.choice(product_items)
-                self.log.debug(f"Generating GOES-19 {SECTOR.upper()}: {self.product_name}")
+        for i in range(self.file_count):
+            self.product_name, self.product_id = random.choice(product_items)
+            self.log.debug(f"Generating GOES-19 {SECTOR.upper()}: {self.product_name}")
                 
-                img = self.get_image()
-                safe_product_name = self.product_name.replace(" ", "_")
-                filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}_{SECTOR}_{safe_product_name}.jpeg")
+            img = self.get_image()
+            safe_product_name = self.product_name.replace(" ", "_")
+            filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}_{SECTOR}_{safe_product_name}.jpeg")
                 
-                try:
-                    img.save(filename)
-                    self.log.debug(f"Saved GOES Image: {filename}")
-                except Exception as e:
-                    self.log.debug(f"Failed to save {filename}: {e}")
+            try:
+                img.save(filename)
+                self.log.debug(f"Saved GOES Image: {filename}")
+            except Exception as e:
+                self.log.debug(f"Failed to save {filename}: {e}")
