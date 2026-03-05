@@ -4,11 +4,10 @@ import os
 from pathlib import Path
 import sys
 from multiprocessing import freeze_support 
-from typing import List, Tuple
 import glob
 import random
 import time
-from collections import namedtuple, defaultdict
+from collections import namedtuple
 from datetime import datetime
 
 # 1. Import your Generators
@@ -83,6 +82,7 @@ class ScreenArtMain(ScreenArt):
 
         # Initialize the pipeline
         self.pipeline = ImageProcessingPipeline()
+        self.generator_stats: dict[str, float] = {}
 
     def erase_image_dir(self, directory: str):
         for dirpath, _, filenames in os.walk(directory):
@@ -128,10 +128,10 @@ class ScreenArtMain(ScreenArt):
         """Dynamically instantiates and runs a generator from the registry."""
         GeneratorClass = self.generator_classes.get(key)
         if GeneratorClass:
-            self.log.debug(f"Running {key.capitalize()} Generator...")
             with self.timer() as t:
-                GeneratorClass().run() 
-            self.generator_stats[key].append(t.elapsed)
+                generator = GeneratorClass()
+                generator.run() 
+            self.generator_stats[generator.__class__.__name__] = t.elapsed
         else:
             self.log.warning(f"Generator class for key '{key}' not mapped in registry.")
 
@@ -146,7 +146,7 @@ class ScreenArtMain(ScreenArt):
             
             # Phase 1: Run Generators
 
-            self.generator_stats: defaultdict[str, list[float]] = defaultdict(list)
+            self.generator_stats: dict[str, float] = {}
             for key in keys_to_process:
                 gen_config = self.generators[key]
                 if gen_config.should_erase:
@@ -167,43 +167,51 @@ class ScreenArtMain(ScreenArt):
         self.log.debug("----------------------------")
         return elapsed
 
-    def _format_stats(self, stats: dict[str, list[float]], strip_word: str = "") -> list[str]:
-        """Sorts, calculates, and formats metrics from a stats dictionary."""
+    def format_stats(self, stats: dict[str, list[float] | float], strip_word: str = "") -> list[str]:
         formatted_lines = []
         
         if not stats:
             return formatted_lines
 
-        # Sort by average time, descending
-        sorted_stats = sorted(
-            stats.items(), 
-            key=lambda item: sum(item[1]) / len(item[1]) if item[1] else 0, 
-            reverse=True
-        )
+        list_stats: dict[str, list[float]] = {k: v for k, v in stats.items() if isinstance(v, list)}
+        float_stats: dict[str, float] = {k: v for k, v in stats.items() if isinstance(v, (int, float))}
+
+        if list_stats:
+            sorted_stats = sorted(
+                list_stats.items(),
+                key=lambda item: sum(item[1]) / len(item[1]) if item[1] else 0,
+                reverse=True
+            )
+        else:
+            sorted_stats = sorted(
+                float_stats.items(),
+                key=lambda item: item[1],
+                reverse=True
+            )
 
         for name, times in sorted_stats:
             if not times:
                 continue
             
-            if len(times) > 1:
-                # Calculate the metrics
-                min_time = round(min(times))
-                max_time = round(max(times))
-                avg_time = round(sum(times) / len(times))
-                
-                # Format the numbers
+            if list_stats:
+                min_time = round(min(times)) #type: ignore
+                max_time = round(max(times)) #type: ignore
+                avg_time = round(sum(times) / len(times))  #type: ignore
+                self.log.info(name)
                 formatted_times = (
+                    f"{name:26s} -> "
                     f"Min: {min_time:5d}ms | "
                     f"Avg: {avg_time:5d}ms | "
                     f"Max: {max_time:5d}ms"
                 )
             else:
-                formatted_times = f"{round(times[0]):5d}ms"
+                formatted_times = (
+                    f"{name:26s} -> "
+                    f"{round(times):5d}ms" #type: ignore     
+                )
 
-            # Clean up the name and append to output
-            clean_name = name.replace(strip_word, "") if strip_word else name
-            formatted_lines.append(f"{clean_name:24s}: {formatted_times}")
-            
+            formatted_lines.append(formatted_times)
+
         return formatted_lines
 
     def write_outcome(self, elapsed_time: str, ok: bool, accepted_rejected: str, pipeline_stats: dict[str, list[float]] | None):
@@ -218,7 +226,7 @@ class ScreenArtMain(ScreenArt):
         # 1. Process and append the Generator Stats
         if self.generator_stats:
             # Use extend() to add the returned list of strings to our main output
-            output_lines.extend(self._format_stats(self.generator_stats, strip_word="Generator"))
+            output_lines.extend(self.format_stats(self.generator_stats, strip_word="Generator"))
             output_lines.append("---") # Optional separator between sections
 
         # 2. Process and append the Pipeline Stats
@@ -229,7 +237,7 @@ class ScreenArtMain(ScreenArt):
             output_lines.append("---")
             
             # Process the pipeline transformer stats
-            output_lines.extend(self._format_stats(pipeline_stats, strip_word="Transformer"))
+            output_lines.extend(self.format_stats(pipeline_stats, strip_word="Transformer")) #type: ignore
       
         final_output = "\n".join(output_lines)
         

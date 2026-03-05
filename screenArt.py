@@ -9,7 +9,6 @@ from typing import Any, Optional
 import time
 from contextlib import contextmanager
 
-
 class TimeResult:
     def __init__(self):
         self.elapsed = 0.0
@@ -128,13 +127,13 @@ class ScreenArt(ABC):
         # Calculate and store in the object
         if unit == "s":
             result.elapsed = round(elapsed_seconds, 2)
-            display = f"{result.elapsed}s"
+#            display = f"{result.elapsed}s"
         else:
             result.elapsed = round(elapsed_seconds * 1000, 2)
-            display = f"{result.elapsed}ms"
+#            display = f"{result.elapsed}ms"
             
-        log_name = custom_name or self.__class__.__name__
-        self.log.info(f"{log_name}: {display}")
+#        log_name = custom_name or self.__class__.__name__
+#        self.log.info(f"{log_name}: {display}")
 
     @abstractmethod
     def run(self, *args, **kwargs) -> Any:

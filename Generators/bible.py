@@ -66,7 +66,7 @@ class Bible(Text):
         """Pre-compute and persist font sizes for all psalms in all books.
         Call once manually after adding or changing psalm data.
         """
-        self.log.info("Warming font size cache...")
+        self.log.debug("Warming font size cache...")
         count = 0
         for lang_book, chapter_count in self.BOOKS:
             for chapter in range(1, chapter_count + 1):
@@ -76,7 +76,7 @@ class Bible(Text):
                     font_path = self.language_fonts.get(language, self.language_fonts["English"])
                     self._find_max_font_size(font_path, lines)
                     count += 1
-        self.log.info(f"Cache warmed with {count} entries.")
+        self.log.debug(f"Cache warmed with {count} entries.")
 
     def run(self, *args, **kwargs) -> None:
         with self.timer():

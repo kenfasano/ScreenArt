@@ -19,9 +19,8 @@ class KochSnowflake(DrawGenerator):
         self.log.debug("Running Master KochSnowflake Generator...")
         
         # generators = [KochSnowflake1, KochSnowflake2, KochSnowflake3, KochSnowflake4]
-        generators = [KochSnowflake4]
-        #weights = [3, 4, 5, 6]
-        weights = [6] 
+        generators = [KochSnowflake1, KochSnowflake2, KochSnowflake3, KochSnowflake4]
+        weights = [3, 4, 5, 6]
         SelectedGeneratorClass = random.choices(generators, weights=weights, k=1)[0]
         
         # Instantiate without passing config, and call run()

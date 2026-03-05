@@ -23,11 +23,8 @@ def _load_font_size_cache() -> None:
     try:
         with open(_FONT_CACHE_PATH, 'r') as f:
             _font_size_cache = json.load(f)
-        print(f"Loaded font cache: {len(_font_size_cache)} entries from {_FONT_CACHE_PATH}")
     except FileNotFoundError:
-        print(f"Font cache not found at {_FONT_CACHE_PATH}")
         _font_size_cache = {}
-
 
 def _save_font_size_cache() -> None:
     with open(_FONT_CACHE_PATH, 'w') as f:

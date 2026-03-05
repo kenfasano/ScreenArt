@@ -16,7 +16,13 @@ while getopts "n:s:" opt; do
 done
 
 echo "Starting ScreenArt loop with ${num_times} iterations and ${sleep_seconds}s sleep..."
-rm "~/Scripts/ScreenArt/logs/screenArt.log"
+
+LOG_FILE="~/Scripts/ScreenArt/logs/screenArt.log"
+
+if [[ -e $LOG_FILE ]]; then
+	rm "${LOG_FILE}"
+fi
+
 # --- 3. Run Loop ---
 # Using (( )) for C-style loop to handle the variable num_times
 for (( i=1; i<=${num_times}; i++ ))
@@ -28,6 +34,11 @@ do
     # Execute your command
     cd ~/Scripts
 	 source .venv/bin/activate && .venv/bin/python3 -m ScreenArt.main
+	 rc=$?
+	 if [[ rc -ne 0 ]]; then
+		 exit 1
+  	 fi
+	 echo "rc=${rc}"
     
     # Sleep unless it's the very last run
     if [ "${i}" -lt "${num_times}" ]; then
