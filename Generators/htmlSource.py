@@ -1,9 +1,4 @@
 from abc import abstractmethod
-import os
-import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
-import requests
-from typing import Callable
 
 # Inherits from the newly refactored Source
 from .source import Source

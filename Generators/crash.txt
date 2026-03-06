@@ -1,0 +1,2 @@
+/Users/kenfasano/Scripts/ScreenArt/Transformers/RasterTransformers/fisheyeTransformer.py:76: RuntimeWarning: invalid value encountered in divide
+  scale_factor = np.where(r_out == 0, 1.0, r_in / r_out)

@@ -1,0 +1,16 @@
+0s@converted
+---
+Cubes                       ->  549ms
+ScreenArtMain               -> 1211ms
+PeripheralDriftIllusion     ->   46ms
+Bible                       ->  660ms
+KochSnowflake1              ->  338ms
+KochSnowflake2              ->  313ms
+Bubbles                     ->  263ms
+KochSnowflake3              ->  327ms
+KochSnowflake4              ->  244ms
+Lojong                      ->  435ms
+GoesGenerator               -> 1029ms
+Hilbert                     ->   98ms
+Wiki                        -> 6314ms
+NasaMapGenerator            ->  510ms

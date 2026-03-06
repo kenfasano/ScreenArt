@@ -1,0 +1,14 @@
+30s@converted ✓
+---
+PeripheralDriftIllusion     ->  45ms
+Bible                       ->  683ms
+Nasa                        ->  6193ms
+Cubes                       ->  462ms
+Bubbles                     ->  237ms
+KochSnowflake4              ->  246ms
+Lojong                      ->  459ms
+GoesGenerator               ->  851ms
+Hilbert                     ->  98ms
+Wiki                        ->  5977ms
+NasaMapGenerator            ->  896ms
+---

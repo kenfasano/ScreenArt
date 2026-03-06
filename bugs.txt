@@ -1,0 +1,2 @@
+2026-03-02 18:33:28,472 - INFO - [screenArt.py:129] - Hilbert: 270.55ms
+Corrupt JPEG data: premature end of data segment

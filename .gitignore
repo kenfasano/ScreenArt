@@ -11,10 +11,6 @@ __pycache__/
 venv/
 env/
 
-*.txt
-*.log
-*.csv
-
 # Media
 Images
 Generators/maps_cache/

@@ -22,7 +22,7 @@ $VENV_PYTHON -m cProfile -o $STATS_FILE -m ScreenArt.main
 # Check if the stats file was created and launch SnakeViz
 if [ -f "$STATS_FILE" ]; then
     echo "Profiling complete. Launching browser..."
-    $HOME/Scripts/.venv/bin/snakeviz $STATS_FILE
+    snakeviz $STATS_FILE
 else
     echo "Error: Profiling file was not generated."
 fi
