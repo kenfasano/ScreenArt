@@ -121,11 +121,11 @@ class KochSnowflake1(DrawGenerator):
             img = self._apply_psychedelic_mask(img, current_hues, bg_color)
 
             # 7. Save
-            filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
+            filename_suffix = f"_{i+1}.jpeg" if self.file_count > 1 else ".jpeg"
             filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
                 
             try:
-                img.save(filename)
+                img.save(filename, quality=95)
                 hue_str = ">".join(map(str, current_hues))
                 self.log.debug(f"Generated KS1: {filename} (Iter: {num_transforms}, Spiral: {spiral_tightness:.2f}, Hues: {hue_str})")
             except Exception as e:

@@ -184,7 +184,7 @@ class Wiki(DrawGenerator):
                 name = self.get_short_name(url)
                 filename = os.path.join(out_dir, f"{name}.jpeg").replace("1920px-", "")
                 try:
-                    img.save(filename)
+                    img.save(filename, quality=95)
                     self.log.debug(f"Saved Wiki Image: {filename}")
                 except Exception as e:
                     self.log.debug(f"Failed saving {filename}: {e}")

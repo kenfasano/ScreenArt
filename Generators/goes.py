@@ -84,7 +84,7 @@ class GoesGenerator(DrawGenerator):
             filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}_{SECTOR}_{safe_product_name}.jpeg")
                 
             try:
-                img.save(filename)
+                img.save(filename, quality=95)
                 self.log.debug(f"Saved GOES Image: {filename}")
             except Exception as e:
                 self.log.debug(f"Failed to save {filename}: {e}")

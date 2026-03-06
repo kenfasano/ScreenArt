@@ -138,7 +138,7 @@ class PeripheralDriftIllusion(DrawGenerator):
             if img:
                 filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}.jpeg")
                 try:
-                    img.save(filename)
+                    img.save(filename, quality=95)
                     self.log.debug(f"Saved Optical Illusion: {filename}")
                 except Exception as e:
                     self.log.debug(f"Failed to save {filename}: {e}")

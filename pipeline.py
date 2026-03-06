@@ -61,7 +61,7 @@ class ImageProcessingPipeline(ScreenArt):
             grade = self._calculate_grade(img_np)
             
             # 2. Append the grade to the filename
-            new_filename = f"{base_name}_{joined_tags}_Grade-{grade}.png"
+            new_filename = f"{base_name}_{joined_tags}_Grade-{grade}.jpeg"
             
             # 3. Route and Save
             self._evaluate_and_save(img_np, new_filename, grade)
@@ -96,7 +96,7 @@ class ImageProcessingPipeline(ScreenArt):
             status = "REJECTED"
 
         # Save the file using the inherited log for output
-        cv2.imwrite(final_path, img_np)
+        cv2.imwrite(final_path, img_np, [cv2.IMWRITE_JPEG_QUALITY, 95])
         self.log.debug(f"[{status} - Grade: {grade}] Saved to: {final_path}")
 
     def get_accepted_rejected(self) -> str:

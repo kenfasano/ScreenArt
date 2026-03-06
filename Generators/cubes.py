@@ -118,9 +118,9 @@ class Cubes(DrawGenerator):
                 mask_draw.polygon(points, fill=1)
                 placed_count += 1
 
-            filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}.jpg")
+            filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}.jpeg")
             try:
-                img.save(filename)
+                img.save(filename, quality=95)
                 self.log.debug(f"Mode: {mode}. {placed_count} cubes")
             except Exception as e:
                 self.log.debug(f"Failed to save {filename}: {e}")

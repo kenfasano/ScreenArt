@@ -156,7 +156,7 @@ class NasaMapGenerator(DrawGenerator):
             filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}_{safe_city_name}_{safe_layer_name}.jpeg")
                 
             try:
-                img.save(filename)
+                img.save(filename, quality=95)
                 self.log.debug(f"Saved NASA Map Image: {filename}")
             except Exception as e:
                 self.log.debug(f"Failed to save {filename}: {e}")

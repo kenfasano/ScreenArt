@@ -120,9 +120,9 @@ class Lojong(Text):
                 fg_color=fg_color,
             )
 
-            out_path = os.path.join(self.out_dir, f"lojong_{i}.png")
+            out_path = os.path.join(self.out_dir, f"lojong_{i}.jpeg")
             try:
-                img.save(out_path, compress_level=1)
+                img.convert("RGB").save(out_path, quality=95)
                 self.log.debug(f"Saved: {out_path}")
             except Exception as e:
                 self.log.debug(f"Failed to save {out_path}: {e}")

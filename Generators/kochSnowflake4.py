@@ -120,14 +120,14 @@ class KochSnowflake4(DrawGenerator):
             cloud = self.chaos_transformer.run(vertices) 
             cloud = self.spiral_transformer.run(cloud) 
                 
-            filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
+            filename_suffix = f"_{i+1}.jpeg" if self.file_count > 1 else ".jpeg"
             filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
                 
             img, bg_color = self._create_image_with_opposite_bg(self.width, self.height, cloud, current_hues)
             img_arr, bg_color = self._create_image_with_opposite_bg(self.width, self.height, cloud, current_hues)
 
             try:
-                Image.fromarray(img_arr).save(filename)
+                Image.fromarray(img_arr).save(filename, quality=95)
                 self.log.debug(f"Generated KS4: {filename} (Points: {num_points}, Spiral: {spiral_tightness:.2f}, BG: {bg_color})")
             except Exception as e:
                 self.log.debug(f"Failed to save {filename}: {e}")
