@@ -51,4 +51,4 @@ class DataMoshTransformer(RasterTransformer):
         else:
             output_np = img_np[new_y, new_x]
 
-        return output_np.astype(np.uint8)
+        return output_np

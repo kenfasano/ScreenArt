@@ -1,7 +1,6 @@
 import cv2 
 import random
 import numpy as np 
-from PIL import Image 
 from .rasterTransformer import RasterTransformer
 
 class ColormapTransformer(RasterTransformer):
@@ -30,13 +29,11 @@ class ColormapTransformer(RasterTransformer):
         t_config = self.config.get("colormaptransformer", {})
 
         # Ensure the image is in a supported format
-        if img_np.dtype != np.uint8:
-            img_np = (img_np * 255).astype(np.uint8)
+        img_np = self.to_uint8(img_np)
 
         # Convert to grayscale if it's a color image
         if img_np.ndim == 3 and img_np.shape[2] == 3:
-            img_pil = Image.fromarray(img_np)
-            grayscale_img = np.array(img_pil.convert('L'))
+            grayscale_img = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)
         else:
             grayscale_img = img_np
 
@@ -53,4 +50,4 @@ class ColormapTransformer(RasterTransformer):
         self.chosen_colormap_value = self.color_maps[chosen_colormap_key]
         colored_img = cv2.applyColorMap(grayscale_img, self.chosen_colormap_value)
 
-        return colored_img
+        return self.to_float32(colored_img)

@@ -25,7 +25,7 @@ class FlipWilsonTransformer(RasterTransformer):
 
     def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
         if isinstance(img_np, np.ndarray):
-            img = Image.fromarray(img_np)
+            img = Image.fromarray(self.to_uint8(img_np))
         elif isinstance(img_np, Image.Image):
             img = img_np.copy()
         else:
@@ -52,7 +52,7 @@ class FlipWilsonTransformer(RasterTransformer):
             self._reflect_vertical(img, keep_top=False)
             self._reflect_horizontal(img, keep_left=False)
 
-        return np.array(img)
+        return self.to_float32(np.array(img))
 
     def _reflect_horizontal(self, img: Image.Image, keep_left: bool) -> None:
         w, h = img.size

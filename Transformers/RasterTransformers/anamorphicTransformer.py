@@ -76,6 +76,7 @@ class AnamorphicTransformer(RasterTransformer):
             final_colors = final_colors[:count]
         
         # --- Optimized Processing ---
+        img_np = self.to_uint8(img_np)
         if img_np.ndim == 3:
             gray_f32 = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY).astype(np.float32)
         else:
@@ -112,4 +113,4 @@ class AnamorphicTransformer(RasterTransformer):
         streak_overlay = row_accumulator[:, np.newaxis, :]
         output_np = np.clip(img_np.astype(np.float32) + streak_overlay, 0, 255).astype(np.uint8)
 
-        return output_np
+        return self.to_float32(output_np)

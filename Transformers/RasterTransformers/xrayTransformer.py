@@ -14,15 +14,13 @@ class XrayTransformer(RasterTransformer):
         super().__init__()
 
     def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
-        t_config = self.config.get("xraytransformer", {})
+        POSSIBLE_NUM_COLORS: list[int] = [1, 2, 4, 8, 16, 32, 64, 128, 256]
+        WEIGHTS:             list[int] = [8, 7, 6, 5,  4,  3,  2,   1,   1]
 
-        num_colors = t_config.get("num_colors")
-        if isinstance(num_colors, int) and num_colors in POSSIBLE_NUM_COLORS:
-            self.num_colors = num_colors
-        else:
-            self.num_colors = random.choice(POSSIBLE_NUM_COLORS)
-            
+        self.num_colors = random.choices(POSSIBLE_NUM_COLORS, weights=WEIGHTS, k=1)[0]
         self.metadata_dictionary["colors"] = self.num_colors
+
+        img_np = self.to_uint8(img_np)
 
         # Handle grayscale vs color seamlessly
         if img_np.ndim == 2:
@@ -33,4 +31,5 @@ class XrayTransformer(RasterTransformer):
         quantized_img_pil = img_rgb_pil.quantize(colors=self.num_colors)
         quantized_img_np = cv2.cvtColor(np.array(quantized_img_pil), cv2.COLOR_RGB2BGR)
 
-        return quantized_img_np
+        return self.to_float32(quantized_img_np)
+

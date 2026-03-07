@@ -54,4 +54,4 @@ class HalftoneTransformer(RasterTransformer):
         else:
             final_output[:trimmed_height, :trimmed_width] = output_np
 
-        return final_output.astype(np.uint8)
+        return final_output

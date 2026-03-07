@@ -61,11 +61,13 @@ class TritoneTransformer(RasterTransformer):
         light_mask = normalized_grayscale > 0.5
         light_normalized = np.where(light_mask, (normalized_grayscale - 0.5) / 0.5, 0)
 
-        for i in range(3):
-            output_np[..., i] = np.where(
-                dark_mask,
-                (mid_np[i] * dark_normalized) + (shadow_np[i] * (1 - dark_normalized)),
-                (highlight_np[i] * light_normalized) + (mid_np[i] * (1 - light_normalized))
-            )
-            
-        return np.clip(output_np, 0, 255).astype(np.uint8)
+        # Better - vectorize all channels at once
+        t = normalized_grayscale[..., np.newaxis]
+        dark_t = np.where(dark_mask[..., np.newaxis], t / 0.5, 0)
+        light_t = np.where(~dark_mask[..., np.newaxis], (t - 0.5) / 0.5, 0)
+        output_np = np.where(
+            dark_mask[..., np.newaxis],
+            mid_np * dark_t + shadow_np * (1 - dark_t),
+            highlight_np * light_t + mid_np * (1 - light_t)
+        )
+        return np.clip(output_np, 0, 255)

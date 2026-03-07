@@ -67,6 +67,7 @@ class SwirlWarpTransformer(RasterTransformer):
         map_x_new = (cx + r * np.cos(theta_new)).astype(np.float32)
         map_y_new = (cy + r * np.sin(theta_new)).astype(np.float32)
 
+        img_np = self.to_uint8(img_np)
         warped = cv2.remap(
             img_np,
             map_x_new,
@@ -75,4 +76,4 @@ class SwirlWarpTransformer(RasterTransformer):
             borderMode=cv2.BORDER_REFLECT_101
         )
 
-        return warped
+        return self.to_float32(warped)

@@ -37,6 +37,8 @@ class DuotoneTransformer(RasterTransformer):
         self.shadow_rgb = self._hex_to_rgb(shadow_hex)
         self.highlight_rgb = self._hex_to_rgb(hilight_hex)
 
+        img_np = self.to_uint8(img_np)
+
         if img_np.ndim < 3 or img_np.shape[2] < 3:
             # If grayscale passed in, convert to pseudo-RGB so we can colorize it
             if img_np.ndim == 2:
@@ -60,8 +62,7 @@ class DuotoneTransformer(RasterTransformer):
         normalized_grayscale = grayscale_np.astype(np.float32) / 255.0
 
         # Perform the linear interpolation for each color channel
-        for i in range(3):
-            output_np[..., i] = (shadow_np[i] * (1 - normalized_grayscale) +
-                                  highlight_np[i] * normalized_grayscale)
-
-        return output_np.astype(np.uint8)
+        # Better - single vectorized operation, reshape once
+        t = normalized_grayscale[..., np.newaxis].astype(np.float32)
+        output_np = (shadow_np * (1 - t) + highlight_np * t)
+        return self.to_float32(np.clip(output_np, 0, 255).astype(np.uint8))

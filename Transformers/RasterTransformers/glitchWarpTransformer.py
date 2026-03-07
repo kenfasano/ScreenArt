@@ -39,4 +39,4 @@ class GlitchWarpTransformer(RasterTransformer):
         # Advanced indexing
         output_np = img_np[np.arange(height)[:, np.newaxis], new_x_indices]
 
-        return output_np.astype(np.uint8)
+        return output_np

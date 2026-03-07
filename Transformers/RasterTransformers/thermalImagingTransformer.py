@@ -1,5 +1,6 @@
 import numpy as np
 from PIL import Image
+import cv2 
 from .rasterTransformer import RasterTransformer
 
 class ThermalImagingTransformer(RasterTransformer):
@@ -30,13 +31,12 @@ class ThermalImagingTransformer(RasterTransformer):
 
     def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
         # Ensure the image is in a supported format
-        if img_np.dtype != np.uint8:
-            img_np = (img_np * 255).astype(np.uint8)
+        img_np = self.to_uint8(img_np)
 
         # Convert to grayscale first
         if img_np.ndim == 3 and img_np.shape[2] == 3:
             img_pil = Image.fromarray(img_np)
-            grayscale_img = np.array(img_pil.convert('L'))
+            grayscale_img = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)
         else:
             grayscale_img = img_np
             
@@ -44,4 +44,4 @@ class ThermalImagingTransformer(RasterTransformer):
         
         self.metadata_dictionary["thermal"] = True
 
-        return self.colormap[grayscale_img]
+        return self.to_float32(self.colormap[grayscale_img])

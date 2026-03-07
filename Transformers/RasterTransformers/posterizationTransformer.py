@@ -34,4 +34,4 @@ class PosterizationTransformer(RasterTransformer):
         # Quantize each color channel
         output_np = np.round(output_np / step_size) * step_size
 
-        return output_np.astype(np.uint8)
+        return output_np

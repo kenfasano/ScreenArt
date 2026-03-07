@@ -35,6 +35,7 @@ class ThreeDExtrusionTransformer(RasterTransformer):
         self.metadata_dictionary["ambient"] = round(ambient_light, 2)
         
         # --- Optimized Pipeline ---
+        img_np = self.to_uint8(img_np)
         if img_np.ndim == 3:
             gray = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY).astype(np.float32)
         else:
@@ -70,4 +71,4 @@ class ThreeDExtrusionTransformer(RasterTransformer):
         shading = shading[..., np.newaxis]
         output_np = (img_np * shading).astype(np.uint8)
 
-        return output_np
+        return self.to_float32(output_np)

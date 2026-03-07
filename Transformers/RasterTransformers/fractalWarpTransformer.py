@@ -79,10 +79,11 @@ class FractalWarpTransformer(RasterTransformer):
         map_x = (nx * width + center_x).astype(np.float32)
         map_y = (ny * height + center_y).astype(np.float32)
 
+        img_np = self.to_uint8(img_np)
         try:
             warped = cv2.remap(img_np, map_x, map_y, interpolation=cv2.INTER_LINEAR)
-            return warped
+            return self.to_float32(warped)
         except Exception as e:
             # Replaced global log with self.log
             self.log.critical(f"Error during FractalWarp remap: {e}")
-            return img_np
+            return self.to_float32(img_np)

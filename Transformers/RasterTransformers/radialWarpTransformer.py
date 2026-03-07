@@ -19,6 +19,7 @@ class RadialWarpTransformer(RasterTransformer):
         self.allowed_styles = ["push", "pull"]
 
     def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
+        img_np = self.to_uint8(img_np)
         t_config = self.config.get("radialwarptransformer", {})
 
         height, width = img_np.shape[:2]
@@ -86,7 +87,7 @@ class RadialWarpTransformer(RasterTransformer):
             px_radius = np.clip([v * min(height, width) for v in radius], 1, min(height, width)).astype(int)
         except Exception as e:
             self.log.error(f"Could not convert coordinate percentages: {e}")
-            return img_np 
+            return self.to_float32(img_np)
 
         # --- OPTIMIZED WARP LOGIC ---
         map_x, map_y = np.meshgrid(np.arange(width, dtype=np.float32), 
@@ -128,7 +129,7 @@ class RadialWarpTransformer(RasterTransformer):
 
         try:
             warped = cv2.remap(img_np, map_x, map_y, interpolation=cv2.INTER_LINEAR)
-            return warped
+            return self.to_float32(warped)
         except Exception as e:
             self.log.critical(f"Error during final remap: {e}")
-            return img_np
+            return self.to_float32(img_np)

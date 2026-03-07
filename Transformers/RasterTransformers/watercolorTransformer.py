@@ -33,6 +33,7 @@ class WatercolorTransformer(RasterTransformer):
             sigma_s = random.uniform(150, 200)
             sigma_r = random.uniform(0.8, 0.95)
 
+        img_np = self.to_uint8(img_np)
         h, w = img_np.shape[:2]
         new_w, new_h = int(w * scale_factor), int(h * scale_factor)
         should_resize = scale_factor < 1.0 and new_w > 100 and new_h > 100
@@ -63,4 +64,4 @@ class WatercolorTransformer(RasterTransformer):
         else:
             output_np = result_small
 
-        return output_np
+        return self.to_float32(output_np)

@@ -16,6 +16,7 @@ class TimeResult:
 class ScreenArt(ABC):
     # Class-level singleton storage for the configuration
     _global_config: Optional[dict[str, Any]] = None
+    _logging_configured: bool = False  # add alongside _global_config
 
     def __init__(self, project_name="ScreenArt"):
         self.project_name = project_name
@@ -36,16 +37,26 @@ class ScreenArt(ABC):
         self._setup_logging()
 
     def _setup_logging(self):
+        if ScreenArt._logging_configured:
+            self.log = logging.getLogger(self.project_name)
+            return
+
         """Configures standard logging to both file and console."""
         # Pull log directory from the config, or fallback to a default logs folder
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.log_path = self.config.get("paths", {}).get("log_path", os.path.join(self.base_path, "logs"))
-        self.log_file = os.path.join(self.log_path, "screenArt.log")
+        self.log_file = os.path.join(self.log_path, f"screenArt_{timestamp}.log")
 
         # Ensure the directory exists before creating the handler
         os.makedirs(self.log_path, exist_ok=True)
+        # After creating the new log file, trim old ones
+        log_files = sorted(Path(self.log_path).glob("screenArt_*.log"), key=os.path.getmtime)
+        for old_log in log_files[:-10]:  # keep 10 most recent
+            old_log.unlink()
 
         logging.basicConfig(
             level=logging.INFO,
+
             format='%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s',
             handlers=[
                 logging.FileHandler(self.log_file),
@@ -53,6 +64,7 @@ class ScreenArt(ABC):
             ]
         )
         self.log = logging.getLogger(self.project_name)
+        ScreenArt._logging_configured = True
         self.log.debug(f"ScreenArt superclass initialized on {self.os_type}. Paths expanded.")
 
     def _setup_config(self) -> dict[str, Any]:

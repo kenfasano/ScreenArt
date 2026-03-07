@@ -21,7 +21,7 @@ class WheelTransformer(RasterTransformer):
 
         # 1. Convert incoming Numpy Array to PIL Image
         if isinstance(img_np, np.ndarray):
-            img = Image.fromarray(img_np)
+            img = Image.fromarray(self.to_uint8(img_np))
         elif isinstance(img_np, Image.Image):
             img = img_np.copy()
         else:
@@ -69,4 +69,4 @@ class WheelTransformer(RasterTransformer):
         bg = Image.new("RGB", (w, h), (0, 0, 0))
         bg.paste(canvas, (0, 0), mask=canvas)
         
-        return np.array(bg)
+        return self.to_float32(np.array(bg))

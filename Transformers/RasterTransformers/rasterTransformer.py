@@ -33,6 +33,19 @@ class RasterTransformer(Transformer):
             
         return ",".join(parts)
 
+    # In rasterTransformer.py — add these two helpers
+    def to_uint8(self, img_np: np.ndarray) -> np.ndarray:
+        """Convert float32 [0,1] pipeline format to uint8 for PIL/cv2 operations."""
+        if img_np.dtype == np.float32 or img_np.dtype == np.float64:
+            return np.clip(img_np * 255.0, 0, 255).astype(np.uint8)
+        return img_np
+
+    def to_float32(self, img_np: np.ndarray) -> np.ndarray:
+        """Convert uint8 back to float32 [0,1] for pipeline return."""
+        if img_np.dtype == np.uint8:
+            return img_np.astype(np.float32) / 255.0
+        return img_np
+
     def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
         """
         Replaces apply(). Takes an image array and returns an image array.

@@ -47,4 +47,4 @@ class MeltMorphTransformer(RasterTransformer):
         # Use advanced indexing to create the final warped image
         output_np = img_np[new_y_coords, x_coords]
 
-        return output_np.astype(np.uint8)
+        return output_np
