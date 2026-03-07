@@ -1,6 +1,8 @@
 from .source import Source
 from bs4 import BeautifulSoup
 import requests
+from requests.adapters import HTTPAdapter
+import socket
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -13,10 +15,21 @@ class Nasa(Source):
         self.file_count = self.config.get("nasa", {}).get("file_count", 3)
         self.log.debug(f"{self.file_count=}")
 
+        # Session pooling with connection reuse
+        self.session = requests.Session()
+        self.session.headers.update(self.headers)
+        candidate_count = self.file_count * self.CANDIDATE_MULTIPLIER
+        adapter = HTTPAdapter(
+            pool_connections=1,
+            pool_maxsize=min(self.MAX_WORKERS, candidate_count),
+            max_retries=0
+        )
+        self.session.mount("https://", adapter)
+        socket.getaddrinfo("apod.nasa.gov", 443)  # warm DNS cache
+
     MIN_YEAR = 2002
     INPUT_SOURCE = "nasa"
     MAX_WORKERS = 5
-    # Fetch more candidates than needed to account for pages with no image
     CANDIDATE_MULTIPLIER = 3
 
     def _apod_url(self) -> str:
@@ -24,9 +37,8 @@ class Nasa(Source):
         return f"https://apod.nasa.gov/apod/ap{date_str}.html"
 
     def _get_image_url(self, page_url: str) -> str | None:
-        """Fetch an APOD page and return the full image URL, or None if absent/SVG."""
         try:
-            response = requests.get(page_url, headers=self.headers, timeout=10)
+            response = self.session.get(page_url, timeout=10)
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
             self.log.debug(f"Error fetching {page_url}: {e}")
@@ -46,13 +58,12 @@ class Nasa(Source):
         return img_url
 
     def _download_image(self, img_url: str) -> bool:
-        """Download an image to the configured output directory."""
         try:
             filename = os.path.basename(img_url.split("?")[0])
             out_dir = os.path.join(self.config["paths"]["generators_in"], self.INPUT_SOURCE)
             os.makedirs(out_dir, exist_ok=True)
 
-            response = requests.get(img_url, headers=self.headers, timeout=10)
+            response = self.session.get(img_url, timeout=10)
             response.raise_for_status()
 
             with open(os.path.join(out_dir, filename), "wb") as f:
@@ -64,16 +75,14 @@ class Nasa(Source):
             return False
 
     def _fetch_one(self, page_url: str) -> bool:
-        """Try to download the image from one APOD page. Returns True on success."""
         img_url = self._get_image_url(page_url)
         return self._download_image(img_url) if img_url else False
 
     def run(self, *args, **kwargs):
-        # Generate extra candidates upfront so missing-image pages don't stall us
         candidates = [self._apod_url() for _ in range(self.file_count * self.CANDIDATE_MULTIPLIER)]
         fetched = 0
 
-        with ThreadPoolExecutor(max_workers=self.MAX_WORKERS) as executor:
+        with ThreadPoolExecutor(max_workers=min(self.MAX_WORKERS, len(candidates))) as executor:
             futures = {executor.submit(self._fetch_one, url): url for url in candidates}
             for future in as_completed(futures):
                 if future.result():

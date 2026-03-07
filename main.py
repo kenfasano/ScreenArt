@@ -9,6 +9,7 @@ import random
 import time
 from collections import namedtuple
 from datetime import datetime
+from tqdm import tqdm
 
 # 1. Import your Generators
 from .Generators import (
@@ -147,14 +148,14 @@ class ScreenArtMain(ScreenArt):
             # Phase 1: Run Generators
 
             self.generator_stats: dict[str, float] = {}
-            for key in keys_to_process:
+            for key in (bar := tqdm(keys_to_process, desc="Generators  ", unit="gen", ncols=80)):
                 gen_config = self.generators[key]
                 if gen_config.should_erase:
                     self.erase_image_dir(gen_config.source)
                 self.run_generator(key)
 
             # Phase 2: Run Transformers
-            for key in keys_to_process:
+            for key in (bar := tqdm(keys_to_process, desc="Transformers", unit="trans", ncols=80)):
                 dir_path = self.generators[key].source
                 # Choose a random number between 1 and 4 (but no more than the total available  )
                 num_to_pick = random.randint(1, min(4, len(self.active_transformers)))
@@ -231,11 +232,6 @@ class ScreenArtMain(ScreenArt):
 
         # 2. Process and append the Pipeline Stats
         if pipeline_stats:
-            # Add the pipeline-specific data first
-            output_lines.append(f"{self.pipeline.accepted} accepted")
-            output_lines.append(f"{self.pipeline.rejected} rejected")
-            output_lines.append("---")
-            
             # Process the pipeline transformer stats
             output_lines.extend(self.format_stats(pipeline_stats, strip_word="Transformer")) #type: ignore
       

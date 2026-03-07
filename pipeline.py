@@ -50,18 +50,19 @@ class ImageProcessingPipeline(ScreenArt):
                     # THE NEW STANDARD: call .run()
                     img_np = transformer.run(img_np) 
                     
-                    metadata_tags.append(transformer.get_image_metadata())
+                    #metadata_tags.append(transformer.get_image_metadata())
                 self.stats[t_name].append(t.elapsed)
 
             # Construct the final filename based on the transformations
             base_name = Path(filename).stem
-            joined_tags = "_".join(metadata_tags)
+            # joined_tags = "_".join(metadata_tags)
             
             # 1. Calculate the Grade
             grade = self._calculate_grade(img_np)
             
             # 2. Append the grade to the filename
-            new_filename = f"{base_name}_{joined_tags}_Grade-{grade}.jpeg"
+            #new_filename = f"{base_name}_{joined_tags}_Grade-{grade}.jpeg"
+            new_filename = f"{base_name}-{grade}.jpeg"
             
             # 3. Route and Save
             self._evaluate_and_save(img_np, new_filename, grade)

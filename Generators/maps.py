@@ -1,12 +1,14 @@
 from .drawGenerator import DrawGenerator
 from PIL import Image
 from astral import LocationInfo
-from astral.sun import sun           
+from astral.sun import sun
 from datetime import datetime, timedelta
 from typing import Optional, Tuple
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import math
 import os
-import pytz                          
+import socket
+import pytz
 import random
 
 # --- Data Constants ---
@@ -49,35 +51,36 @@ LAYERS = {
     "Chlorophyll": ("MODIS_Terra_Chlorophyll_A", 7)
 }
 
+MAX_TILE_WORKERS = 9  # grid_size² = 3×3
+
 class NasaMapGenerator(DrawGenerator):
     def __init__(self):
         super().__init__()
-        # OS-agnostic path expansion for the cache directory
         self.cache_dir = os.path.expanduser(os.path.join("~", "Scripts", "ScreenArt", "Generators", "maps_cache"))
 
         self.width = int(self.config.get("width", 1920))
         self.height = int(self.config.get("height", 1080))
         self.file_count = int(self.config.get("file_count", 1))
         self.base_filename = "nasa_earth"
-        
+
         self.grid_size = 3
         self.tile_size = 256
         self.zoom = 4
         self.lat = 0.0
         self.lon = 0.0
         self.layer_id = "VIIRS_SNPP_CorrectedReflectance_TrueColor"
-        
+
         today = datetime.today()
         self.date_str = (today - timedelta(days=1)).strftime('%Y-%m-%d')
+
+        socket.getaddrinfo("gibs.earthdata.nasa.gov", 443)  # warm DNS cache
 
     def _is_night_at_location(self, lat: float, lon: float) -> bool:
         now_utc = datetime.now(pytz.utc)
         city = LocationInfo("Target City", "Region", "UTC", lat, lon)
         try:
             s = sun(city.observer, date=now_utc, tzinfo=pytz.utc)
-            if now_utc < s['sunrise'] or now_utc > s['sunset']:
-                return True
-            return False
+            return now_utc < s['sunrise'] or now_utc > s['sunset']
         except Exception as e:
             self.log.debug(f"Astral calculation error: {e}")
             return False
@@ -88,21 +91,20 @@ class NasaMapGenerator(DrawGenerator):
         ytile = int((1.0 - math.asinh(math.tan(math.radians(lat))) / math.pi) / 2.0 * n)
         return xtile, ytile
 
-    def _fetch_tile(self, x: int, y: int) -> Optional[Image.Image]:
-        tile_matrix_set = "GoogleMapsCompatible_Level9"
+    def _tile_matrix_set(self) -> str:
         if "Temp" in self.layer_id or "Chlorophyll" in self.layer_id:
-             tile_matrix_set = "GoogleMapsCompatible_Level7"
+            return "GoogleMapsCompatible_Level7"
         if "DayNight" in self.layer_id:
-             tile_matrix_set = "GoogleMapsCompatible_Level8"
+            return "GoogleMapsCompatible_Level8"
+        return "GoogleMapsCompatible_Level9"
 
+    def _fetch_tile(self, x: int, y: int) -> Optional[Image.Image]:
         url = (
             f"https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/"
-            f"{self.layer_id}/default/{self.date_str}/{tile_matrix_set}/"
+            f"{self.layer_id}/default/{self.date_str}/{self._tile_matrix_set()}/"
             f"{self.zoom}/{y}/{x}.jpg"
         )
-        
         try:
-            # Safely create a cache subdirectory for this layer
             layer_cache = os.path.join(self.cache_dir, self.layer_id)
             return self.get_cached_image(url, cache_dir=layer_cache)
         except Exception as e:
@@ -116,12 +118,22 @@ class NasaMapGenerator(DrawGenerator):
         stitched_map = Image.new('RGB', (canvas_w, canvas_h), (0, 0, 0))
         offset = self.grid_size // 2
 
-        for i in range(self.grid_size):
-            for j in range(self.grid_size):
-                tile_x = center_x - offset + i
-                tile_y = center_y - offset + j
-                
-                tile_img = self._fetch_tile(tile_x, tile_y)
+        # Build list of (grid_i, grid_j, tile_x, tile_y)
+        coords = [
+            (i, j, center_x - offset + i, center_y - offset + j)
+            for i in range(self.grid_size)
+            for j in range(self.grid_size)
+        ]
+
+        # Fetch all 9 tiles in parallel
+        with ThreadPoolExecutor(max_workers=MAX_TILE_WORKERS) as executor:
+            future_to_pos = {
+                executor.submit(self._fetch_tile, tx, ty): (i, j)
+                for i, j, tx, ty in coords
+            }
+            for future in as_completed(future_to_pos):
+                i, j = future_to_pos[future]
+                tile_img = future.result()
                 if tile_img:
                     stitched_map.paste(tile_img, (i * self.tile_size, j * self.tile_size))
 
@@ -130,31 +142,27 @@ class NasaMapGenerator(DrawGenerator):
     def run(self, *args, **kwargs) -> None:
         out_dir = os.path.join(self.config["paths"]["generators_in"], "maps")
         os.makedirs(out_dir, exist_ok=True)
-            
-        layer_items = list(LAYERS.items()) 
-            
+
+        layer_items = list(LAYERS.items())
+
         for i in range(self.file_count):
             city_name, coords = random.choice(list(CITIES.items()))
-            temp_lat, temp_lon = coords[0], coords[1]
+            self.lat, self.lon = coords[0], coords[1]
             layer_name, layer_info = layer_items[i % len(layer_items)]
-                
-            if layer_name == "Night Lights" and not self._is_night_at_location(temp_lat, temp_lon):
+
+            if layer_name == "Night Lights" and not self._is_night_at_location(self.lat, self.lon):
                 continue
 
-            self.lat = temp_lat
-            self.lon = temp_lon
             self.layer_id = layer_info[0]
-                
             max_zoom = layer_info[1]
-            requested_zoom = int(self.config.get('zoom', 4))
-            self.zoom = min(requested_zoom, max_zoom)
-                
-            img = self.get_image() 
-                
+            self.zoom = min(int(self.config.get('zoom', 4)), max_zoom)
+
+            img = self.get_image()
+
             safe_layer_name = layer_name.replace(" ", "_").replace("(", "").replace(")", "")
             safe_city_name = city_name.split(",")[0].replace(" ", "_")
             filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}_{safe_city_name}_{safe_layer_name}.jpeg")
-                
+
             try:
                 img.save(filename, quality=95)
                 self.log.debug(f"Saved NASA Map Image: {filename}")

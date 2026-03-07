@@ -34,7 +34,7 @@ class FractalWarpTransformer(RasterTransformer):
         # --- POPULATE METADATA ---
         self.metadata_dictionary["iter"] = iterations
         self.metadata_dictionary["scale"] = round(scale, 2)
-        self.metadata_dictionary["seed"] = seed
+        #self.metadata_dictionary["seed"] = seed
         
         image_type = t_config.get("image_type", "default")
         apply_noise = (image_type != "text")
