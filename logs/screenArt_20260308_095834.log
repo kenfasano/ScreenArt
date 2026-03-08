@@ -1,0 +1,44 @@
+2026-03-08 09:59:04,685 - INFO - [main.py:201] - FluidWarpTransformer
+2026-03-08 09:59:04,686 - INFO - [main.py:201] - WatercolorTransformer
+2026-03-08 09:59:04,686 - INFO - [main.py:201] - FisheyeTransformer
+2026-03-08 09:59:04,686 - INFO - [main.py:201] - XrayTransformer
+2026-03-08 09:59:04,686 - INFO - [main.py:201] - MeltMorphTransformer
+2026-03-08 09:59:04,686 - INFO - [main.py:201] - DataMoshTransformer
+2026-03-08 09:59:04,686 - INFO - [main.py:201] - FractalWarpTransformer
+2026-03-08 09:59:04,686 - INFO - [main.py:201] - SwirlWarpTransformer
+2026-03-08 09:59:04,686 - INFO - [main.py:201] - ThermalImagingTransformer
+2026-03-08 09:59:04,686 - INFO - [main.py:201] - GlitchWarpTransformer
+2026-03-08 09:59:04,686 - INFO - [main.py:201] - ThreeDExtrusionTransformer
+2026-03-08 09:59:04,686 - INFO - [main.py:201] - ColormapTransformer
+2026-03-08 09:59:04,686 - INFO - [main.py:201] - PosterizationTransformer
+2026-03-08 09:59:04,686 - INFO - [main.py:201] - InvertRGBTransformer
+2026-03-08 09:59:04,686 - INFO - [main.py:244] - 30s@09:59 ✓
+Accepted: 59
+Rejected: 35
+---
+Wiki                       -> 12814ms
+Nasa                       ->   789ms
+Bible                      ->   619ms
+NasaMapGenerator           ->   499ms
+GoesGenerator              ->   458ms
+Cubes                      ->   456ms
+Lojong                     ->   437ms
+KochSnowflake              ->   363ms
+Bubbles                    ->   216ms
+Hilbert                    ->   104ms
+PeripheralDriftIllusion    ->    45ms
+---
+FluidWarpTransformer       -> Min:   202ms | Avg:   332ms | Max:   503ms
+WatercolorTransformer      -> Min:   144ms | Avg:   150ms | Max:   156ms
+FisheyeTransformer         -> Min:   112ms | Avg:   112ms | Max:   112ms
+XrayTransformer            -> Min:    50ms | Avg:    68ms | Max:    90ms
+MeltMorphTransformer       -> Min:    49ms | Avg:    67ms | Max:    71ms
+DataMoshTransformer        -> Min:     1ms | Avg:    62ms | Max:   251ms
+FractalWarpTransformer     -> Min:    49ms | Avg:    50ms | Max:    52ms
+SwirlWarpTransformer       -> Min:     5ms | Avg:    29ms | Max:    46ms
+ThermalImagingTransformer  -> Min:    27ms | Avg:    28ms | Max:    28ms
+GlitchWarpTransformer      -> Min:    27ms | Avg:    27ms | Max:    27ms
+ThreeDExtrusionTransformer -> Min:    10ms | Avg:    14ms | Max:    26ms
+ColormapTransformer        -> Min:     3ms | Avg:    10ms | Max:    12ms
+PosterizationTransformer   -> Min:     0ms | Avg:     3ms | Max:     5ms
+InvertRGBTransformer       -> Min:     0ms | Avg:     1ms | Max:     4ms

@@ -51,7 +51,7 @@ def _warm_font_cache() -> None:
 
 
 def _find_max_font_size_cached(font_path: str, lines: tuple[str, ...],
-                                usable_width: int, usable_height: int) -> int:
+                               usable_width: int, usable_height: int) -> int:
     key = _make_cache_key(font_path, lines, usable_width, usable_height)
     if key in _font_size_cache:
         return _font_size_cache[key]
@@ -75,7 +75,7 @@ def _find_max_font_size_cached(font_path: str, lines: tuple[str, ...],
 
     _font_size_cache[key] = best
     _save_font_size_cache()
-    return best
+    return max(best, 1) # never return 0
 
 
 # ── Run once at import time ────────────────────────────────────────────────────
@@ -104,24 +104,24 @@ class Text(DrawGenerator):
         """Maps font paths based on the current operating system."""
         if self.os_type == "darwin":
             self.language_fonts = {
-                "Tibetan": os.path.expanduser("~/Library/Fonts/NotoSerifTibetan-VariableFont_wght.ttf"),
-                "Hebrew":  "/System/Library/Fonts/ArialHB.ttc",
-                "English": "/System/Library/Fonts/Supplemental/Arial.ttf",
-            }
+                    "Tibetan": os.path.expanduser("~/Library/Fonts/NotoSerifTibetan-VariableFont_wght.ttf"),
+                    "Hebrew":  "/System/Library/Fonts/ArialHB.ttc",
+                    "English": "/System/Library/Fonts/Supplemental/Arial.ttf",
+                    }
         else:
             self.language_fonts = {
-                "Tibetan": "/usr/share/fonts/jomolhari-fonts/Jomolhari-alpha3c-0605331.ttf",
-                "Hebrew":  "/usr/share/fonts/google-noto-vf/NotoSansHebrew[wght].ttf",
-                "English": "/usr/share/fonts/liberation-sans-fonts/LiberationSans-Regular.ttf",
-            }
+                    "Tibetan": "/usr/share/fonts/jomolhari-fonts/Jomolhari-alpha3c-0605331.ttf",
+                    "Hebrew":  "/usr/share/fonts/google-noto-vf/NotoSansHebrew[wght].ttf",
+                    "English": "/usr/share/fonts/liberation-sans-fonts/LiberationSans-Regular.ttf",
+                    }
 
     def _load_font(self, font_path: str, size: int) -> FreeTypeFont | BitmapFont:
         return _load_font_cached(font_path, size)
 
     def _find_max_font_size(self, font_path: str, lines: list[str]) -> int:
         return _find_max_font_size_cached(
-            font_path, tuple(lines), self.usable_width, self.usable_height
-        )
+                font_path, tuple(lines), self.usable_width, self.usable_height
+                )
 
     def get_max_font_size(self, font_path: str, lines: list[str]) -> tuple[int, list[str]]:
         """
@@ -136,13 +136,13 @@ class Text(DrawGenerator):
         if size >= self.min_font_size:
             return size, lines
 
-        # Full text too dense — try the second half
         half = lines[len(lines) // 2:]
         half_size = self._find_max_font_size(font_path, half)
         if half_size >= self.min_font_size:
             return half_size, half
 
-        return size, lines  # best effort with full text
+        # Always return at least min_font_size rather than 0
+        return max(size, self.min_font_size), lines
 
     def generate_text_image(self,
                             lines_to_draw: list[str],

@@ -108,11 +108,10 @@ class Lojong(Text):
             language = random.choice(available)
             lines = self._pick_lines(language)
             if not lines:
-                self.log.debug(f"No lines for {language}, skipping.")
+                self.log.debug(f"No lines for {language}, skijping.")
                 continue
 
             bg_color, fg_color = random.choice(self.COLORS)
-
             img = self.generate_text_image(
                 lines_to_draw=lines,
                 language=language,
