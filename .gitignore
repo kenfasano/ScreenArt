@@ -14,3 +14,6 @@ env/
 # Media
 Images
 Generators/maps_cache/
+
+# Logs
+.logs

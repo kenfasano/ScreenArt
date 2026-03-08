@@ -1,0 +1,48 @@
+2026-03-08 13:18:06,356 - INFO - [main.py:201] - FluidWarpTransformer
+2026-03-08 13:18:06,356 - INFO - [main.py:201] - MeltMorphTransformer
+2026-03-08 13:18:06,356 - INFO - [main.py:201] - WheelTransformer
+2026-03-08 13:18:06,356 - INFO - [main.py:201] - WatercolorTransformer
+2026-03-08 13:18:06,356 - INFO - [main.py:201] - SwirlWarpTransformer
+2026-03-08 13:18:06,356 - INFO - [main.py:201] - AnamorphicTransformer
+2026-03-08 13:18:06,356 - INFO - [main.py:201] - XrayTransformer
+2026-03-08 13:18:06,356 - INFO - [main.py:201] - FractalWarpTransformer
+2026-03-08 13:18:06,356 - INFO - [main.py:201] - DataMoshTransformer
+2026-03-08 13:18:06,356 - INFO - [main.py:201] - ThreeDExtrusionTransformer
+2026-03-08 13:18:06,356 - INFO - [main.py:201] - FisheyeTransformer
+2026-03-08 13:18:06,356 - INFO - [main.py:201] - HalftoneTransformer
+2026-03-08 13:18:06,356 - INFO - [main.py:201] - ColormapTransformer
+2026-03-08 13:18:06,356 - INFO - [main.py:201] - RadialWarpTransformer
+2026-03-08 13:18:06,356 - INFO - [main.py:201] - PosterizationTransformer
+2026-03-08 13:18:06,356 - INFO - [main.py:201] - InvertRGBTransformer
+2026-03-08 13:18:06,356 - INFO - [main.py:244] - 20s@13:18 ✓
+Accepted: 28
+Rejected: 58
+---
+Wiki                       ->  5064ms
+Nasa                       ->   787ms
+Bible                      ->   612ms
+GoesGenerator              ->   566ms
+Cubes                      ->   452ms
+Lojong                     ->   352ms
+Bubbles                    ->   248ms
+KochSnowflake              ->   242ms
+NasaMapGenerator           ->   183ms
+Hilbert                    ->    91ms
+PeripheralDriftIllusion    ->    49ms
+---
+FluidWarpTransformer       -> Min:     5ms | Avg:    89ms | Max:   212ms
+MeltMorphTransformer       -> Min:     8ms | Avg:    67ms | Max:   165ms
+WheelTransformer           -> Min:    14ms | Avg:    61ms | Max:   108ms
+WatercolorTransformer      -> Min:    23ms | Avg:    61ms | Max:    82ms
+SwirlWarpTransformer       -> Min:     6ms | Avg:    52ms | Max:   131ms
+AnamorphicTransformer      -> Min:    41ms | Avg:    42ms | Max:    43ms
+XrayTransformer            -> Min:    14ms | Avg:    38ms | Max:    46ms
+FractalWarpTransformer     -> Min:    34ms | Avg:    34ms | Max:    34ms
+DataMoshTransformer        -> Min:    11ms | Avg:    32ms | Max:    41ms
+ThreeDExtrusionTransformer -> Min:    30ms | Avg:    30ms | Max:    30ms
+FisheyeTransformer         -> Min:     3ms | Avg:    23ms | Max:    88ms
+HalftoneTransformer        -> Min:     4ms | Avg:    23ms | Max:    30ms
+ColormapTransformer        -> Min:    11ms | Avg:    11ms | Max:    12ms
+RadialWarpTransformer      -> Min:     2ms | Avg:     5ms | Max:    10ms
+PosterizationTransformer   -> Min:     1ms | Avg:     2ms | Max:     5ms
+InvertRGBTransformer       -> Min:     1ms | Avg:     1ms | Max:     1ms

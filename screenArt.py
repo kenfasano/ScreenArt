@@ -113,8 +113,7 @@ class ScreenArt(ABC):
     def get_output_filename(self, extension="png"):
         """Generates a timestamped filename for generic art output."""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_dir = self.config.get("paths", {}).get("output", os.path.join(self.base_path, "output"))
-        return os.path.join(output_dir, f"art_{timestamp}.{extension}")
+        return f"art_{timestamp}.{extension}"
 
     def check_os_config(self):
         """Helper to return specific commands based on current environment."""

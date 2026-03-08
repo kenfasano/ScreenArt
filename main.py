@@ -47,8 +47,8 @@ class ScreenArtMain(ScreenArt):
             "nasa": GeneratorConfig(source=f"{gen_in}/nasa", should_erase=True),
             "maps": GeneratorConfig(source=f"{gen_in}/maps", should_erase=True),
             "goes": GeneratorConfig(source=f"{gen_in}/goes", should_erase=True),
-            "wiki": GeneratorConfig(source=f"{gen_in}/wiki", should_erase=False),
-            "lojong": GeneratorConfig(source=f"{gen_in}/lojong", should_erase=False),
+            "wiki": GeneratorConfig(source=f"{gen_in}/wiki", should_erase=True),
+            "lojong": GeneratorConfig(source=f"{gen_in}/lojong", should_erase=True),
             "bible": GeneratorConfig(source=f"{gen_in}/bible", should_erase=True),
             "peripheraldriftillusion": GeneratorConfig(source=f"{gen_in}/opticalillusions", should_erase=True),
              "kochSnowflake": GeneratorConfig(source=f"{gen_in}/kochsnowflake", should_erase=True),
@@ -140,7 +140,7 @@ class ScreenArtMain(ScreenArt):
         elapsed = None
         with self.timer("Total", "s") as t:
             self.trim_images(self.config["paths"]["transformers_out"], 50)
-            self.trim_images(self.config["paths"]["rejected_out"], 0)
+            self.trim_images(self.config["paths"]["rejected_out"], 50)
             self.trim_images(self.config["paths"]["wiki_out"], 10)
 
             keys_to_process = self._get_keys_to_process()
@@ -157,12 +157,7 @@ class ScreenArtMain(ScreenArt):
             # Phase 2: Run Transformers
             for key in (bar := tqdm(keys_to_process, desc="Transformers", unit="tra", ncols=80)):
                 dir_path = self.generators[key].source
-                # Choose a random number between 1 and 4 (but no more than the total available  )
-                num_to_pick = random.randint(1, min(4, len(self.active_transformers)))
-        
-                # Select unique transformers
-                transformers_to_apply = random.sample(self.active_transformers, num_to_pick)
-                self.pipeline.run(dir_path, transformers=transformers_to_apply)
+                self.pipeline.run(dir_path, transformers=self.active_transformers)
 
         elapsed = str(t.elapsed)
         self.log.debug("----------------------------")
