@@ -53,6 +53,12 @@ class FractalWarpTransformer(RasterTransformer):
 
         active_mask = np.ones((height, width), dtype=bool)
 
+        # Pre-compute downsampled noise dimensions once outside the loop.
+        # Noise range is ±0.01, so per-pixel uniqueness has no visible benefit.
+        _D = 8
+        _sh = max(1, -(-height // _D))  # ceiling division
+        _sw = max(1, -(-width // _D))   # ceiling division
+
         for _ in range(iterations):
             r_sq = nx * nx + ny * ny
             escaped_now = r_sq > 4
@@ -68,8 +74,10 @@ class FractalWarpTransformer(RasterTransformer):
             ny_new = r * np.sin(scale * angle)
 
             if apply_noise:
-                noise_x = np.random.uniform(-0.01, 0.01, (height, width)).astype(np.float32)
-                noise_y = np.random.uniform(-0.01, 0.01, (height, width)).astype(np.float32)
+                noise_x = np.repeat(np.repeat(
+                    np.random.uniform(-0.01, 0.01, (_sh, _sw)).astype(np.float32), _D, axis=0), _D, axis=1)[:height, :width]
+                noise_y = np.repeat(np.repeat(
+                    np.random.uniform(-0.01, 0.01, (_sh, _sw)).astype(np.float32), _D, axis=0), _D, axis=1)[:height, :width]
                 nx_new += noise_x
                 ny_new += noise_y
             

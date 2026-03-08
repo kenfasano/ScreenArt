@@ -1,4 +1,5 @@
 import numpy as np 
+import cv2
 import random
 from .rasterTransformer import RasterTransformer
 
@@ -39,35 +40,21 @@ class TritoneTransformer(RasterTransformer):
         if img_np.ndim < 3 or img_np.shape[2] < 3:
             raise ValueError("Input image must have at least 3 channels (RGB).")
 
-        # Step 1: Convert to grayscale
-        grayscale_np = np.dot(img_np[...,:3], [0.299, 0.587, 0.114]).astype(np.float32)
-
-        # Normalize grayscale values to the 0-1 range for interpolation
-        normalized_grayscale = grayscale_np / 255.0
-
-        # Create numpy arrays for the RGB colors
-        shadow_np = np.array(self.shadow_rgb, dtype=np.float32)
-        mid_np = np.array(self.mid_rgb, dtype=np.float32)
+        shadow_np    = np.array(self.shadow_rgb,    dtype=np.float32)
+        mid_np       = np.array(self.mid_rgb,       dtype=np.float32)
         highlight_np = np.array(self.highlight_rgb, dtype=np.float32)
-        
-        # Determine the output color based on pixel intensity
-        output_np = np.zeros_like(img_np, dtype=np.float32)
 
-        # Interpolate for the darker half (0-0.5 normalized grayscale)
-        dark_mask = normalized_grayscale <= 0.5
-        dark_normalized = np.where(dark_mask, normalized_grayscale / 0.5, 0)
-        
-        # Interpolate for the lighter half (0.5-1.0 normalized grayscale)
-        light_mask = normalized_grayscale > 0.5
-        light_normalized = np.where(light_mask, (normalized_grayscale - 0.5) / 0.5, 0)
+        # Build a 256-entry RGB LUT: shadow->mid for dark half, mid->highlight for light half.
+        # Cost: ~0.04ms. Avoids expensive per-pixel np.where across full-image arrays.
+        idx = np.arange(256, dtype=np.float32)
+        t = idx / 255.0
+        dark = t <= 0.5
+        t2_dark  = (t * 2.0)[:, np.newaxis]
+        t2_light = ((t - 0.5) * 2.0)[:, np.newaxis]
+        lut = np.empty((256, 3), dtype=np.float32)
+        lut[dark]  = shadow_np * (1 - t2_dark[dark])  + mid_np       * t2_dark[dark]
+        lut[~dark] = mid_np    * (1 - t2_light[~dark]) + highlight_np * t2_light[~dark]
 
-        # Better - vectorize all channels at once
-        t = normalized_grayscale[..., np.newaxis]
-        dark_t = np.where(dark_mask[..., np.newaxis], t / 0.5, 0)
-        light_t = np.where(~dark_mask[..., np.newaxis], (t - 0.5) / 0.5, 0)
-        output_np = np.where(
-            dark_mask[..., np.newaxis],
-            mid_np * dark_t + shadow_np * (1 - dark_t),
-            highlight_np * light_t + mid_np * (1 - light_t)
-        )
-        return np.clip(output_np, 0, 255)
+        # Convert to grayscale and apply LUT via fancy indexing
+        gray = cv2.cvtColor(self.to_uint8(img_np), cv2.COLOR_RGB2GRAY)
+        return np.clip(lut[gray], 0, 255)

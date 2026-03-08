@@ -1,4 +1,16 @@
-15s@12:27 ✓
+2026-03-08 12:27:45,500 - INFO - [main.py:201] - WheelTransformer
+2026-03-08 12:27:45,501 - INFO - [main.py:201] - XrayTransformer
+2026-03-08 12:27:45,501 - INFO - [main.py:201] - DuotoneTransformer
+2026-03-08 12:27:45,501 - INFO - [main.py:201] - WatercolorTransformer
+2026-03-08 12:27:45,501 - INFO - [main.py:201] - MeltMorphTransformer
+2026-03-08 12:27:45,501 - INFO - [main.py:201] - ThreeDExtrusionTransformer
+2026-03-08 12:27:45,501 - INFO - [main.py:201] - FractalWarpTransformer
+2026-03-08 12:27:45,501 - INFO - [main.py:201] - DataMoshTransformer
+2026-03-08 12:27:45,501 - INFO - [main.py:201] - FisheyeTransformer
+2026-03-08 12:27:45,501 - INFO - [main.py:201] - RadialWarpTransformer
+2026-03-08 12:27:45,501 - INFO - [main.py:201] - ColormapTransformer
+2026-03-08 12:27:45,501 - INFO - [main.py:201] - InvertRGBTransformer
+2026-03-08 12:27:45,501 - INFO - [main.py:244] - 15s@12:27 ✓
 Accepted: 56
 Rejected: 27
 ---

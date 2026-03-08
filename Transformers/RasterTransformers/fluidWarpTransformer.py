@@ -1,8 +1,8 @@
 import numpy as np
+import cv2
 import random
 from .rasterTransformer import RasterTransformer
-from scipy.ndimage import gaussian_filter #type: ignore
-from scipy.ndimage import map_coordinates #type: ignore
+
 
 MAX_ALPHA = 20.0
 MAX_SIGMA = 100.0
@@ -12,8 +12,9 @@ class FluidWarpTransformer(RasterTransformer):
         super().__init__()
 
     def _generate_perlin_noise(self, shape: tuple, octaves: int = 1, persistence: float = 0.5) -> np.ndarray:
-        noise = np.random.rand(*shape) * 2 - 1
-        return gaussian_filter(noise, sigma=self.sigma)
+        noise = (np.random.rand(*shape) * 2 - 1).astype(np.float32)
+        ksize = max(1, int(6 * self.sigma + 1)) | 1  # must be odd
+        return cv2.GaussianBlur(noise, (ksize, ksize), self.sigma)
 
     def _create_displacement_map(self, shape: tuple) -> tuple:
         rows, cols = shape
@@ -58,21 +59,13 @@ class FluidWarpTransformer(RasterTransformer):
         rows, cols = img_np.shape[:2]
         displacement_map = self._create_displacement_map((rows, cols))
 
-        if img_np.ndim == 3:
-            warped_img = np.zeros_like(img_np)
-            for i in range(img_np.shape[2]):
-               warped_img[:, :, i] = map_coordinates(
-                       img_np[:, :, i],
-                       displacement_map,
-                       order=interpolation_order,
-                       mode='reflect'
-                       )
-        else:
-            warped_img = map_coordinates(
-                   img_np,
-                   displacement_map,
-                   order=interpolation_order,
-                   mode='reflect'
-                   )
+        map_x = displacement_map[1].astype(np.float32)
+        map_y = displacement_map[0].astype(np.float32)
+
+        interp = cv2.INTER_NEAREST if interpolation_order == 0 else cv2.INTER_LINEAR
+
+        warped_img = cv2.remap(img_np, map_x, map_y,
+                               interpolation=interp,
+                               borderMode=cv2.BORDER_REFLECT)
 
         return warped_img.astype(img_np.dtype)

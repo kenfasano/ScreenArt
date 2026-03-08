@@ -35,8 +35,15 @@ class MeltMorphTransformer(RasterTransformer):
         # Calculate the melt shift for all pixels at once based on luminosity
         shifts = (self.melt_intensity * (1 - grayscale_np / 255.0) * height * 0.1).astype(int)
 
-        # Generate a random vertical offset for all pixels
-        random_offset = np.random.randint(-5, 6, size=(height, width))
+        # Generate a random vertical offset at reduced resolution and upsample.
+        # The jitter range is only ±5px, so per-pixel uniqueness has no visible benefit.
+        DOWNSAMPLE = 8
+        small_h = max(1, -(-height // DOWNSAMPLE))  # ceiling division
+        small_w = max(1, -(-width // DOWNSAMPLE))   # ceiling division
+        random_offset = np.repeat(
+            np.repeat(np.random.randint(-5, 6, size=(small_h, small_w)), DOWNSAMPLE, axis=0),
+            DOWNSAMPLE, axis=1
+        )[:height, :width]
 
         # Create coordinate arrays for vectorized indexing
         y_coords, x_coords = np.meshgrid(np.arange(height), np.arange(width), indexing='ij')

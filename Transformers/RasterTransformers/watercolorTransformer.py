@@ -44,7 +44,7 @@ class WatercolorTransformer(RasterTransformer):
         else:
             processing_img = img_np
 
-        stylized = cv2.stylization(processing_img, sigma_s=sigma_s, sigma_r=sigma_r)
+        stylized = cv2.edgePreservingFilter(processing_img, sigma_s=sigma_s, sigma_r=sigma_r)
 
         hsv = cv2.cvtColor(stylized, cv2.COLOR_BGR2HSV).astype(np.float32)
         

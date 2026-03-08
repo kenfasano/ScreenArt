@@ -155,7 +155,7 @@ class ScreenArtMain(ScreenArt):
                 self.run_generator(key)
 
             # Phase 2: Run Transformers
-            for key in (bar := tqdm(keys_to_process, desc="Transformers", unit="trans", ncols=80)):
+            for key in (bar := tqdm(keys_to_process, desc="Transformers", unit="tra", ncols=80)):
                 dir_path = self.generators[key].source
                 # Choose a random number between 1 and 4 (but no more than the total available  )
                 num_to_pick = random.randint(1, min(4, len(self.active_transformers)))

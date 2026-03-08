@@ -37,9 +37,9 @@ class ThreeDExtrusionTransformer(RasterTransformer):
         # --- Optimized Pipeline ---
         img_np = self.to_uint8(img_np)
         if img_np.ndim == 3:
-            gray = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY).astype(np.float32)
+            gray = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY)
         else:
-            gray = img_np.astype(np.float32)
+            gray = img_np
 
         # Gaussian/Mean Blur
         blurred = cv2.blur(gray, (3, 3))
@@ -48,27 +48,22 @@ class ThreeDExtrusionTransformer(RasterTransformer):
         grad_x = cv2.Sobel(blurred, cv2.CV_32F, 1, 0, ksize=1) / 2.0
         grad_y = cv2.Sobel(blurred, cv2.CV_32F, 0, 1, ksize=1) / 2.0
 
-        # Surface Normal Calculation (Vectorized)
+        # Surface Normal + Lighting in one pass — avoids materializing nx, ny, nz arrays.
+        # dot(n, l) = (-gx*lx - gy*ly + nz*lz) / magnitude
         normal_z = 1.0 / extrusion_intensity
         magnitude = np.sqrt(grad_x**2 + grad_y**2 + normal_z**2)
-        
-        nx = -grad_x / magnitude
-        ny = -grad_y / magnitude
-        nz = normal_z / magnitude
-
-        # Lighting Calculation
         lx, ly, lz = 1.0, 1.0, -1.0
         lm = np.sqrt(lx**2 + ly**2 + lz**2)
         lx, ly, lz = lx/lm, ly/lm, lz/lm
 
-        dot_product = (nx * lx) + (ny * ly) + (nz * lz)
+        shading = ((-grad_x * lx) + (-grad_y * ly) + (normal_z * lz)) / magnitude
 
-        # Phong Shading (Simplified)
-        shading = ambient_light + (1.0 - ambient_light) * dot_product
+        # Phong Shading (Simplified) — in-place to avoid extra allocation
+        shading *= (1.0 - ambient_light)
+        shading += ambient_light
         np.clip(shading, 0.0, 1.0, out=shading)
 
         # Apply to Image
-        shading = shading[..., np.newaxis]
-        output_np = (img_np * shading).astype(np.uint8)
+        output_np = (img_np * shading[..., np.newaxis]).astype(np.uint8)
 
         return self.to_float32(output_np)

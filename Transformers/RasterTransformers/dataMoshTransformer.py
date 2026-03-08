@@ -37,9 +37,19 @@ class DataMoshTransformer(RasterTransformer):
         max_shift_x = int(width * self.mosh_intensity)
         max_shift_y = int(height * self.mosh_intensity)
 
-        # Generate random shifts for each pixel, vectorized
-        shift_x = np.random.randint(-max_shift_x, max_shift_x + 1, size=(height, width))
-        shift_y = np.random.randint(-max_shift_y, max_shift_y + 1, size=(height, width))
+        # Generate random shifts at reduced resolution and upsample.
+        # Shift values are small relative to image size, so per-pixel uniqueness is not visible.
+        DOWNSAMPLE = 8
+        small_h = max(1, -(-height // DOWNSAMPLE))  # ceiling division
+        small_w = max(1, -(-width // DOWNSAMPLE))   # ceiling division
+        shift_x = np.repeat(
+            np.repeat(np.random.randint(-max_shift_x, max_shift_x + 1, size=(small_h, small_w)), DOWNSAMPLE, axis=0),
+            DOWNSAMPLE, axis=1
+        )[:height, :width]
+        shift_y = np.repeat(
+            np.repeat(np.random.randint(-max_shift_y, max_shift_y + 1, size=(small_h, small_w)), DOWNSAMPLE, axis=0),
+            DOWNSAMPLE, axis=1
+        )[:height, :width]
 
         # Calculate the new coordinates with wrapping
         new_x = (x_coords + shift_x) % width

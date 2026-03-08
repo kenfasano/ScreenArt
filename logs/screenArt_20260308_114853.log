@@ -1,0 +1,44 @@
+2026-03-08 11:49:12,037 - INFO - [main.py:201] - XrayTransformer
+2026-03-08 11:49:12,037 - INFO - [main.py:201] - FlipWilsonTransformer
+2026-03-08 11:49:12,037 - INFO - [main.py:201] - WatercolorTransformer
+2026-03-08 11:49:12,037 - INFO - [main.py:201] - AnamorphicTransformer
+2026-03-08 11:49:12,037 - INFO - [main.py:201] - MeltMorphTransformer
+2026-03-08 11:49:12,037 - INFO - [main.py:201] - DataMoshTransformer
+2026-03-08 11:49:12,037 - INFO - [main.py:201] - WheelTransformer
+2026-03-08 11:49:12,037 - INFO - [main.py:201] - TritoneTransformer
+2026-03-08 11:49:12,037 - INFO - [main.py:201] - ThreeDExtrusionTransformer
+2026-03-08 11:49:12,037 - INFO - [main.py:201] - FisheyeTransformer
+2026-03-08 11:49:12,037 - INFO - [main.py:201] - RadialWarpTransformer
+2026-03-08 11:49:12,037 - INFO - [main.py:201] - ColormapTransformer
+2026-03-08 11:49:12,037 - INFO - [main.py:201] - PosterizationTransformer
+2026-03-08 11:49:12,037 - INFO - [main.py:201] - InvertRGBTransformer
+2026-03-08 11:49:12,038 - INFO - [main.py:244] - 18s@11:49 ✓
+Accepted: 56
+Rejected: 31
+---
+Wiki                       ->  2209ms
+Nasa                       ->  1218ms
+GoesGenerator              ->   477ms
+Cubes                      ->   461ms
+Bible                      ->   456ms
+Lojong                     ->   379ms
+Bubbles                    ->   264ms
+KochSnowflake              ->   239ms
+NasaMapGenerator           ->   186ms
+Hilbert                    ->    72ms
+PeripheralDriftIllusion    ->    47ms
+---
+XrayTransformer            -> Min:     6ms | Avg:   104ms | Max:   219ms
+FlipWilsonTransformer      -> Min:    71ms | Avg:    99ms | Max:   105ms
+WatercolorTransformer      -> Min:    79ms | Avg:    81ms | Max:    86ms
+AnamorphicTransformer      -> Min:    64ms | Avg:    74ms | Max:    88ms
+MeltMorphTransformer       -> Min:    52ms | Avg:    52ms | Max:    57ms
+DataMoshTransformer        -> Min:    35ms | Avg:    36ms | Max:    39ms
+WheelTransformer           -> Min:    32ms | Avg:    32ms | Max:    33ms
+TritoneTransformer         -> Min:     4ms | Avg:    29ms | Max:    44ms
+ThreeDExtrusionTransformer -> Min:     4ms | Avg:    23ms | Max:    31ms
+FisheyeTransformer         -> Min:     7ms | Avg:    20ms | Max:    31ms
+RadialWarpTransformer      -> Min:     2ms | Avg:    17ms | Max:    33ms
+ColormapTransformer        -> Min:     2ms | Avg:    11ms | Max:    18ms
+PosterizationTransformer   -> Min:     0ms | Avg:     1ms | Max:     2ms
+InvertRGBTransformer       -> Min:     1ms | Avg:     1ms | Max:     1ms

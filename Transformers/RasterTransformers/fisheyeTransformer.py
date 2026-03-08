@@ -1,7 +1,7 @@
 import numpy as np
 import random
+import cv2
 from .rasterTransformer import RasterTransformer
-from scipy.ndimage import map_coordinates # type: ignore
 
 # --- Default min/max values for randomization ---
 MIN_STRENGTH = 0.2
@@ -83,26 +83,14 @@ class FisheyeTransformer(RasterTransformer):
         y_in = (norm_y_in * radius_y) + center_y
         x_in = (norm_x_in * radius_x) + center_x
 
-        displacement_map = (y_in, x_in)
-
         # 8. Apply transformation
-        if img_np.ndim == 3:
-            warped_img = np.zeros_like(img_np)
-            for i in range(img_np.shape[2]):
-                warped_img[:, :, i] = map_coordinates(
-                    img_np[:, :, i],
-                    displacement_map,
-                    order=1,
-                    mode='constant',
-                    cval=0.0
-                )
-        else:
-            warped_img = map_coordinates(
-                img_np,
-                displacement_map,
-                order=1,
-                mode='constant',
-                cval=0.0
-            )
+        warped_img = cv2.remap(
+            img_np,
+            x_in.astype(np.float32),
+            y_in.astype(np.float32),
+            interpolation=cv2.INTER_LINEAR,
+            borderMode=cv2.BORDER_CONSTANT,
+            borderValue=0
+        )
 
         return warped_img.astype(img_np.dtype)

@@ -1,0 +1,44 @@
+2026-03-08 11:54:55,131 - INFO - [main.py:201] - WheelTransformer
+2026-03-08 11:54:55,131 - INFO - [main.py:201] - DuotoneTransformer
+2026-03-08 11:54:55,131 - INFO - [main.py:201] - MeltMorphTransformer
+2026-03-08 11:54:55,131 - INFO - [main.py:201] - XrayTransformer
+2026-03-08 11:54:55,131 - INFO - [main.py:201] - FluidWarpTransformer
+2026-03-08 11:54:55,131 - INFO - [main.py:201] - SwirlWarpTransformer
+2026-03-08 11:54:55,131 - INFO - [main.py:201] - TritoneTransformer
+2026-03-08 11:54:55,131 - INFO - [main.py:201] - FractalWarpTransformer
+2026-03-08 11:54:55,131 - INFO - [main.py:201] - FisheyeTransformer
+2026-03-08 11:54:55,131 - INFO - [main.py:201] - ThermalImagingTransformer
+2026-03-08 11:54:55,131 - INFO - [main.py:201] - GlitchWarpTransformer
+2026-03-08 11:54:55,131 - INFO - [main.py:201] - RadialWarpTransformer
+2026-03-08 11:54:55,131 - INFO - [main.py:201] - ThreeDExtrusionTransformer
+2026-03-08 11:54:55,131 - INFO - [main.py:201] - PosterizationTransformer
+2026-03-08 11:54:55,131 - INFO - [main.py:244] - 21s@11:54 ✓
+Accepted: 54
+Rejected: 33
+---
+Wiki                       ->  5156ms
+Nasa                       ->   680ms
+GoesGenerator              ->   550ms
+Bible                      ->   484ms
+Cubes                      ->   463ms
+KochSnowflake              ->   312ms
+Lojong                     ->   262ms
+Bubbles                    ->   261ms
+Hilbert                    ->   101ms
+NasaMapGenerator           ->    48ms
+PeripheralDriftIllusion    ->    46ms
+---
+WheelTransformer           -> Min:   184ms | Avg:   274ms | Max:   308ms
+DuotoneTransformer         -> Min:    58ms | Avg:    81ms | Max:    87ms
+MeltMorphTransformer       -> Min:    13ms | Avg:    69ms | Max:   145ms
+XrayTransformer            -> Min:    52ms | Avg:    65ms | Max:    77ms
+FluidWarpTransformer       -> Min:    26ms | Avg:    57ms | Max:    85ms
+SwirlWarpTransformer       -> Min:    41ms | Avg:    42ms | Max:    46ms
+TritoneTransformer         -> Min:     7ms | Avg:    36ms | Max:    68ms
+FractalWarpTransformer     -> Min:    34ms | Avg:    35ms | Max:    40ms
+FisheyeTransformer         -> Min:     6ms | Avg:    32ms | Max:    96ms
+ThermalImagingTransformer  -> Min:    26ms | Avg:    29ms | Max:    32ms
+GlitchWarpTransformer      -> Min:    19ms | Avg:    27ms | Max:    31ms
+RadialWarpTransformer      -> Min:    12ms | Avg:    14ms | Max:    16ms
+ThreeDExtrusionTransformer -> Min:     4ms | Avg:    11ms | Max:    23ms
+PosterizationTransformer   -> Min:     4ms | Avg:     5ms | Max:     6ms

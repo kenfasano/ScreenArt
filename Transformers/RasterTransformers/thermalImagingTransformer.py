@@ -1,5 +1,4 @@
 import numpy as np
-from PIL import Image
 import cv2 
 from .rasterTransformer import RasterTransformer
 
@@ -10,6 +9,7 @@ class ThermalImagingTransformer(RasterTransformer):
     """
     def __init__(self):
         super().__init__()
+        self.colormap = self._create_thermal_colormap()
 
     def _create_thermal_colormap(self) -> np.ndarray:
         # A simple linear interpolation for a thermal-like palette
@@ -30,18 +30,13 @@ class ThermalImagingTransformer(RasterTransformer):
         return colormap
 
     def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
-        # Ensure the image is in a supported format
         img_np = self.to_uint8(img_np)
 
-        # Convert to grayscale first
         if img_np.ndim == 3 and img_np.shape[2] == 3:
-            img_pil = Image.fromarray(img_np)
-            grayscale_img = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)
+            grayscale_img = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY)
         else:
             grayscale_img = img_np
-            
-        self.colormap = self._create_thermal_colormap()
-        
+
         self.metadata_dictionary["thermal"] = True
 
         return self.to_float32(self.colormap[grayscale_img])
