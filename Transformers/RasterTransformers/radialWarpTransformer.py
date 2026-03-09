@@ -8,7 +8,7 @@ OptionalInt: TypeAlias = Optional[int]
 DEFAULT_COUNT = 1
 DEFAULT_STYLE = "push"
 DEFAULT_STRENGTH = 70.0
-DEFAULT_RADIUS = 0.05 
+DEFAULT_RADIUS = 0.15  # was 0.05 — too small, effect barely visible 
 
 class RadialWarpTransformer(RasterTransformer):
     """
@@ -27,7 +27,7 @@ class RadialWarpTransformer(RasterTransformer):
         # --- Parameter Handling ---
         count = t_config.get("count", "?")
         if not isinstance(count, int):
-            count = int(random.uniform(DEFAULT_COUNT // 2, DEFAULT_COUNT * 2))
+            count = random.randint(1, 3)
 
         style = t_config.get("style", "?")
         if isinstance(style, str):
@@ -64,7 +64,7 @@ class RadialWarpTransformer(RasterTransformer):
         if isinstance(radius, list):
             radius = [float(v) for v in radius]
         elif radius is None or radius == "?":
-            radius = [random.uniform(DEFAULT_RADIUS * 0.5, DEFAULT_RADIUS * 2.0) for _ in range(count)]
+            radius = [random.uniform(0.08, 0.25) for _ in range(count)]
         else: 
             radius = [float(radius)]
 

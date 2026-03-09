@@ -5,9 +5,9 @@ import random
 from .rasterTransformer import RasterTransformer
 
 DEFAULT_COUNT = 1
-DEFAULT_BRIGHTNESS_THRESHOLD = 95
+DEFAULT_BRIGHTNESS_THRESHOLD = 80  # was 95 — too restrictive, only top 5% generated streaks
 DEFAULT_STREAK_COLOR = [255, 255, 0]
-DEFAULT_STREAK_INTENSITY = 0.5
+DEFAULT_STREAK_INTENSITY = 0.8  # was 0.5 — streaks were too faint
 MAX_BRIGHT_PIXELS = 10000
 
 class AnamorphicTransformer(RasterTransformer):

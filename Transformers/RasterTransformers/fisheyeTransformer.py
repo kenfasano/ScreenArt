@@ -29,7 +29,7 @@ class FisheyeTransformer(RasterTransformer):
         # Zoom factor
         self.zoom = t_config.get("zoom")
         if self.zoom is None or not isinstance(self.zoom, (int, float)):
-            self.zoom = random.uniform(0.5, 1.5)
+            self.zoom = random.uniform(0.85, 1.15)  # was 0.5-1.5; extreme zoom fills with black
             
         # Shape of the lens
         self.shape = t_config.get("shape")
@@ -84,13 +84,15 @@ class FisheyeTransformer(RasterTransformer):
         x_in = (norm_x_in * radius_x) + center_x
 
         # 8. Apply transformation
+        # Ensure input is float32 [0,1] before remap so output dtype is correct
+        img_f = img_np.astype(np.float32)
+        if img_f.max() > 1.5:
+            img_f = img_f / 255.0
         warped_img = cv2.remap(
-            img_np,
+            img_f,
             x_in.astype(np.float32),
             y_in.astype(np.float32),
             interpolation=cv2.INTER_LINEAR,
-            borderMode=cv2.BORDER_CONSTANT,
-            borderValue=0
+            borderMode=cv2.BORDER_REFLECT_101
         )
-
-        return warped_img.astype(img_np.dtype)
+        return warped_img.astype(np.float32)

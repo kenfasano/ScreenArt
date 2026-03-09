@@ -1,4 +1,5 @@
 import numpy as np
+import random
 from .rasterTransformer import RasterTransformer
 
 class PosterizationTransformer(RasterTransformer):
@@ -15,23 +16,22 @@ class PosterizationTransformer(RasterTransformer):
 
         levels = t_config.get("levels")
         if isinstance(levels, int):
-            self.levels = levels 
+            self.levels = levels
         else:
-            self.levels = 2
+            self.levels = random.randint(4, 16)
 
-        # Ensure that levels is at least 2 for a meaningful effect
-        self.levels = max(2, self.levels)
+        # Ensure at least 4 for a visible effect (2 = pure B&W)
+        self.levels = max(4, self.levels)
         
         # --- POPULATE METADATA ---
         self.metadata_dictionary["levels"] = self.levels
         
-        # Create a copy to avoid modifying the original image
-        output_np = img_np.copy().astype(np.float32)
+        # Pipeline contract: float32 [0,1]. Quantize in [0,1] space.
+        img_f = np.clip(img_np.astype(np.float32), 0.0, 1.0)
+        if img_f.max() > 1.5:  # guard: normalise if somehow [0,255]
+            img_f = img_f / 255.0
 
-        # Calculate the step size for quantizing colors
-        step_size = 255.0 / (self.levels - 1)
+        step_size = 1.0 / (self.levels - 1)
+        output_np = np.round(img_f / step_size) * step_size
 
-        # Quantize each color channel
-        output_np = np.round(output_np / step_size) * step_size
-
-        return output_np
+        return np.clip(output_np, 0.0, 1.0).astype(np.float32)

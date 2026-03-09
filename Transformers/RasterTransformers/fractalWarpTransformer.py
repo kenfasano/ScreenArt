@@ -18,9 +18,9 @@ class FractalWarpTransformer(RasterTransformer):
         t_config = self.config.get("fractalwarptransformer", {})
 
         # --- Parameter Handling ---
-        iterations = t_config.get("iterations", DEFAULT_ITERATIONS)
+        iterations = t_config.get("iterations")
         if not isinstance(iterations, int):
-             iterations = DEFAULT_ITERATIONS
+            iterations = random.randint(8, 20)
         
         scale = t_config.get("scale")
         if scale is None or not isinstance(scale, (int, float)):

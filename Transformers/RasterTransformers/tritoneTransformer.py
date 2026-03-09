@@ -23,9 +23,19 @@ class TritoneTransformer(RasterTransformer):
     def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
         t_config = self.config.get("tritonetransformer", {})
 
-        shadow_hex = t_config.get("shadow_hex", self.get_random_hex())
-        mid_hex = t_config.get("mid_hex", self.get_random_hex())
-        hilight_hex = t_config.get("hilight_hex", self.get_random_hex())
+        shadow_hex  = t_config.get("shadow_hex")
+        mid_hex     = t_config.get("mid_hex")
+        hilight_hex = t_config.get("hilight_hex")
+        if not all(isinstance(x, str) for x in [shadow_hex, mid_hex, hilight_hex]):
+            # Ensure the 3 stops are spread across the color wheel
+            for _ in range(20):
+                shadow_hex  = self.get_random_hex()
+                mid_hex     = self.get_random_hex()
+                hilight_hex = self.get_random_hex()
+                s, m, h = self._hex_to_rgb(shadow_hex), self._hex_to_rgb(mid_hex), self._hex_to_rgb(hilight_hex)
+                spread = sum(abs(a-b) for a,b in zip(s,h)) + sum(abs(a-b) for a,b in zip(s,m))
+                if spread > 300:
+                    break
         
         # --- POPULATE METADATA ---
         self.metadata_dictionary["shadow"] = shadow_hex
@@ -57,4 +67,4 @@ class TritoneTransformer(RasterTransformer):
 
         # Convert to grayscale and apply LUT via fancy indexing
         gray = cv2.cvtColor(self.to_uint8(img_np), cv2.COLOR_RGB2GRAY)
-        return np.clip(lut[gray], 0, 255)
+        return np.clip(lut[gray] / 255.0, 0.0, 1.0).astype(np.float32)  # [0,1] contract

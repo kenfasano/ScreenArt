@@ -1,37 +1,35 @@
-14s@12:49 ✓
-Accepted: 19
-Rejected: 48
+15s@17:57 ✓
+Accepted: 33
+Rejected: 24
 ---
-Wiki                       ->  3228ms
-Nasa                       ->   796ms
-Cubes                      ->   559ms
-GoesGenerator              ->   510ms
-Bible                      ->   425ms
-Lojong                     ->   328ms
-KochSnowflake              ->   315ms
-Bubbles                    ->   297ms
-Hilbert                    ->    67ms
-NasaMapGenerator           ->    47ms
-PeripheralDriftIllusion    ->    41ms
+Wiki                       ->  2757ms
+Nasa                       ->  1021ms
+GoesGenerator              ->   682ms
+Bible                      ->   669ms
+Cubes                      ->   524ms
+Bubbles                    ->   289ms
+Lojong                     ->   287ms
+NasaMapGenerator           ->   179ms
+PeripheralDriftIllusion    ->    45ms
 ---
-WheelTransformer           -> Min:   173ms | Avg:   190ms | Max:   246ms
-DuotoneTransformer         -> Min:    83ms | Avg:    83ms | Max:    83ms
-WatercolorTransformer      -> Min:    75ms | Avg:    83ms | Max:    94ms
-FlipWilsonTransformer      -> Min:    32ms | Avg:    81ms | Max:   123ms
-XrayTransformer            -> Min:    37ms | Avg:    77ms | Max:   112ms
-AnamorphicTransformer      -> Min:    17ms | Avg:    54ms | Max:    69ms
-FluidWarpTransformer       -> Min:    13ms | Avg:    52ms | Max:    78ms
-MeltMorphTransformer       -> Min:    16ms | Avg:    43ms | Max:    62ms
-DataMoshTransformer        -> Min:    14ms | Avg:    34ms | Max:    43ms
-FractalWarpTransformer     -> Min:    10ms | Avg:    31ms | Max:    48ms
-ThreeDExtrusionTransformer -> Min:    30ms | Avg:    30ms | Max:    32ms
-HalftoneTransformer        -> Min:     4ms | Avg:    30ms | Max:    51ms
-ThermalImagingTransformer  -> Min:     3ms | Avg:    25ms | Max:    39ms
-TritoneTransformer         -> Min:     6ms | Avg:    25ms | Max:    38ms
-GlitchWarpTransformer      -> Min:     4ms | Avg:    22ms | Max:    32ms
-SwirlWarpTransformer       -> Min:     2ms | Avg:    22ms | Max:    47ms
-FisheyeTransformer         -> Min:     6ms | Avg:    20ms | Max:    41ms
-RadialWarpTransformer      -> Min:     4ms | Avg:    14ms | Max:    26ms
-ColormapTransformer        -> Min:     3ms | Avg:    11ms | Max:    19ms
-PosterizationTransformer   -> Min:     1ms | Avg:     4ms | Max:     5ms
-InvertRGBTransformer       -> Min:     1ms | Avg:     1ms | Max:     1ms
+WatercolorTransformer      -> Min:   116ms | Avg:   214ms | Max:   317ms
+WheelTransformer           -> Min:    58ms | Avg:   100ms | Max:   115ms
+FlipWilsonTransformer      -> Min:    15ms | Avg:    77ms | Max:   109ms
+XrayTransformer            -> Min:    12ms | Avg:    76ms | Max:   160ms
+DuotoneTransformer         -> Min:    13ms | Avg:    67ms | Max:    88ms
+AnamorphicTransformer      -> Min:    32ms | Avg:    53ms | Max:    69ms
+MeltMorphTransformer       -> Min:    17ms | Avg:    49ms | Max:    68ms
+HalftoneTransformer        -> Min:    14ms | Avg:    44ms | Max:    60ms
+ThreeDExtrusionTransformer -> Min:     9ms | Avg:    41ms | Max:   143ms
+DataMoshTransformer        -> Min:     5ms | Avg:    36ms | Max:    44ms
+FisheyeTransformer         -> Min:     7ms | Avg:    35ms | Max:   171ms
+SwirlWarpTransformer       -> Min:    13ms | Avg:    34ms | Max:    38ms
+FluidWarpTransformer       -> Min:    10ms | Avg:    27ms | Max:    51ms
+ThermalImagingTransformer  -> Min:     7ms | Avg:    25ms | Max:    37ms
+TritoneTransformer         -> Min:     7ms | Avg:    22ms | Max:    31ms
+FractalWarpTransformer     -> Min:     5ms | Avg:    22ms | Max:    36ms
+GlitchWarpTransformer      -> Min:     4ms | Avg:    21ms | Max:    28ms
+RadialWarpTransformer      -> Min:     8ms | Avg:    17ms | Max:    26ms
+InvertRGBTransformer       -> Min:     3ms | Avg:    10ms | Max:    17ms
+PosterizationTransformer   -> Min:     4ms | Avg:     9ms | Max:    14ms
+ColormapTransformer        -> Min:     2ms | Avg:     7ms | Max:    13ms

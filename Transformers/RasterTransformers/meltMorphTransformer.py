@@ -1,4 +1,5 @@
 import numpy as np
+import random
 from .rasterTransformer import RasterTransformer
 
 DEFAULT_MELT_INTENSITY = 0.5
@@ -15,16 +16,19 @@ class MeltMorphTransformer(RasterTransformer):
         np.random.seed()
         
         # Convert to grayscale to determine luminosity
-        grayscale_np = np.dot(img_np[...,:3], [0.299, 0.587, 0.114]).astype(np.float32)
+        if img_np.ndim == 3:
+            grayscale_np = np.dot(img_np[...,:3], [0.299, 0.587, 0.114]).astype(np.float32)
+        else:
+            grayscale_np = img_np.astype(np.float32)
 
-        height, width, _ = img_np.shape
+        height, width = img_np.shape[:2]
 
         t_config = self.config.get("meltmorphtransformer", {})
 
         # --- Parameter Handling ---
         self.melt_intensity = t_config.get("melt_intensity")
         if not isinstance(self.melt_intensity, (int, float)):
-            self.melt_intensity = DEFAULT_MELT_INTENSITY
+            self.melt_intensity = random.uniform(0.15, 0.55)
 
         # Clamp the intensity to the valid range [0, 1]
         self.melt_intensity = max(0.0, min(1.0, self.melt_intensity))
@@ -54,4 +58,4 @@ class MeltMorphTransformer(RasterTransformer):
         # Use advanced indexing to create the final warped image
         output_np = img_np[new_y_coords, x_coords]
 
-        return output_np
+        return output_np.astype(np.float32)  # ensure pipeline contract: float32 [0,1]

@@ -25,10 +25,8 @@ class ThreeDExtrusionTransformer(RasterTransformer):
         extrusion_intensity = max(0.001, min(1.0, float(extrusion_intensity)))
 
         ambient_light = t_config.get("ambient_light")
-        if isinstance(ambient_light, str):
-             ambient_light = random.uniform(0.0, 1.0)
-        elif not isinstance(ambient_light, (int, float)):
-             ambient_light = 0.3
+        if isinstance(ambient_light, str) or not isinstance(ambient_light, (int, float)):
+            ambient_light = random.uniform(0.25, 0.6)  # was 0.0-1.0; extremes → black or flat
              
         # --- POPULATE METADATA ---
         self.metadata_dictionary["intensity"] = round(extrusion_intensity, 3)
@@ -63,7 +61,8 @@ class ThreeDExtrusionTransformer(RasterTransformer):
         shading += ambient_light
         np.clip(shading, 0.0, 1.0, out=shading)
 
-        # Apply to Image
+        # Apply to Image — floor shading at ambient to prevent solid-black regions
+        shading = np.maximum(shading, ambient_light * 0.5)
         output_np = (img_np * shading[..., np.newaxis]).astype(np.uint8)
 
         return self.to_float32(output_np)

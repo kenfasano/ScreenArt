@@ -5,7 +5,7 @@ from .rasterTransformer import RasterTransformer
 
 
 MAX_ALPHA = 20.0
-MAX_SIGMA = 100.0
+MAX_SIGMA = 8.0  # was 100; large sigma → huge blur kernel → sharpness floor failures
 
 class FluidWarpTransformer(RasterTransformer):
     def __init__(self):
@@ -38,9 +38,9 @@ class FluidWarpTransformer(RasterTransformer):
 
         sigma = t_config.get("sigma")
         if sigma is None or not isinstance(sigma, (int, float)):
-            self.sigma = random.uniform(0.01, MAX_ALPHA)
+            self.sigma = random.uniform(0.5, MAX_SIGMA)
         else:
-            self.sigma = sigma
+            self.sigma = min(float(sigma), MAX_SIGMA)
             
         # --- POPULATE METADATA ---
         self.metadata_dictionary["alpha"] = round(self.alpha, 2)
@@ -64,8 +64,10 @@ class FluidWarpTransformer(RasterTransformer):
 
         interp = cv2.INTER_NEAREST if interpolation_order == 0 else cv2.INTER_LINEAR
 
-        warped_img = cv2.remap(img_np, map_x, map_y,
+        img_f = img_np.astype(np.float32)
+        if img_f.max() > 1.5:
+            img_f = img_f / 255.0
+        warped_img = cv2.remap(img_f, map_x, map_y,
                                interpolation=interp,
                                borderMode=cv2.BORDER_REFLECT)
-
-        return warped_img.astype(img_np.dtype)
+        return warped_img.astype(np.float32)

@@ -37,6 +37,11 @@ class ThermalImagingTransformer(RasterTransformer):
         else:
             grayscale_img = img_np
 
+        # Histogram stretch so the full thermal palette is used regardless of source brightness
+        p_low, p_high = np.percentile(grayscale_img, (2, 98))
+        if p_high > p_low:
+            grayscale_img = np.clip((grayscale_img.astype(np.float32) - p_low) / (p_high - p_low) * 255, 0, 255).astype(np.uint8)
+
         self.metadata_dictionary["thermal"] = True
 
         return self.to_float32(self.colormap[grayscale_img])

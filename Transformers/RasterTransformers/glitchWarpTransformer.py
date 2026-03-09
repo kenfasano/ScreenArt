@@ -15,7 +15,7 @@ class GlitchWarpTransformer(RasterTransformer):
 
         self.warp_intensity = t_config.get("warp_intensity")
         if not isinstance(self.warp_intensity, (int, float)):
-            self.warp_intensity = random.uniform(0.0, 1.0)
+            self.warp_intensity = random.uniform(0.05, 0.35)
 
         # Clamp the intensity to the valid range [0, 1]
         self.warp_intensity = max(0.0, min(1.0, self.warp_intensity))
@@ -26,7 +26,7 @@ class GlitchWarpTransformer(RasterTransformer):
         # Set the random seed for reproducible glitches
         seed = random.randint(0, 1000000)
         np.random.seed(seed)
-        height, width, _ = img_np.shape
+        height, width = img_np.shape[:2]
 
         max_shift = int(width * self.warp_intensity)
         shifts = np.random.randint(-max_shift, max_shift + 1, size=height)
@@ -39,4 +39,4 @@ class GlitchWarpTransformer(RasterTransformer):
         # Advanced indexing
         output_np = img_np[np.arange(height)[:, np.newaxis], new_x_indices]
 
-        return output_np
+        return output_np.astype(np.float32)  # ensure pipeline contract: float32 [0,1]

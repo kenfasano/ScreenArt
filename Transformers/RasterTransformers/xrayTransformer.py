@@ -14,8 +14,8 @@ class XrayTransformer(RasterTransformer):
         super().__init__()
 
     def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
-        POSSIBLE_NUM_COLORS: list[int] = [1, 2, 4, 8, 16, 32, 64, 128, 256]
-        WEIGHTS:             list[int] = [8, 7, 6, 5,  4,  3,  2,   1,   1]
+        POSSIBLE_NUM_COLORS: list[int] = [4, 8, 16, 32, 64, 128, 256]
+        WEIGHTS:             list[int] = [6, 7,  6,  5,  3,   2,   1]
 
         self.num_colors = random.choices(POSSIBLE_NUM_COLORS, weights=WEIGHTS, k=1)[0]
         self.metadata_dictionary["colors"] = self.num_colors

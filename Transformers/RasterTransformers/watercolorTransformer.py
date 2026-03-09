@@ -20,7 +20,7 @@ class WatercolorTransformer(RasterTransformer):
         if self.style_name not in self.allowed_styles:
             self.style_name = random.choice(self.allowed_styles)
 
-        scale_factor = t_config.get("scale_factor", DEFAULT_DOWNSCALE_FACTOR)
+        scale_factor = t_config.get("scale_factor", 0.85)
         
         # --- POPULATE METADATA ---
         self.metadata_dictionary["style"] = self.style_name
@@ -61,6 +61,10 @@ class WatercolorTransformer(RasterTransformer):
 
         if should_resize:
             output_np = cv2.resize(result_small, (w, h), interpolation=cv2.INTER_LINEAR)
+            # Mild unsharp mask to recover edge detail lost in downscale
+            blurred = cv2.GaussianBlur(output_np, (0, 0), 1.5)
+            output_np = cv2.addWeighted(output_np, 1.25, blurred, -0.25, 0)
+            output_np = np.clip(output_np, 0, 255).astype(np.uint8)
         else:
             output_np = result_small
 

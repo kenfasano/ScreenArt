@@ -26,8 +26,17 @@ class DuotoneTransformer(RasterTransformer):
     def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
         t_config = self.config.get("duotonetransformer", {})
 
-        shadow_hex = t_config.get("shadow_hex", self.get_random_hex())
-        hilight_hex = t_config.get("hilight_hex", self.get_random_hex())
+        shadow_hex = t_config.get("shadow_hex")
+        hilight_hex = t_config.get("hilight_hex")
+        if not isinstance(shadow_hex, str) or not isinstance(hilight_hex, str):
+            # Regenerate until shadow and highlight are perceptually distinct
+            for _ in range(20):
+                shadow_hex = self.get_random_hex()
+                hilight_hex = self.get_random_hex()
+                s = self._hex_to_rgb(shadow_hex)
+                h = self._hex_to_rgb(hilight_hex)
+                if sum(abs(a - b) for a, b in zip(s, h)) > 180:
+                    break
         
         # --- POPULATE METADATA ---
         self.metadata_dictionary["shadow"] = shadow_hex

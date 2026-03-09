@@ -2,7 +2,7 @@ import numpy as np
 import random
 from .rasterTransformer import RasterTransformer
 
-MAX_LIGHT_MOSH_INTENSITY = 0.004
+MAX_LIGHT_MOSH_INTENSITY = 0.025  # was 0.004 — 0.4% shift is invisible; 2.5% is visible
 
 class DataMoshTransformer(RasterTransformer):
     """
@@ -20,7 +20,7 @@ class DataMoshTransformer(RasterTransformer):
         if isinstance(mosh_intensity, float):
             self.mosh_intensity = mosh_intensity
         else:
-            self.mosh_intensity = random.uniform(0.01, MAX_LIGHT_MOSH_INTENSITY)
+            self.mosh_intensity = random.uniform(0.005, MAX_LIGHT_MOSH_INTENSITY)
 
         # Clamp the intensity to the valid range [0.0, 1.0]
         self.mosh_intensity = max(0.0, min(1.0, self.mosh_intensity))
@@ -61,4 +61,4 @@ class DataMoshTransformer(RasterTransformer):
         else:
             output_np = img_np[new_y, new_x]
 
-        return output_np
+        return output_np.astype(np.float32)  # ensure pipeline contract: float32 [0,1]

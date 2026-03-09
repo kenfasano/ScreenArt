@@ -52,8 +52,8 @@ class ScreenArtMain(ScreenArt):
             "lojong": GeneratorConfig(source=f"{gen_in}/lojong", should_erase=True),
             "bible": GeneratorConfig(source=f"{gen_in}/bible", should_erase=True),
             "peripheraldriftillusion": GeneratorConfig(source=f"{gen_in}/opticalillusions", should_erase=True),
-             "kochSnowflake": GeneratorConfig(source=f"{gen_in}/kochsnowflake", should_erase=True),
-             "hilbert": GeneratorConfig(source=f"{gen_in}/hilbert", should_erase=True),
+            # kochSnowflake and hilbert are linear generators — they use their own
+            # internal linear transformers and must NOT enter the raster pipeline.
         }
 
         # 2. GENERATOR REGISTRY (Map the string key directly to the Class)
@@ -67,8 +67,7 @@ class ScreenArtMain(ScreenArt):
             "lojong": lojong.Lojong,
             "bible": bible.Bible,
             "peripheraldriftillusion": peripheral_drift_illusion.PeripheralDriftIllusion,
-            "kochSnowflake": kochSnowflake.KochSnowflake,
-            "hilbert": hilbert.Hilbert,
+            # kochSnowflake and hilbert excluded — linear generators, not raster
         }
 
         # Pull requested transformers from screenArt.conf, default to colormap

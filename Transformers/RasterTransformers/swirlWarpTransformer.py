@@ -57,8 +57,9 @@ class SwirlWarpTransformer(RasterTransformer):
         fall = self._compute_falloff(r, R).astype(np.float32)
         swirl_amount = self.strength * fall
 
-        self.band_period = self.radius / 2.0 
-        if not self.band_period or self.band_period > 0:
+        # Band modulation is optional — without config it defaults off because sin can zero out the swirl
+        self.band_period = t_config.get("band_period", None)
+        if self.band_period and isinstance(self.band_period, (int, float)) and self.band_period > 0:
             band = np.sin((2.0 * np.pi * r) / float(self.band_period)).astype(np.float32)
             swirl_amount = swirl_amount * band
 
