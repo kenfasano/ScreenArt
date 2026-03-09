@@ -238,6 +238,7 @@ class ScreenArtMain(ScreenArt):
             m.write(final_output)
             
         self.log.info(final_output)
+        print(final_output)
 
 def run_main():
     parser = argparse.ArgumentParser(description="Run the image processing and transformation pipeline.")
