@@ -107,7 +107,7 @@ class FlipWilsonTransformer(RasterTransformer):
         
         return img.transform((w, h), Image.PERSPECTIVE, coeffs, Image.BICUBIC)
 
-    def _find_coeffs(self, pa, pb):
+    def _find_coeffs(self, pa: list[tuple[float, float]], pb: list[tuple[float, float]]) -> np.ndarray:
         matrix = []
         for p1, p2 in zip(pa, pb):
             matrix.append([p1[0], p1[1], 1, 0, 0, 0, -p2[0]*p1[0], -p2[0]*p1[1]])

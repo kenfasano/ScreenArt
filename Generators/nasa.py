@@ -78,7 +78,7 @@ class Nasa(Source):
         img_url = self._get_image_url(page_url)
         return self._download_image(img_url) if img_url else False
 
-    def run(self, *args, **kwargs):
+    def run(self, *args, **kwargs) -> int:
         candidates = [self._apod_url() for _ in range(self.file_count * self.CANDIDATE_MULTIPLIER)]
         fetched = 0
 

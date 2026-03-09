@@ -4,7 +4,7 @@ from typing import TextIO
 import os
 
 class ParseBible:
-    def __init__(self, target_path: str, psalm_name: str, encoding="UTF-8"):
+    def __init__(self, target_path: str, psalm_name: str, encoding: str = "UTF-8"):
         self.psalm_name = psalm_name
         self.encoding = encoding
         expanded_path = os.path.expanduser(target_path)

@@ -110,7 +110,7 @@ def radial_ripple_warp(image: Image.Image, amplitude: float = 10.0, wavelength: 
 # ---------------------------
 # Video production functions
 # ---------------------------
-def make_forward_segment(image_path, tmp_segment_path, duration_secs=5.0, fps=30, start_intensity=0.5, end_intensity=0.51, logger=logger):
+def make_forward_segment(image_path: str, tmp_segment_path: str, duration_secs: float = 5.0, fps: int = 30, start_intensity: float = 0.5, end_intensity: float = 0.51, logger: logging.Logger = logger):
     """
     Produce a forward segment mp4 at tmp_segment_path by evolving warp intensity linearly.
     """
@@ -139,7 +139,7 @@ def make_forward_segment(image_path, tmp_segment_path, duration_secs=5.0, fps=30
     logger.info("Forward segment complete")
     return total_frames, (w, h), fps
 
-def append_reverse_with_crossfade(tmp_segment_path, output_path, fade_seconds=1.0, logger=logger):
+def append_reverse_with_crossfade(tmp_segment_path: str, output_path: str, fade_seconds: float = 1.0, logger: logging.Logger = logger):
     """
     Stream the tmp_segment_path forward, then append its reversed frames with a crossfade,
     writing to output_path. Does not load all frames at once (seeks).
@@ -291,7 +291,7 @@ class VideoMakerApp(tk.Tk):
         self._load_preview(path)
         logger.info(f"Selected image: {path}")
 
-    def _load_preview(self, path):
+    def _load_preview(self, path: str):
         try:
             img = Image.open(path).convert("RGB")
         except Exception as e:
@@ -369,7 +369,7 @@ class VideoMakerApp(tk.Tk):
             self.btn_create.config(state="normal")
             self.status_var.set("Idle")
 
-    def _set_progress(self, value, status_text=None):
+    def _set_progress(self, value: float, status_text: str | None = None):
         # run in UI thread
         def _ui():
             self.progress["value"] = value

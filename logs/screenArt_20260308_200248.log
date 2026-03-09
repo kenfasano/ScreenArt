@@ -1,0 +1,291 @@
+2026-03-08 20:02:54,877 - INFO - [pipeline.py:44] - ColormapTransformer
+2026-03-08 20:02:54,890 - INFO - [pipeline.py:44] - AnamorphicTransformer
+2026-03-08 20:02:54,959 - INFO - [pipeline.py:117] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/bubbles_4-C.jpeg
+2026-03-08 20:02:54,967 - INFO - [pipeline.py:44] - MeltMorphTransformer
+2026-03-08 20:02:55,042 - INFO - [pipeline.py:117] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/bubbles_8-C.jpeg
+2026-03-08 20:02:55,050 - INFO - [pipeline.py:44] - HalftoneTransformer
+2026-03-08 20:02:55,080 - INFO - [pipeline.py:44] - InvertRGBTransformer
+2026-03-08 20:02:55,081 - INFO - [pipeline.py:44] - ThreeDExtrusionTransformer
+2026-03-08 20:02:55,111 - INFO - [pipeline.py:44] - TritoneTransformer
+2026-03-08 20:02:55,155 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/bubbles_9-F.jpeg
+2026-03-08 20:02:55,163 - INFO - [pipeline.py:44] - ThermalImagingTransformer
+2026-03-08 20:02:55,190 - INFO - [pipeline.py:44] - FractalWarpTransformer
+2026-03-08 20:02:55,251 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/bubbles_5-F.jpeg
+2026-03-08 20:02:55,259 - INFO - [pipeline.py:44] - FractalWarpTransformer
+2026-03-08 20:02:55,297 - INFO - [pipeline.py:44] - FlipWilsonTransformer
+2026-03-08 20:02:55,361 - INFO - [pipeline.py:44] - DuotoneTransformer
+2026-03-08 20:02:55,447 - INFO - [pipeline.py:44] - PosterizationTransformer
+2026-03-08 20:02:55,467 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/bubbles_2-F.jpeg
+2026-03-08 20:02:55,475 - INFO - [pipeline.py:44] - FluidWarpTransformer
+2026-03-08 20:02:55,553 - INFO - [pipeline.py:44] - XrayTransformer
+2026-03-08 20:02:55,675 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/bubbles_3-F.jpeg
+2026-03-08 20:02:55,683 - INFO - [pipeline.py:44] - SwirlWarpTransformer
+2026-03-08 20:02:55,726 - INFO - [pipeline.py:44] - PosterizationTransformer
+2026-03-08 20:02:55,730 - INFO - [pipeline.py:44] - ColormapTransformer
+2026-03-08 20:02:55,757 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/bubbles_10-F.jpeg
+2026-03-08 20:02:55,765 - INFO - [pipeline.py:44] - RadialWarpTransformer
+2026-03-08 20:02:55,795 - INFO - [pipeline.py:117] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/bubbles_1-C.jpeg
+2026-03-08 20:02:55,803 - INFO - [pipeline.py:44] - PosterizationTransformer
+2026-03-08 20:02:55,823 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/bubbles_6-F.jpeg
+2026-03-08 20:02:55,831 - INFO - [pipeline.py:44] - PosterizationTransformer
+2026-03-08 20:02:55,836 - INFO - [pipeline.py:44] - ThreeDExtrusionTransformer
+2026-03-08 20:02:55,866 - INFO - [pipeline.py:44] - TritoneTransformer
+2026-03-08 20:02:55,910 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/bubbles_7-F.jpeg
+2026-03-08 20:02:55,918 - INFO - [pipeline.py:44] - ColormapTransformer
+2026-03-08 20:02:55,929 - INFO - [pipeline.py:44] - TritoneTransformer
+2026-03-08 20:02:55,958 - INFO - [pipeline.py:44] - AnamorphicTransformer
+2026-03-08 20:02:56,000 - INFO - [pipeline.py:44] - GlitchWarpTransformer
+2026-03-08 20:02:56,042 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/cubes_2-F.jpeg
+2026-03-08 20:02:56,049 - INFO - [pipeline.py:44] - WheelTransformer
+2026-03-08 20:02:56,179 - INFO - [pipeline.py:117] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/cubes_3-C.jpeg
+2026-03-08 20:02:56,186 - INFO - [pipeline.py:44] - SwirlWarpTransformer
+2026-03-08 20:02:56,231 - INFO - [pipeline.py:44] - ThermalImagingTransformer
+2026-03-08 20:02:56,277 - INFO - [pipeline.py:117] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/cubes_4-C.jpeg
+2026-03-08 20:02:56,285 - INFO - [pipeline.py:44] - AnamorphicTransformer
+2026-03-08 20:02:56,342 - INFO - [pipeline.py:44] - ColormapTransformer
+2026-03-08 20:02:56,353 - INFO - [pipeline.py:44] - MeltMorphTransformer
+2026-03-08 20:02:56,422 - INFO - [pipeline.py:117] - [Grade: B] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/cubes_5-B.jpeg
+2026-03-08 20:02:56,430 - INFO - [pipeline.py:44] - XrayTransformer
+2026-03-08 20:02:56,549 - INFO - [pipeline.py:44] - DataMoshTransformer
+2026-03-08 20:02:56,584 - INFO - [pipeline.py:44] - GlitchWarpTransformer
+2026-03-08 20:02:56,627 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/cubes_6-F.jpeg
+2026-03-08 20:02:56,635 - INFO - [pipeline.py:44] - RadialWarpTransformer
+2026-03-08 20:02:56,652 - INFO - [pipeline.py:44] - FisheyeTransformer
+2026-03-08 20:02:56,698 - INFO - [pipeline.py:117] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/cubes_1-C.jpeg
+2026-03-08 20:02:56,700 - INFO - [pipeline.py:44] - FisheyeTransformer
+2026-03-08 20:02:56,712 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/eso1143b_900-F.jpg
+2026-03-08 20:02:56,718 - INFO - [pipeline.py:44] - WatercolorTransformer
+2026-03-08 20:02:56,761 - INFO - [pipeline.py:44] - ColormapTransformer
+2026-03-08 20:02:56,776 - INFO - [pipeline.py:117] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/EnceladusStripes_Cassini_960-A.jpg
+2026-03-08 20:02:56,780 - INFO - [pipeline.py:44] - FractalWarpTransformer
+2026-03-08 20:02:56,791 - INFO - [pipeline.py:44] - HalftoneTransformer
+2026-03-08 20:02:56,800 - INFO - [pipeline.py:44] - ThermalImagingTransformer
+2026-03-08 20:02:56,808 - INFO - [pipeline.py:44] - SwirlWarpTransformer
+2026-03-08 20:02:56,825 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/AirglowRings_Wang_1080-F.jpg
+2026-03-08 20:02:56,826 - INFO - [pipeline.py:44] - MeltMorphTransformer
+2026-03-08 20:02:56,835 - INFO - [pipeline.py:44] - FlipWilsonTransformer
+2026-03-08 20:02:56,847 - INFO - [pipeline.py:117] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/ozone030911_toms-C.jpg
+2026-03-08 20:02:56,849 - INFO - [pipeline.py:44] - MeltMorphTransformer
+2026-03-08 20:02:56,856 - INFO - [pipeline.py:44] - DuotoneTransformer
+2026-03-08 20:02:56,872 - INFO - [pipeline.py:117] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/wildcomp_stardust_c1-C.jpg
+2026-03-08 20:02:56,876 - INFO - [pipeline.py:44] - ColormapTransformer
+2026-03-08 20:02:56,881 - INFO - [pipeline.py:44] - RadialWarpTransformer
+2026-03-08 20:02:56,889 - INFO - [pipeline.py:44] - GlitchWarpTransformer
+2026-03-08 20:02:56,909 - INFO - [pipeline.py:117] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/20180721_apparentSizes1024-A.jpg
+2026-03-08 20:02:56,912 - INFO - [pipeline.py:44] - GlitchWarpTransformer
+2026-03-08 20:02:56,919 - INFO - [pipeline.py:44] - PosterizationTransformer
+2026-03-08 20:02:56,925 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/busyastronaut_sts135_900-F.jpg
+2026-03-08 20:02:56,926 - INFO - [pipeline.py:44] - WatercolorTransformer
+2026-03-08 20:02:56,938 - INFO - [pipeline.py:44] - TritoneTransformer
+2026-03-08 20:02:56,942 - INFO - [pipeline.py:44] - GlitchWarpTransformer
+2026-03-08 20:02:56,946 - INFO - [pipeline.py:44] - RadialWarpTransformer
+2026-03-08 20:02:56,950 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/ngc6822_noao-F.jpg
+2026-03-08 20:02:56,954 - INFO - [pipeline.py:44] - ThreeDExtrusionTransformer
+2026-03-08 20:02:56,973 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/DragonsEgg_Prangley_960-F.jpg
+2026-03-08 20:02:56,976 - INFO - [pipeline.py:44] - WheelTransformer
+2026-03-08 20:02:57,010 - INFO - [pipeline.py:44] - HalftoneTransformer
+2026-03-08 20:02:57,019 - INFO - [pipeline.py:44] - FlipWilsonTransformer
+2026-03-08 20:02:57,043 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/methane5_nasa_960-F.jpg
+2026-03-08 20:02:57,045 - INFO - [pipeline.py:44] - DuotoneTransformer
+2026-03-08 20:02:57,067 - INFO - [pipeline.py:44] - FlipWilsonTransformer
+2026-03-08 20:02:57,082 - INFO - [pipeline.py:44] - WatercolorTransformer
+2026-03-08 20:02:57,109 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/ngc1300_hst_960-F.jpg
+2026-03-08 20:02:57,121 - INFO - [pipeline.py:44] - InvertRGBTransformer
+2026-03-08 20:02:57,137 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/nasa_earth_1_Osaka_True_Color-F.jpeg
+2026-03-08 20:02:57,142 - INFO - [pipeline.py:44] - WatercolorTransformer
+2026-03-08 20:02:57,198 - INFO - [pipeline.py:44] - HalftoneTransformer
+2026-03-08 20:02:57,219 - INFO - [pipeline.py:44] - FluidWarpTransformer
+2026-03-08 20:02:57,288 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/noaa_goes_1_se_Fire_Temperature-F.jpeg
+2026-03-08 20:02:57,313 - INFO - [pipeline.py:44] - XrayTransformer
+2026-03-08 20:02:57,585 - INFO - [pipeline.py:44] - GlitchWarpTransformer
+2026-03-08 20:02:57,685 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/Ford_B23-F.jpeg
+2026-03-08 20:02:57,705 - INFO - [pipeline.py:44] - HalftoneTransformer
+2026-03-08 20:02:57,783 - INFO - [pipeline.py:44] - ColormapTransformer
+2026-03-08 20:02:57,805 - INFO - [pipeline.py:44] - FluidWarpTransformer
+2026-03-08 20:02:57,896 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/Reading_woman__-F.jpeg
+2026-03-08 20:02:57,915 - INFO - [pipeline.py:44] - SwirlWarpTransformer
+2026-03-08 20:02:58,007 - INFO - [pipeline.py:117] - [Grade: B] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/Triangul-B.jpeg
+2026-03-08 20:02:58,018 - INFO - [pipeline.py:44] - AnamorphicTransformer
+2026-03-08 20:02:58,097 - INFO - [pipeline.py:44] - XrayTransformer
+2026-03-08 20:02:58,242 - INFO - [pipeline.py:44] - TritoneTransformer
+2026-03-08 20:02:58,280 - INFO - [pipeline.py:44] - ColormapTransformer
+2026-03-08 20:02:58,315 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/Melia_az-F.jpeg
+2026-03-08 20:02:58,329 - INFO - [pipeline.py:44] - WheelTransformer
+2026-03-08 20:02:58,485 - INFO - [pipeline.py:44] - FluidWarpTransformer
+2026-03-08 20:02:58,522 - INFO - [pipeline.py:44] - PosterizationTransformer
+2026-03-08 20:02:58,529 - INFO - [pipeline.py:44] - TritoneTransformer
+2026-03-08 20:02:58,591 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/Le_Mulet-F.jpeg
+2026-03-08 20:02:58,599 - INFO - [pipeline.py:44] - PosterizationTransformer
+2026-03-08 20:02:58,603 - INFO - [pipeline.py:44] - SwirlWarpTransformer
+2026-03-08 20:02:58,645 - INFO - [pipeline.py:44] - DuotoneTransformer
+2026-03-08 20:02:58,745 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/lojong_2-F.jpeg
+2026-03-08 20:02:58,752 - INFO - [pipeline.py:44] - FractalWarpTransformer
+2026-03-08 20:02:58,789 - INFO - [pipeline.py:44] - RadialWarpTransformer
+2026-03-08 20:02:58,805 - INFO - [pipeline.py:44] - PosterizationTransformer
+2026-03-08 20:02:58,825 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/lojong_3-F.jpeg
+2026-03-08 20:02:58,831 - INFO - [pipeline.py:44] - XrayTransformer
+2026-03-08 20:02:58,918 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/lojong_8-F.jpeg
+2026-03-08 20:02:58,924 - INFO - [pipeline.py:44] - FractalWarpTransformer
+2026-03-08 20:02:58,973 - INFO - [pipeline.py:117] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/lojong_4-C.jpeg
+2026-03-08 20:02:58,979 - INFO - [pipeline.py:44] - FlipWilsonTransformer
+2026-03-08 20:02:59,040 - INFO - [pipeline.py:44] - FisheyeTransformer
+2026-03-08 20:02:59,063 - INFO - [pipeline.py:44] - HalftoneTransformer
+2026-03-08 20:02:59,093 - INFO - [pipeline.py:44] - PosterizationTransformer
+2026-03-08 20:02:59,114 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/lojong_5-F.jpeg
+2026-03-08 20:02:59,120 - INFO - [pipeline.py:44] - FlipWilsonTransformer
+2026-03-08 20:02:59,181 - INFO - [pipeline.py:44] - XrayTransformer
+2026-03-08 20:02:59,233 - INFO - [pipeline.py:44] - AnamorphicTransformer
+2026-03-08 20:02:59,275 - INFO - [pipeline.py:44] - GlitchWarpTransformer
+2026-03-08 20:02:59,317 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/lojong_9-F.jpeg
+2026-03-08 20:02:59,323 - INFO - [pipeline.py:44] - WheelTransformer
+2026-03-08 20:02:59,436 - INFO - [pipeline.py:44] - WatercolorTransformer
+2026-03-08 20:02:59,514 - INFO - [pipeline.py:44] - DuotoneTransformer
+2026-03-08 20:02:59,615 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/lojong_6-F.jpeg
+2026-03-08 20:02:59,621 - INFO - [pipeline.py:44] - RadialWarpTransformer
+2026-03-08 20:02:59,638 - INFO - [pipeline.py:44] - SwirlWarpTransformer
+2026-03-08 20:02:59,679 - INFO - [pipeline.py:44] - WatercolorTransformer
+2026-03-08 20:02:59,757 - INFO - [pipeline.py:44] - MeltMorphTransformer
+2026-03-08 20:02:59,825 - INFO - [pipeline.py:117] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/lojong_7-C.jpeg
+2026-03-08 20:02:59,831 - INFO - [pipeline.py:44] - MeltMorphTransformer
+2026-03-08 20:02:59,884 - INFO - [pipeline.py:44] - RadialWarpTransformer
+2026-03-08 20:02:59,916 - INFO - [pipeline.py:117] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/lojong_0-C.jpeg
+2026-03-08 20:02:59,922 - INFO - [pipeline.py:44] - WheelTransformer
+2026-03-08 20:03:00,034 - INFO - [pipeline.py:44] - InvertRGBTransformer
+2026-03-08 20:03:00,036 - INFO - [pipeline.py:44] - DataMoshTransformer
+2026-03-08 20:03:00,071 - INFO - [pipeline.py:44] - FisheyeTransformer
+2026-03-08 20:03:00,109 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/lojong_1-F.jpeg
+2026-03-08 20:03:00,115 - INFO - [pipeline.py:44] - WheelTransformer
+2026-03-08 20:03:00,228 - INFO - [pipeline.py:44] - ThermalImagingTransformer
+2026-03-08 20:03:00,255 - INFO - [pipeline.py:44] - DataMoshTransformer
+2026-03-08 20:03:00,309 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/psalms_1-F.jpeg
+2026-03-08 20:03:00,316 - INFO - [pipeline.py:44] - FluidWarpTransformer
+2026-03-08 20:03:00,398 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/psalms_93-F.jpeg
+2026-03-08 20:03:00,405 - INFO - [pipeline.py:44] - WheelTransformer
+2026-03-08 20:03:00,517 - INFO - [pipeline.py:44] - PosterizationTransformer
+2026-03-08 20:03:00,536 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/psalms_26-F.jpeg
+2026-03-08 20:03:00,544 - INFO - [pipeline.py:44] - RadialWarpTransformer
+2026-03-08 20:03:00,556 - INFO - [pipeline.py:44] - WheelTransformer
+2026-03-08 20:03:00,668 - INFO - [pipeline.py:44] - ThreeDExtrusionTransformer
+2026-03-08 20:03:00,698 - INFO - [pipeline.py:44] - AnamorphicTransformer
+2026-03-08 20:03:00,778 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/psalms_135-F.jpeg
+2026-03-08 20:03:00,786 - INFO - [pipeline.py:44] - PosterizationTransformer
+2026-03-08 20:03:00,791 - INFO - [pipeline.py:44] - MeltMorphTransformer
+2026-03-08 20:03:00,843 - INFO - [pipeline.py:44] - ThreeDExtrusionTransformer
+2026-03-08 20:03:00,873 - INFO - [pipeline.py:44] - WheelTransformer
+2026-03-08 20:03:01,000 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/psalms_48-F.jpeg
+2026-03-08 20:03:01,010 - INFO - [pipeline.py:44] - FlipWilsonTransformer
+2026-03-08 20:03:01,078 - INFO - [pipeline.py:44] - ThreeDExtrusionTransformer
+2026-03-08 20:03:01,108 - INFO - [pipeline.py:44] - FisheyeTransformer
+2026-03-08 20:03:01,151 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/psalms_139-F.jpeg
+2026-03-08 20:03:01,158 - INFO - [pipeline.py:44] - FlipWilsonTransformer
+2026-03-08 20:03:01,221 - INFO - [pipeline.py:44] - FisheyeTransformer
+2026-03-08 20:03:01,259 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/psalms_102-F.jpeg
+2026-03-08 20:03:01,264 - INFO - [pipeline.py:44] - FisheyeTransformer
+2026-03-08 20:03:01,289 - INFO - [pipeline.py:44] - WatercolorTransformer
+2026-03-08 20:03:01,366 - INFO - [pipeline.py:44] - ColormapTransformer
+2026-03-08 20:03:01,377 - INFO - [pipeline.py:44] - RadialWarpTransformer
+2026-03-08 20:03:01,409 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/psalms_134-F.jpeg
+2026-03-08 20:03:01,418 - INFO - [pipeline.py:44] - FluidWarpTransformer
+2026-03-08 20:03:01,477 - INFO - [pipeline.py:44] - GlitchWarpTransformer
+2026-03-08 20:03:01,521 - INFO - [pipeline.py:117] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/psalms_104-C.jpeg
+2026-03-08 20:03:01,525 - INFO - [pipeline.py:44] - SwirlWarpTransformer
+2026-03-08 20:03:01,545 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/peripheral_drift_2-F.jpeg
+2026-03-08 20:03:01,548 - INFO - [pipeline.py:44] - WheelTransformer
+2026-03-08 20:03:01,580 - INFO - [pipeline.py:44] - MeltMorphTransformer
+2026-03-08 20:03:01,597 - INFO - [pipeline.py:44] - ThreeDExtrusionTransformer
+2026-03-08 20:03:01,606 - INFO - [pipeline.py:44] - DuotoneTransformer
+2026-03-08 20:03:01,638 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/peripheral_drift_3-F.jpeg
+2026-03-08 20:03:01,640 - INFO - [pipeline.py:44] - RadialWarpTransformer
+2026-03-08 20:03:01,646 - INFO - [pipeline.py:44] - InvertRGBTransformer
+2026-03-08 20:03:01,647 - INFO - [pipeline.py:44] - MeltMorphTransformer
+2026-03-08 20:03:01,668 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/peripheral_drift_1-F.jpeg
+2026-03-08 20:03:01,675 - INFO - [pipeline.py:44] - XrayTransformer
+2026-03-08 20:03:01,776 - INFO - [pipeline.py:44] - DataMoshTransformer
+2026-03-08 20:03:01,826 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/koch_snowflake_4_4-F.jpeg
+2026-03-08 20:03:01,833 - INFO - [pipeline.py:44] - FisheyeTransformer
+2026-03-08 20:03:01,872 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/koch_snowflake_4_5-F.jpeg
+2026-03-08 20:03:01,878 - INFO - [pipeline.py:44] - RadialWarpTransformer
+2026-03-08 20:03:01,890 - INFO - [pipeline.py:44] - AnamorphicTransformer
+2026-03-08 20:03:01,947 - INFO - [pipeline.py:44] - XrayTransformer
+2026-03-08 20:03:02,025 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/koch_snowflake_4_2-F.jpeg
+2026-03-08 20:03:02,031 - INFO - [pipeline.py:44] - InvertRGBTransformer
+2026-03-08 20:03:02,032 - INFO - [pipeline.py:44] - ThermalImagingTransformer
+2026-03-08 20:03:02,073 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/koch_snowflake_4_3-F.jpeg
+2026-03-08 20:03:02,079 - INFO - [pipeline.py:44] - TritoneTransformer
+2026-03-08 20:03:02,108 - INFO - [pipeline.py:44] - XrayTransformer
+2026-03-08 20:03:02,168 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/koch_snowflake_4_1-F.jpeg
+2026-03-08 20:03:02,175 - INFO - [pipeline.py:44] - ThermalImagingTransformer
+2026-03-08 20:03:02,202 - INFO - [pipeline.py:44] - XrayTransformer
+2026-03-08 20:03:02,249 - INFO - [pipeline.py:44] - WheelTransformer
+2026-03-08 20:03:02,362 - INFO - [pipeline.py:44] - MeltMorphTransformer
+2026-03-08 20:03:02,429 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/hilbert_5-F.jpg
+2026-03-08 20:03:02,438 - INFO - [pipeline.py:44] - HalftoneTransformer
+2026-03-08 20:03:02,468 - INFO - [pipeline.py:44] - GlitchWarpTransformer
+2026-03-08 20:03:02,495 - INFO - [pipeline.py:44] - ThreeDExtrusionTransformer
+2026-03-08 20:03:02,525 - INFO - [pipeline.py:44] - AnamorphicTransformer
+2026-03-08 20:03:02,582 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/hilbert_4-F.jpg
+2026-03-08 20:03:02,591 - INFO - [pipeline.py:44] - ThreeDExtrusionTransformer
+2026-03-08 20:03:02,637 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/hilbert_1-F.jpg
+2026-03-08 20:03:02,646 - INFO - [pipeline.py:44] - GlitchWarpTransformer
+2026-03-08 20:03:02,673 - INFO - [pipeline.py:44] - RadialWarpTransformer
+2026-03-08 20:03:02,702 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/hilbert_3-F.jpg
+2026-03-08 20:03:02,713 - INFO - [pipeline.py:44] - HalftoneTransformer
+2026-03-08 20:03:02,758 - INFO - [pipeline.py:117] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/hilbert_2-F.jpg
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - XrayTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - WheelTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - FluidWarpTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - AnamorphicTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - DuotoneTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - WatercolorTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - FlipWilsonTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - SwirlWarpTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - MeltMorphTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - DataMoshTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - FractalWarpTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - HalftoneTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - TritoneTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - ThreeDExtrusionTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - GlitchWarpTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - ThermalImagingTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - FisheyeTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - RadialWarpTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - ColormapTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - PosterizationTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:196] - InvertRGBTransformer
+2026-03-08 20:03:02,758 - INFO - [main.py:239] - 14s@20:03 ✓
+Accepted: 16
+Rejected: 50
+---
+Wiki                       ->  3136ms
+GoesGenerator              ->   966ms
+Nasa                       ->   591ms
+Cubes                      ->   465ms
+Bible                      ->   465ms
+Lojong                     ->   342ms
+Bubbles                    ->   295ms
+KochSnowflake              ->   278ms
+Hilbert                    ->    63ms
+NasaMapGenerator           ->    48ms
+PeripheralDriftIllusion    ->    44ms
+---
+XrayTransformer            -> Min:    45ms | Avg:   102ms | Max:   272ms
+WheelTransformer           -> Min:    33ms | Avg:   102ms | Max:   155ms
+FluidWarpTransformer       -> Min:    38ms | Avg:    60ms | Max:    78ms
+AnamorphicTransformer      -> Min:    41ms | Avg:    54ms | Max:    78ms
+DuotoneTransformer         -> Min:    12ms | Avg:    52ms | Max:    86ms
+WatercolorTransformer      -> Min:    11ms | Avg:    52ms | Max:    78ms
+FlipWilsonTransformer      -> Min:     9ms | Avg:    45ms | Max:    68ms
+SwirlWarpTransformer       -> Min:    13ms | Avg:    37ms | Max:    63ms
+MeltMorphTransformer       -> Min:     8ms | Avg:    37ms | Max:    56ms
+DataMoshTransformer        -> Min:    35ms | Avg:    36ms | Max:    38ms
+FractalWarpTransformer     -> Min:    12ms | Avg:    33ms | Max:    43ms
+HalftoneTransformer        -> Min:     8ms | Avg:    29ms | Max:    79ms
+TritoneTransformer         -> Min:     4ms | Avg:    28ms | Max:    41ms
+ThreeDExtrusionTransformer -> Min:     9ms | Avg:    26ms | Max:    30ms
+GlitchWarpTransformer      -> Min:     4ms | Avg:    25ms | Max:    62ms
+ThermalImagingTransformer  -> Min:     8ms | Avg:    24ms | Max:    28ms
+FisheyeTransformer         -> Min:     6ms | Avg:    22ms | Max:    29ms
+RadialWarpTransformer      -> Min:     2ms | Avg:    12ms | Max:    17ms
+ColormapTransformer        -> Min:     5ms | Avg:    12ms | Max:    22ms
+PosterizationTransformer   -> Min:     1ms | Avg:     4ms | Max:     6ms
+InvertRGBTransformer       -> Min:     0ms | Avg:     1ms | Max:     1ms

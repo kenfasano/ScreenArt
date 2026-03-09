@@ -23,7 +23,7 @@ class Cubes(DrawGenerator):
             'fire', 'cool', 'grayscale'
         ]
 
-    def _get_rotated_corners(self, cx, cy, size, angle_rad):
+    def _get_rotated_corners(self, cx: float, cy: float, size: float, angle_rad: float) -> list[tuple[float, float]]:
         half_size = size / 2
         c = math.cos(angle_rad)
         s = math.sin(angle_rad)
@@ -41,7 +41,7 @@ class Cubes(DrawGenerator):
             
         return rotated_points
 
-    def get_color(self, mode, norm_dist, base_hue):
+    def get_color(self, mode: str, norm_dist: float, base_hue: float) -> tuple[int, int, int]:
         h, s, v = 0.0, random.uniform(0.6, 1.0), random.uniform(0.7, 1.0)
 
         if mode == 'random':

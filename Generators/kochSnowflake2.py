@@ -41,7 +41,7 @@ class KochSnowflake2(DrawGenerator):
         y = cy + radius * np.sin(angles) 
         return np.column_stack((x, y)).astype(np.float32)
 
-    def _apply_psychedelic_mask(self, arr, hues, bg_color):
+    def _apply_psychedelic_mask(self, arr: np.ndarray, hues: list[int], bg_color: tuple[int, int, int]):
         radius = self._radius
         angle = self._angle
 

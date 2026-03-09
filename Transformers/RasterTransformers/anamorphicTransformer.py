@@ -40,7 +40,7 @@ class AnamorphicTransformer(RasterTransformer):
         count = t_config.get("count", DEFAULT_COUNT)
         
         # Helper to ensure list
-        def to_list(val, length, default):
+        def to_list(val, length, default) -> list:
             if isinstance(val, list):
                 return (val * length)[:length]
             return [val] * length

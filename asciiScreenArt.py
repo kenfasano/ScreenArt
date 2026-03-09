@@ -28,13 +28,13 @@ IMG_DIR = os.path.join(BASE_DIR, "Images/TransformedImages")
 WIDTH = os.get_terminal_size().columns - 2
 INTERVAL = 10 
 
-def scale_image(image, new_width):
+def scale_image(image: Image.Image, new_width: int):
     (original_width, original_height) = image.size
     aspect_ratio = original_height / float(original_width)
     new_height = int(aspect_ratio * new_width * 0.5)
     return image.resize((new_width, new_height))
 
-def get_ascii_frame(target_path, ascii_set):
+def get_ascii_frame(target_path: str, ascii_set: str):
     try:
         img = Image.open(target_path)
         img = scale_image(img, WIDTH)
@@ -65,13 +65,13 @@ def get_ascii_frame(target_path, ascii_set):
     except Exception as e:
         return [f"Error loading {target_path}: {e}"]
 
-def transition_wipe(new_frame, delay=0.01):
+def transition_wipe(new_frame: list[str], delay: float = 0.01):
     for i, line in enumerate(new_frame):
         sys.stdout.write(f"\x1b[{i+1};1H{line}")
         sys.stdout.flush()
         time.sleep(delay)
 
-def run_screensaver(args):
+def run_screensaver(args: argparse.Namespace):
     # Determine mode settings
     selected_ramp = BOURKE_RAMP if args.b else SMALL_RAMP
     prefix = "b_" if args.b else "a_"

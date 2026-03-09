@@ -45,7 +45,7 @@ class KochSnowflake1(DrawGenerator):
         self._radius = np.sqrt(dx**2 + dy**2)
         self._angle = np.arctan2(dy, dx)
 
-    def _apply_psychedelic_mask(self, img,  hues: list[int], bg_color: tuple[int, int, int]) -> Image.Image:
+    def _apply_psychedelic_mask(self, img: Image.Image, hues: list[int], bg_color: tuple[int, int, int]) -> Image.Image:
         arr = np.array(img)
         h, w, _ = arr.shape
         

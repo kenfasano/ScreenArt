@@ -27,7 +27,7 @@ class Hilbert(DrawGenerator):
         self.bg_color = (0, 0, 0)
         self.points = []
 
-    def _generate_high_contrast_bg(self):
+    def _generate_high_contrast_bg(self) -> tuple[tuple[int, int, int], str]:
         mode = random.choice(["dark", "dark", "light"]) 
         hue = random.random()
         
@@ -39,7 +39,7 @@ class Hilbert(DrawGenerator):
         bg_rgb = (int(bg_r*255), int(bg_g*255), int(bg_b*255))
         return bg_rgb, mode
 
-    def _get_gradient_color(self, x, y, width, height, mode):
+    def _get_gradient_color(self, x: float, y: float, width: int, height: int, mode: str) -> tuple[int, int, int]:
         nx = x / width
         ny = y / height
         hue = (nx + ny) * 0.5 
@@ -141,7 +141,7 @@ class Hilbert(DrawGenerator):
             except Exception as e:
                 self.log.debug(f"Failed to save {filename}: {e}")
 
-    def _generate_points(self):
+    def _generate_points(self) -> None:
         self.points = []
         self.x, self.y = 0, 0
         self.direction = 0
@@ -160,7 +160,7 @@ class Hilbert(DrawGenerator):
         
         self.points = [((p[0] - min_x) / range_x, (p[1] - min_y) / range_y) for p in self.points]
 
-    def _move(self, direction):
+    def _move(self, direction: int) -> None:
         if direction == 0: 
             self.x += 1 
         elif direction == 1: 
@@ -171,7 +171,7 @@ class Hilbert(DrawGenerator):
             self.y -= 1 
         self.points.append((self.x, self.y))
 
-    def _hilbert_a(self, depth):
+    def _hilbert_a(self, depth: int) -> None:
         if depth <= 0: 
             return
         self.direction = (self.direction - 1) % 4 
@@ -186,7 +186,7 @@ class Hilbert(DrawGenerator):
         self._hilbert_b(depth - 1)                
         self.direction = (self.direction - 1) % 4 
 
-    def _hilbert_b(self, depth):
+    def _hilbert_b(self, depth: int) -> None:
         if depth <= 0: 
             return
         self.direction = (self.direction + 1) % 4 

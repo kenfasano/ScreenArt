@@ -15,7 +15,7 @@ KNOWN_BASES = {
     'optical_illusion', 'peripheral_drift_illusion'
 }
 
-def get_base_name(saved_path):
+def get_base_name(saved_path: str) -> str:
     filename = Path(saved_path).stem          # e.g. "bubbles_8-F"
     base = BASENAME_SUFFIX_RE.sub('', Path(saved_path).name)  # strip _8-F.jpeg
     base = re.sub(r'_\d+$', '', base)        # strip any trailing _4 etc.
@@ -26,7 +26,7 @@ TRANSFORMER_RE = re.compile(r'\] - ([A-Za-z]+Transformer)\s*$')
 GRADE_SAVED_RE = re.compile(r'\[Grade:\s*([A-F])\].*Saved to:\s*(\S+)')
 BASENAME_SUFFIX_RE = re.compile(r'_\d+-[ABCDEZ]\.(jpeg|jpg|png)$', re.IGNORECASE)
 
-def parse_log_file(filepath):
+def parse_log_file(filepath: str) -> list[tuple[str, str, str]]:
     """Parse a single log file, returning a list of (base_name, grade, transformers) tuples."""
     results = []
     current_transformers = []
@@ -58,7 +58,7 @@ def parse_log_file(filepath):
     return results
 
 
-def main():
+def main() -> None:
     LOG_DIR = Path('~/Scripts/ScreenArt/logs').expanduser()
     log_files = sorted(LOG_DIR.glob("*.log"))
 

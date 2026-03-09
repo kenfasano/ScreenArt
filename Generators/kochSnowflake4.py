@@ -47,7 +47,7 @@ class KochSnowflake4(DrawGenerator):
         self._radius = np.sqrt(dx**2 + dy**2)
         self._angle = np.arctan2(dy, dx)
 
-    def _create_image_with_opposite_bg(self, width, height, points, hues):
+    def _create_image_with_opposite_bg(self, width: int, height: int, points: np.ndarray, hues: list[int]):
         cx, cy = width / 2, height / 2
 
         valid = (

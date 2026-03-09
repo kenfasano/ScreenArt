@@ -110,7 +110,7 @@ class ScreenArt(ABC):
         # Update the config dictionary with the fully resolved absolute paths
         self.config["paths"] = raw_paths
 
-    def get_output_filename(self, extension="png"):
+    def get_output_filename(self, extension: str = "png"):
         """Generates a timestamped filename for generic art output."""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         return f"art_{timestamp}.{extension}"
@@ -124,7 +124,7 @@ class ScreenArt(ABC):
         return {"wallpaper_cmd": None, "shell": "sh"}
 
     @contextmanager
-    def timer(self, custom_name=None, unit="ms"):
+    def timer(self, custom_name: str | None = None, unit: str = "ms"):
         """Context manager to time a block of code and log the duration."""
         result = TimeResult()
         start_time = time.perf_counter()

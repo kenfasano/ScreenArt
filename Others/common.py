@@ -113,7 +113,7 @@ def fix_file_name(file_name: str) -> str:
 
     return re.sub(r'[^\w\.]', '', file_name)
 
-def write_response_to_file(response, path) -> bool:
+def write_response_to_file(response, path: str) -> bool:
     from . import log
     try:
         image = response.raw
@@ -123,7 +123,7 @@ def write_response_to_file(response, path) -> bool:
     except OSError as e:
         return log.error(f"OSError {e}")
 
-def convert_png_to_jpeg(png_path, jpeg_path):
+def convert_png_to_jpeg(png_path: str, jpeg_path: str):
     from . import log
     try:
         with Image.open(png_path) as img:

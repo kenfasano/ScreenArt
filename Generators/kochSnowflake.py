@@ -15,7 +15,7 @@ class KochSnowflake(DrawGenerator):
     def __init__(self):
         super().__init__()
 
-    def run(self, *args, **kwargs):
+    def run(self, *args, **kwargs) -> None:
         self.log.debug("Running Master KochSnowflake Generator...")
         
         # generators = [KochSnowflake1, KochSnowflake2, KochSnowflake3, KochSnowflake4]

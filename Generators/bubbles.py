@@ -168,7 +168,7 @@ class Bubbles(DrawGenerator):
         v = 0.8 + np.abs(v_rnds)
         return h, s, v
 
-    def draw_bubbles(self, width, height, add_highlights=False):
+    def draw_bubbles(self, width: int, height: int, add_highlights: bool = False) -> Image.Image:
         cx = width / 2
         cy = height / 2
 
