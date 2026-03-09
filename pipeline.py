@@ -3,8 +3,10 @@ import random
 import cv2
 import numpy as np
 from collections import defaultdict
+import piexif
 
 from .screenArt import ScreenArt
+from .Transformers.RasterTransformers.rasterTransformer import RasterTransformer
 
 class ImageProcessingPipeline(ScreenArt):
     def __init__(self):
@@ -17,7 +19,7 @@ class ImageProcessingPipeline(ScreenArt):
         self.rejected = 0
         self.stats: defaultdict[str, list[float]] = defaultdict(list)
 
-    def run(self, source_dir: str, transformers: list):
+    def run(self, source_dir: str, transformers: list[RasterTransformer]):
         image_files = [f for f in os.listdir(source_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
 
         if not image_files:
@@ -39,12 +41,15 @@ class ImageProcessingPipeline(ScreenArt):
             # Convert once to float32 [0, 1] — stays here for entire transformer chain
             img_f32 = img_bgr.astype(np.float32) / 255.0
 
+            metadata_parts: list[str] = []
             for transformer in selected:
                 t_name = transformer.__class__.__name__
-                self.log.info(f"{t_name}")
                 try:
                     with self.timer(custom_name=t_name) as t:
                         img_f32 = transformer.run(img_f32)
+                    meta = transformer.get_image_metadata()
+                    self.log.info(f'"{t_name}","{meta}"')
+                    metadata_parts.append(f"{t_name}:{meta}" if meta else t_name)
                 except Exception as e:
                     self.log.error(f"{t_name}: {e}")
                     continue
@@ -53,7 +58,7 @@ class ImageProcessingPipeline(ScreenArt):
             # Convert back once after all transformers are done
             img_out = np.clip(img_f32 * 255.0, 0, 255).astype(np.uint8)
             try:
-                self._evaluate_and_save(img_out, filename)
+                self._evaluate_and_save(img_out, filename, metadata_parts)
             except Exception as e:
                 self.log.error(f"Failed to save image: {e}")
 
@@ -94,7 +99,7 @@ class ImageProcessingPipeline(ScreenArt):
         else:
             return "F"
 
-    def _evaluate_and_save(self, img_np: np.ndarray, filename: str):
+    def _evaluate_and_save(self, img_np: np.ndarray, filename: str, metadata_parts: list[str] | None = None):
         grade = self._calculate_grade(img_np)
         stem, ext = os.path.splitext(filename)
         if not ext:
@@ -110,10 +115,20 @@ class ImageProcessingPipeline(ScreenArt):
 
         if ext.lower() in ('.jpg', '.jpeg'):
             encode_params = [cv2.IMWRITE_JPEG_QUALITY, 95]
+            cv2.imwrite(final_path, img_np, encode_params)
+            # Embed transformer metadata into TIFF ImageDescription (readable by Sandy)
+            if metadata_parts:
+                description = " | ".join(metadata_parts)
+                try:
+                    exif_dict = {"0th": {piexif.ImageIFD.ImageDescription: description.encode("utf-8")}}
+                    exif_bytes = piexif.dump(exif_dict)
+                    piexif.insert(exif_bytes, final_path)
+                except Exception as e:
+                    self.log.warning(f"Could not write EXIF to {final_path}: {e}")
         else:
             encode_params = [cv2.IMWRITE_PNG_COMPRESSION, 3]
+            cv2.imwrite(final_path, img_np, encode_params)
 
-        cv2.imwrite(final_path, img_np, encode_params)
         self.log.info(f"[Grade: {grade}] Saved to: {final_path}")
 
     def get_accepted_rejected(self) -> str:

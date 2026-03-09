@@ -1,3 +1,4 @@
+from .Transformers.RasterTransformers.rasterTransformer import RasterTransformer
 from .screenArt import ScreenArt
 import argparse 
 import os
@@ -75,7 +76,7 @@ class ScreenArtMain(ScreenArt):
         self.active_transformers = []
         
         for t_key in requested_transformers:
-            TransformerClass = transformer_registry.get(t_key.lower().replace("transformer",""))
+            TransformerClass: RasterTransformer = transformer_registry.get(t_key.lower().replace("transformer",""))
             if TransformerClass:
                 self.active_transformers.append(TransformerClass())
             else:
