@@ -60,50 +60,57 @@ class ImageProcessingPipeline(ScreenArt):
 
     def _calculate_grade(self, img_np: np.ndarray) -> str:
         """
-        Scores image quality as a composite of sharpness and contrast.
+        Scores image quality as a composite of sharpness, contrast, and highlights.
         Returns a grade letter: A, B, C, or F.
 
-        - Sharpness:  Linear ramp up to Laplacian peak (150), log-bell decay above.
-                      Correctly penalises soft images without punishing dark ones.
+        - Sharpness:  Laplacian variance, linear ramp up to peak=150, then gentle
+                      log-bell decay (sigma=3.0) — very high lap_var is always good.
         - Contrast:   Grayscale std dev, saturating at 50.
-        - Clip guard: Replaces the old brightness_penalty multiplier which incorrectly
-                      killed dark-but-valid images (aurora, night sky, deep space).
-                      Now only fires on genuinely empty images: near-black/white AND
-                      near-zero contrast (std < 20). Does not penalise dark photos.
-        - Low-contrast cap: Images with std < 25 are capped at top of B range,
-                      preventing sparse content (e.g. thin lines on white) from
-                      scoring A purely on sharpness.
+        - Highlights: Estimates fraction of near-white pixels (>220/255). Images
+                      dominated by white are penalised even when contrast is high.
+        - Clip guard: Genuinely empty images (solid black/white, std<20) get 0.35x.
+        - Low-contrast cap: std<25 caps score at 0.49 (prevents sparse line art
+                      from scoring A on sharpness alone).
         """
         gray = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY).astype(np.float32)
+        lap_var = float(cv2.Laplacian(gray, cv2.CV_32F).var())
+        mean    = float(gray.mean())
+        std_dev = float(gray.std())
 
-        lap_var   = float(cv2.Laplacian(gray, cv2.CV_32F).var())
-        std_dev   = float(gray.std())
-        mean      = float(gray.mean())
-
-        # --- Sharpness ---
+        # Sharpness: linear ramp to PEAK, then gentle log-bell decay
         PEAK = 150.0
         if lap_var < 2.0:
             sharpness = 0.0
         elif lap_var <= PEAK:
-            # Linear ramp: 0 at lap=2, 1.0 at lap=150 (power curve — not pure linear)
             sharpness = ((lap_var - 2.0) / (PEAK - 2.0)) ** 0.7
         else:
-            # Gentle log-bell decay above peak: very sharp images still score well
             log_ratio = np.log(lap_var / PEAK)
-            sharpness = float(np.exp(-0.5 * (log_ratio / 1.5) ** 2))
+            sharpness = float(np.exp(-0.5 * (log_ratio / 3.0) ** 2))
 
-        # --- Contrast ---
+        # Contrast: std dev saturates at 50
         contrast = float(np.clip(std_dev / 50.0, 0.0, 1.0))
 
-        # --- Clip guard (replaces brightness_penalty) ---
-        # Only fires on empty/washed-out images, not legitimately dark ones
+        # Highlights penalty: estimate fraction of pixels above 220
+        # High highlight fraction = composition dominated by white → penalise
+        if std_dev < 1:
+            hi_frac = 1.0 if mean > 220 else 0.0
+        else:
+            # Gaussian CDF approximation: fraction above threshold
+            hi_frac = float(0.5 * (1.0 - float(np.tanh((220.0 - mean) / (std_dev * 1.4142)))))
+        if hi_frac < 0.15:
+            hi_penalty = 1.0
+        elif hi_frac > 0.55:
+            hi_penalty = 0.55
+        else:
+            hi_penalty = 1.0 - (hi_frac - 0.15) / 0.40 * 0.45
+
+        # Clip guard: nearly solid black or white images
         is_clipped = (mean < 15 and std_dev < 20) or (mean > 240 and std_dev < 20)
-        clip_mult = 0.35 if is_clipped else 1.0
+        clip_mult  = 0.35 if is_clipped else 1.0
 
-        score = (sharpness * 0.60 + contrast * 0.40) * clip_mult
+        score = (sharpness * 0.60 + contrast * 0.40) * clip_mult * hi_penalty
 
-        # --- Low-contrast cap ---
-        # Prevents thin-line/sparse images from scoring A on sharpness alone
+        # Low-contrast cap: sparse lineart or flat images can't reach A on sharpness alone
         if std_dev < 25:
             score = min(score, 0.49)
 
