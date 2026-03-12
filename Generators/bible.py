@@ -16,12 +16,6 @@ class Bible(Text):
         ("HebrewPsalms", 150),
         ("UkrainianPsalms", 150),
     ]
-    COLORS = [
-        ("white", "black"), ("yellow", "blue"),
-        ("orange", "purple"), ("red", "white"),
-        ("green", "white"), ("blue", "white"),
-        ("purple", "white"), ("black", "white"),
-    ]
 
     def __init__(self):
         super().__init__()
@@ -87,21 +81,21 @@ class Bible(Text):
 
             if not lines:
                 self.log.debug(f"No lines for {lang_book} ch.{chapter}, skipping.")
-                continue  # skip this iteration, not the whole run
+                continue
 
             book_name, language = self._book_meta[lang_book]
-            bg_color, fg_color = random.choice(self.COLORS)
 
-            img = self.generate_text_image(
+            img, layout_mode = self.generate_text_image(
                 lines_to_draw=lines,
                 language=language,
-                bg_color=bg_color,
-                fg_color=fg_color,
             )
 
             out_path = os.path.join(self.out_dir, f"{book_name.lower()}_{chapter}.jpeg")
             try:
                 img.convert("RGB").save(out_path, quality=95)
-                self.log.debug(f"Saved: {out_path}")
+                meta_path = os.path.join(self.out_dir, f"{book_name.lower()}_{chapter}.json")
+                with open(meta_path, "w", encoding="utf-8") as mf:
+                    json.dump({"layout_mode": layout_mode}, mf)
+                self.log.debug(f"Saved: {out_path} layout_mode={layout_mode}")
             except Exception as e:
                 self.log.debug(f"Failed to save {out_path}: {e}")

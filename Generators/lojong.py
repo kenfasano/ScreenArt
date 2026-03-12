@@ -8,12 +8,6 @@ class Lojong(Text):
         ("lojong_slogans_eng.json", "English"),
         ("lojong_slogans_tib.json", "Tibetan"),
     ]
-    COLORS = [
-        ("white", "black"), ("yellow", "blue"),
-        ("orange", "purple"), ("red", "white"),
-        ("green", "white"), ("blue", "white"),
-        ("purple", "white"), ("black", "white"),
-    ]
 
     def __init__(self):
         super().__init__()
@@ -108,20 +102,20 @@ class Lojong(Text):
             language = random.choice(available)
             lines = self._pick_lines(language)
             if not lines:
-                self.log.debug(f"No lines for {language}, skijping.")
+                self.log.debug(f"No lines for {language}, skipping.")
                 continue
 
-            bg_color, fg_color = random.choice(self.COLORS)
-            img = self.generate_text_image(
+            img, layout_mode = self.generate_text_image(
                 lines_to_draw=lines,
                 language=language,
-                bg_color=bg_color,
-                fg_color=fg_color,
             )
 
             out_path = os.path.join(self.out_dir, f"lojong_{i}.jpeg")
             try:
                 img.convert("RGB").save(out_path, quality=95)
-                self.log.debug(f"Saved: {out_path}")
+                meta_path = os.path.join(self.out_dir, f"lojong_{i}.json")
+                with open(meta_path, "w", encoding="utf-8") as mf:
+                    json.dump({"layout_mode": layout_mode}, mf)
+                self.log.debug(f"Saved: {out_path} layout_mode={layout_mode}")
             except Exception as e:
                 self.log.debug(f"Failed to save {out_path}: {e}")

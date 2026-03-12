@@ -1,3 +1,4 @@
+import json
 import os
 import random
 import cv2
@@ -26,7 +27,6 @@ class ImageProcessingPipeline(ScreenArt):
             return
 
         for filename in image_files:
-            # Sample a fresh random subset of transformers for each image
             num_to_pick = random.randint(1, min(4, len(transformers)))
             selected = random.sample(transformers, num_to_pick)
 
@@ -37,7 +37,6 @@ class ImageProcessingPipeline(ScreenArt):
                 self.log.error(f"Failed to read image: {input_path}")
                 continue
 
-            # Convert once to float32 [0, 1] — stays here for entire transformer chain
             img_f32 = img_bgr.astype(np.float32) / 255.0
 
             for transformer in selected:
@@ -51,10 +50,9 @@ class ImageProcessingPipeline(ScreenArt):
                     continue
                 self.stats[t_name].append(t.elapsed)
 
-            # Convert back once after all transformers are done
             img_out = np.clip(img_f32 * 255.0, 0, 255).astype(np.uint8)
             try:
-                self._evaluate_and_save(img_out, filename)
+                self._evaluate_and_save(img_out, filename, source_dir)
             except Exception as e:
                 self.log.error(f"Failed to save image: {e}")
 
@@ -77,7 +75,6 @@ class ImageProcessingPipeline(ScreenArt):
         mean    = float(gray.mean())
         std_dev = float(gray.std())
 
-        # Sharpness: linear ramp to PEAK, then gentle log-bell decay
         PEAK = 150.0
         if lap_var < 2.0:
             sharpness = 0.0
@@ -87,15 +84,11 @@ class ImageProcessingPipeline(ScreenArt):
             log_ratio = np.log(lap_var / PEAK)
             sharpness = float(np.exp(-0.5 * (log_ratio / 3.0) ** 2))
 
-        # Contrast: std dev saturates at 50
         contrast = float(np.clip(std_dev / 50.0, 0.0, 1.0))
 
-        # Highlights penalty: estimate fraction of pixels above 220
-        # High highlight fraction = composition dominated by white → penalise
         if std_dev < 1:
             hi_frac = 1.0 if mean > 220 else 0.0
         else:
-            # Gaussian CDF approximation: fraction above threshold
             hi_frac = float(0.5 * (1.0 - float(np.tanh((220.0 - mean) / (std_dev * 1.4142)))))
         if hi_frac < 0.15:
             hi_penalty = 1.0
@@ -104,13 +97,11 @@ class ImageProcessingPipeline(ScreenArt):
         else:
             hi_penalty = 1.0 - (hi_frac - 0.15) / 0.40 * 0.45
 
-        # Clip guard: nearly solid black or white images
         is_clipped = (mean < 15 and std_dev < 20) or (mean > 240 and std_dev < 20)
         clip_mult  = 0.35 if is_clipped else 1.0
 
         score = (sharpness * 0.60 + contrast * 0.40) * clip_mult * hi_penalty
 
-        # Low-contrast cap: sparse lineart or flat images can't reach A on sharpness alone
         if std_dev < 25:
             score = min(score, 0.49)
 
@@ -123,12 +114,29 @@ class ImageProcessingPipeline(ScreenArt):
         else:
             return "F"
 
-    def _evaluate_and_save(self, img_np: np.ndarray, filename: str):
+    def _evaluate_and_save(self, img_np: np.ndarray, filename: str, source_dir: str):
         grade = self._calculate_grade(img_np)
         stem, ext = os.path.splitext(filename)
         if not ext:
             ext = '.png'
-        graded_filename = f"{stem}-{grade}{ext}"
+
+        # Read and delete sidecar metadata if present
+        layout_mode = None
+        sidecar_path = os.path.join(source_dir, f"{stem}.json")
+        if os.path.exists(sidecar_path):
+            try:
+                with open(sidecar_path, encoding="utf-8") as sf:
+                    layout_mode = json.load(sf).get("layout_mode")
+            except Exception as e:
+                self.log.debug(f"Could not read sidecar {sidecar_path}: {e}")
+            finally:
+                try:
+                    os.remove(sidecar_path)
+                except OSError:
+                    pass
+
+        mode_tag = f"-{layout_mode}" if layout_mode else ""
+        graded_filename = f"{stem}-{grade}{mode_tag}{ext}"
 
         if grade in ('A', 'B', 'C'):
             final_path = os.path.join(self.out_dir, graded_filename)

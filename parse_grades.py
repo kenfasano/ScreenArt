@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """
 Parse transformer log files and output grades.csv with columns:
-  generator, grade, transformers
+  generator, grade, layout_mode, transformers
 
-transformers format: "TransformerName(key=val,...) | ..." (sorted alphabetically)
+Filename formats supported:
+  bubbles_8-A.jpeg          (no layout mode)
+  lojong_0-A-tile.jpeg      (with layout mode)
+  psalms_64-A-hero.jpeg     (with layout mode)
 """
 
 import re
@@ -13,22 +16,27 @@ from pathlib import Path
 # Matches:  "SomeTransformer","key=val,key=val"
 TRANSFORMER_RE = re.compile(r'\] - "([A-Za-z]+Transformer)","([^"]*)"')
 
-# Matches:  [Grade: A] Saved to: /path/to/bubbles_8-A.jpeg
+# Matches:  [Grade: A] Saved to: /path/to/lojong_0-A-tile.jpeg
 GRADE_SAVED_RE = re.compile(r'\[Grade:\s*([A-F])\].*Saved to:\s*(\S+)')
 
-# Extracts generator name from filename like bubbles_8-A.jpeg -> bubbles
-GENERATOR_RE = re.compile(r'^(.*?)(_\d+)?-[A-F]\.(jpeg|jpg|png)$', re.IGNORECASE)
+# Parses filename stem: group(1)=generator, group(3)=layout_mode or None
+# Handles: name_N-GRADE, name_N-GRADE-mode, name-GRADE, name-GRADE-mode
+FILENAME_RE = re.compile(
+    r'^(.*?)(_\d+)?-[A-F](?:-([a-z]+))?\.(jpeg|jpg|png)$',
+    re.IGNORECASE
+)
 
 
-def get_generator(saved_path: str) -> str:
+def parse_filename(saved_path: str) -> tuple[str, str | None]:
+    """Return (generator, layout_mode) from a graded filename."""
     filename = Path(saved_path).name
-    m = GENERATOR_RE.match(filename)
+    m = FILENAME_RE.match(filename)
     if m:
-        return m.group(1)
-    return Path(saved_path).stem
+        return m.group(1), m.group(3)   # group(3) is None if no mode tag
+    return Path(saved_path).stem, None
 
 
-def parse_log_file(filepath: Path) -> list[tuple[str, str, str]]:
+def parse_log_file(filepath: Path) -> list[tuple[str, str, str, str]]:
     results = []
     current: list[str] = []
 
@@ -45,9 +53,9 @@ def parse_log_file(filepath: Path) -> list[tuple[str, str, str]]:
             if g_match:
                 grade = g_match.group(1)
                 saved_path = g_match.group(2)
-                generator = get_generator(saved_path)
+                generator, layout_mode = parse_filename(saved_path)
                 transformer_str = ' | '.join(sorted(current))
-                results.append((generator, grade, transformer_str))
+                results.append((generator, grade, layout_mode or '', transformer_str))
                 current = []
 
     return results
@@ -64,12 +72,12 @@ def main() -> None:
         print(f"  Found {len(rows)} entries")
         all_results.extend(rows)
 
-    all_results.sort(key=lambda r: (r[0], r[1], r[2]))
+    all_results.sort(key=lambda r: (r[0], r[1], r[2], r[3]))
 
     output_path = Path('~/Scripts/ScreenArt/logs/grades.csv').expanduser()
     with open(output_path, 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile, quoting=csv.QUOTE_NONNUMERIC)
-        writer.writerow(['generator', 'grade', 'transformers'])
+        writer.writerow(['generator', 'grade', 'layout_mode', 'transformers'])
         for row in all_results:
             writer.writerow(row)
 
