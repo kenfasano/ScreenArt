@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # --- 1. Set Defaults ---
-num_times=24
+num_times=""
 sleep_seconds=3600
 
 # --- 2. Parse Command Line Arguments ---
@@ -15,22 +15,23 @@ while getopts "n:s:" opt; do
   esac
 done
 
-echo "Starting ScreenArt loop with ${num_times} iterations and ${sleep_seconds}s sleep..."
-
-LOG_FILE="~/Scripts/ScreenArt/logs/screenArt.log"
-
-if [[ -e $LOG_FILE ]]; then
-	rm "${LOG_FILE}"
+if [ -z "${num_times}" ]; then
+    echo "Starting ScreenArt loop infinitely with ${sleep_seconds}s sleep..."
+else
+    echo "Starting ScreenArt loop with ${num_times} iterations and ${sleep_seconds}s sleep..."
 fi
 
 # --- 3. Run Loop ---
-# Using (( )) for C-style loop to handle the variable num_times
-for (( i=1; i<=${num_times}; i++ ))
-do
+i=1
+while true; do
     echo "-----------------------------------"
-    echo "Run ${i} of ${num_times} - $(date)"
+    if [ -z "${num_times}" ]; then
+        echo "Run ${i} (infinite loop) - $(date)"
+    else
+        echo "Run ${i} of ${num_times} - $(date)"
+    fi
     echo "-----------------------------------"
-    
+
     # Execute your command
     cd ~/Scripts
 	 source .venv/bin/activate && .venv/bin/python3 -m ScreenArt.main
@@ -39,12 +40,17 @@ do
 		 exit 1
   	 fi
 	 echo "rc=${rc}"
-    
-    # Sleep unless it's the very last run
-    if [ "${i}" -lt "${num_times}" ]; then
-        echo "$i/$num_times: Waiting for $sleep_seconds second(s)..."
-        sleep "${sleep_seconds}"
+
+    # Exit if we've hit the requested number of runs
+    if [ -n "${num_times}" ] && [ "${i}" -ge "${num_times}" ]; then
+        break
     fi
+
+    echo "$i${num_times:+/$num_times}: Waiting for $sleep_seconds second(s)..."
+    sleep "${sleep_seconds}"
+    (( i++ ))
 done
 
-echo "${num_times}-run cycle complete!"
+if [ -n "${num_times}" ]; then
+    echo "${num_times}-run cycle complete!"
+fi

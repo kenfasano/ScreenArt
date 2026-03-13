@@ -8,30 +8,119 @@ from collections import defaultdict
 from .screenArt import ScreenArt
 from .Transformers.RasterTransformers.rasterTransformer import RasterTransformer
 
+# Maps source_dir folder names to source type keys used in transformer_weights
+_SOURCE_TYPE_MAP = {
+    "lojong":   "lojong",
+    "bible":    "psalms",   # bible generator produces psalms
+    "wiki":     "photo",
+    "nasa":     "photo",
+    "goes":     "photo",
+    "maps":     "photo",
+    "bubbles":  "bubbles",
+    "cubes":    "cubes",
+    "hilbert":  "generated",
+    "kochsnowflake": "generated",
+    "peripheraldriftillusion": "peripheral_drift",
+}
+
+def _source_type_from_dir(source_dir: str) -> str:
+    """Derive source type key from the last component of the source directory."""
+    folder = os.path.basename(os.path.normpath(source_dir)).lower()
+    return _SOURCE_TYPE_MAP.get(folder, "photo")
+
+
 class ImageProcessingPipeline(ScreenArt):
     def __init__(self):
         super().__init__("ScreenArt")
-        self.out_dir = os.path.expanduser(self.config["paths"]["transformers_out"])
+        self.out_dir    = os.path.expanduser(self.config["paths"]["transformers_out"])
         self.reject_dir = os.path.expanduser(self.config["paths"]["rejected_out"])
-        os.makedirs(self.out_dir, exist_ok=True)
+        os.makedirs(self.out_dir,    exist_ok=True)
         os.makedirs(self.reject_dir, exist_ok=True)
         self.accepted = 0
         self.rejected = 0
         self.stats: defaultdict[str, list[float]] = defaultdict(list)
+        self._weight_cache: dict[str, dict[str, float]] = {}  # source_type -> {t_name: weight}
+
+    def _get_transformer_weights(self, source_type: str) -> dict[str, float]:
+        """
+        Return {transformer_name: weight} for the given source type.
+        Looks up config["transformer_weights"], merging "default" with
+        source-specific overrides. Results are cached per source_type.
+        If transformer_weights is absent or disabled, returns {} (uniform sampling).
+        """
+        if source_type in self._weight_cache:
+            return self._weight_cache[source_type]
+
+        tw = self.config.get("transformer_weights", {})
+        if not tw.get("enabled", True):
+            self._weight_cache[source_type] = {}
+            return {}
+
+        defaults = tw.get("default", {})
+        overrides = tw.get(source_type, {})
+
+        # Merge: start with defaults, apply source-specific overrides
+        merged = {k.lower(): float(v) for k, v in defaults.items()}
+        merged.update({k.lower(): float(v) for k, v in overrides.items()})
+
+        self._weight_cache[source_type] = merged
+        return merged
+
+    def _sample_transformers(self,
+                              transformers: list[RasterTransformer],
+                              source_type: str) -> list[RasterTransformer]:
+        """
+        Sample 1–4 transformers using per-source weights from config.
+        Falls back to uniform random.sample if weights are disabled or missing.
+        """
+        n = random.randint(1, min(4, len(transformers)))
+        weights = self._get_transformer_weights(source_type)
+
+        if not weights:
+            return random.sample(transformers, n)
+
+        # Build weight list aligned to the transformer list
+        w = [max(weights.get(t.__class__.__name__.lower(), 1.0), 0.0)
+             for t in transformers]
+
+        total = sum(w)
+        if total <= 0:
+            return random.sample(transformers, n)
+
+        # Weighted sampling without replacement
+        selected = []
+        pool = list(zip(transformers, w))
+        for _ in range(n):
+            if not pool:
+                break
+            ts, ws = zip(*pool)
+            cum = []
+            running = 0.0
+            for wt in ws:
+                running += wt
+                cum.append(running)
+            r = random.uniform(0, cum[-1])
+            idx = next(i for i, c in enumerate(cum) if c >= r)
+            selected.append(ts[idx])
+            pool.pop(idx)
+
+        return selected
 
     def run(self, source_dir: str, transformers: list[RasterTransformer]):
-        image_files = [f for f in os.listdir(source_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+        image_files = [f for f in os.listdir(source_dir)
+                       if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
 
         if not image_files:
             self.log.debug(f"No images found in {source_dir} to process.")
             return
 
+        source_type = _source_type_from_dir(source_dir)
+        self.log.debug(f"Pipeline source_type={source_type} for {source_dir}")
+
         for filename in image_files:
-            num_to_pick = random.randint(1, min(4, len(transformers)))
-            selected = random.sample(transformers, num_to_pick)
+            selected = self._sample_transformers(transformers, source_type)
 
             input_path = os.path.join(source_dir, filename)
-
             img_bgr = cv2.imread(input_path)
             if img_bgr is None:
                 self.log.error(f"Failed to read image: {input_path}")
@@ -60,17 +149,8 @@ class ImageProcessingPipeline(ScreenArt):
         """
         Scores image quality as a composite of sharpness, contrast, and highlights.
         Returns a grade letter: A, B, C, or F.
-
-        - Sharpness:  Laplacian variance, linear ramp up to peak=150, then gentle
-                      log-bell decay (sigma=3.0) — very high lap_var is always good.
-        - Contrast:   Grayscale std dev, saturating at 50.
-        - Highlights: Estimates fraction of near-white pixels (>220/255). Images
-                      dominated by white are penalised even when contrast is high.
-        - Clip guard: Genuinely empty images (solid black/white, std<20) get 0.35x.
-        - Low-contrast cap: std<25 caps score at 0.49 (prevents sparse line art
-                      from scoring A on sharpness alone).
         """
-        gray = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY).astype(np.float32)
+        gray    = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY).astype(np.float32)
         lap_var = float(cv2.Laplacian(gray, cv2.CV_32F).var())
         mean    = float(gray.mean())
         std_dev = float(gray.std())
@@ -105,14 +185,10 @@ class ImageProcessingPipeline(ScreenArt):
         if std_dev < 25:
             score = min(score, 0.49)
 
-        if score >= 0.65:
-            return "A"
-        elif score >= 0.50:
-            return "B"
-        elif score >= 0.35:
-            return "C"
-        else:
-            return "F"
+        if score >= 0.65:   return "A"
+        elif score >= 0.50: return "B"
+        elif score >= 0.35: return "C"
+        else:               return "F"
 
     def _evaluate_and_save(self, img_np: np.ndarray, filename: str, source_dir: str):
         grade = self._calculate_grade(img_np)
@@ -120,7 +196,6 @@ class ImageProcessingPipeline(ScreenArt):
         if not ext:
             ext = '.png'
 
-        # Read and delete sidecar metadata if present
         layout_mode = None
         sidecar_path = os.path.join(source_dir, f"{stem}.json")
         if os.path.exists(sidecar_path):

@@ -51,7 +51,7 @@ class ScreenArt(ABC):
         os.makedirs(self.log_path, exist_ok=True)
         # After creating the new log file, trim old ones
         log_files = sorted(Path(self.log_path).glob("screenArt_*.log"), key=os.path.getmtime)
-        for old_log in log_files[:-10]:  # keep 10 most recent
+        for old_log in log_files[:-25]:  # keep 25 most recent
             old_log.unlink()
 
         logging.basicConfig(
