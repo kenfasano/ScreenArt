@@ -115,7 +115,10 @@ class Lojong(Text):
                 img.convert("RGB").save(out_path, quality=95)
                 meta_path = os.path.join(self.out_dir, f"lojong_{i}.json")
                 with open(meta_path, "w", encoding="utf-8") as mf:
-                    json.dump({"layout_mode": layout_mode}, mf)
+                    json.dump({
+                        "layout_mode": layout_mode,
+                        "description": "; ".join(lines[:2]),
+                    }, mf)
                 self.log.debug(f"Saved: {out_path} layout_mode={layout_mode}")
             except Exception as e:
                 self.log.debug(f"Failed to save {out_path}: {e}")

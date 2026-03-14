@@ -8,7 +8,6 @@ from multiprocessing import freeze_support
 import glob
 import random
 import time
-from collections import namedtuple
 from datetime import datetime
 from tqdm import tqdm
 
@@ -32,28 +31,24 @@ from .Generators import (
 from .Transformers.transformer_dictionary import transformer_registry
 from .pipeline import ImageProcessingPipeline
 
-GeneratorConfig = namedtuple("GeneratorConfig", ["source", "should_erase"])
-
 class ScreenArtMain(ScreenArt):
     def __init__(self):
         super().__init__("ScreenArt")
         random.seed(time.time())
 
         gen_in = self.config["paths"]["generators_in"]
-        
-        # 1. GENERATOR CONFIGURATIONS (Where do they output, and should we erase?)
-        self.generators: dict[str, GeneratorConfig] = {
-            "bubbles": GeneratorConfig(source=f"{gen_in}/bubbles", should_erase=True),
-            "cubes": GeneratorConfig(source=f"{gen_in}/cubes", should_erase=True),
-            "nasa": GeneratorConfig(source=f"{gen_in}/nasa", should_erase=True),
-            "maps": GeneratorConfig(source=f"{gen_in}/maps", should_erase=True),
-            "goes": GeneratorConfig(source=f"{gen_in}/goes", should_erase=True),
-            "wiki": GeneratorConfig(source=f"{gen_in}/wiki", should_erase=True),
-            "lojong": GeneratorConfig(source=f"{gen_in}/lojong", should_erase=True),
-            "bible": GeneratorConfig(source=f"{gen_in}/bible", should_erase=True),
-            "peripheraldriftillusion": GeneratorConfig(source=f"{gen_in}/opticalillusions", should_erase=True),
-            # kochSnowflake and hilbert are linear generators — they use their own
-            # internal linear transformers and must NOT enter the raster pipeline.
+
+        # 1. GENERATOR DIRECTORIES
+        self.generators: dict[str, str] = {
+            "bubbles":                f"{gen_in}/bubbles",
+            "cubes":                  f"{gen_in}/cubes",
+            "nasa":                   f"{gen_in}/nasa",
+            "maps":                   f"{gen_in}/maps",
+            "goes":                   f"{gen_in}/goes",
+            "wiki":                   f"{gen_in}/wiki",
+            "lojong":                 f"{gen_in}/lojong",
+            "bible":                  f"{gen_in}/bible",
+            "peripheraldriftillusion":f"{gen_in}/opticalillusions",
         }
 
         # 2. GENERATOR REGISTRY (Map the string key directly to the Class)
@@ -149,15 +144,12 @@ class ScreenArtMain(ScreenArt):
 
             self.generator_stats: dict[str, float] = {}
             for key in (bar := tqdm(keys_to_process, desc="Generators  ", unit="gen", ncols=80)):
-                gen_config = self.generators[key]
-                if gen_config.should_erase:
-                    self.erase_image_dir(gen_config.source)
+                self.erase_image_dir(self.generators[key])
                 self.run_generator(key)
 
             # Phase 2: Run Transformers
             for key in (bar := tqdm(keys_to_process, desc="Transformers", unit="tra", ncols=80)):
-                dir_path = self.generators[key].source
-                self.pipeline.run(dir_path, transformers=self.active_transformers)
+                self.pipeline.run(self.generators[key], transformers=self.active_transformers)
 
         elapsed = str(t.elapsed)
         self.log.debug("----------------------------")

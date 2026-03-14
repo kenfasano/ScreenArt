@@ -3,6 +3,7 @@ import os
 import random
 import cv2
 import numpy as np
+import piexif
 from collections import defaultdict
 
 from .screenArt import ScreenArt
@@ -197,11 +198,14 @@ class ImageProcessingPipeline(ScreenArt):
             ext = '.png'
 
         layout_mode = None
+        description = None
         sidecar_path = os.path.join(source_dir, f"{stem}.json")
         if os.path.exists(sidecar_path):
             try:
                 with open(sidecar_path, encoding="utf-8") as sf:
-                    layout_mode = json.load(sf).get("layout_mode")
+                    sidecar = json.load(sf)
+                    layout_mode = sidecar.get("layout_mode")
+                    description = sidecar.get("description")
             except Exception as e:
                 self.log.debug(f"Could not read sidecar {sidecar_path}: {e}")
             finally:
@@ -226,6 +230,16 @@ class ImageProcessingPipeline(ScreenArt):
             encode_params = [cv2.IMWRITE_PNG_COMPRESSION, 3]
 
         cv2.imwrite(final_path, img_np, encode_params)
+
+        # Inject description into EXIF (JPEG only — PNG has no EXIF support via piexif)
+        if description and ext.lower() in ('.jpg', '.jpeg'):
+            try:
+                desc_bytes = description.encode("utf-8")
+                exif_dict = {"0th": {piexif.ImageIFD.ImageDescription: desc_bytes}}
+                piexif.insert(piexif.dump(exif_dict), final_path)
+            except Exception as e:
+                self.log.debug(f"Could not write EXIF description: {e}")
+
         self.log.info(f"[Grade: {grade}] Saved to: {final_path}")
 
     def get_accepted_rejected(self) -> str:
