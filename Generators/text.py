@@ -5,11 +5,13 @@ import os
 import json
 import hashlib
 import random
+import atexit
 from functools import lru_cache
 from .drawGenerator import DrawGenerator
 
 _FONT_CACHE_PATH = os.path.join(os.path.dirname(__file__), "_font_size_cache.json")
 _font_size_cache: dict[str, int] = {}
+_font_cache_dirty: bool = False
 _dummy_draw = ImageDraw.Draw(Image.new('RGB', (1, 1)))
 
 # Layout modes with weights
@@ -57,20 +59,23 @@ def _make_cache_key(font_path: str, lines: tuple[str, ...],
 
 
 def _load_font_size_cache() -> None:
-    global _font_size_cache
+    global _font_size_cache, _font_cache_dirty
     try:
         with open(_FONT_CACHE_PATH, 'r') as f:
             raw = json.load(f)
         # Scrub stale zero-size entries that predate the max(best,1) fix
         _font_size_cache = {k: v for k, v in raw.items() if v > 0}
         if len(_font_size_cache) < len(raw):
-            _save_font_size_cache()
+            _font_cache_dirty = True  # will be flushed at exit
     except FileNotFoundError:
         _font_size_cache = {}
 
 def _save_font_size_cache() -> None:
-    with open(_FONT_CACHE_PATH, 'w') as f:
-        json.dump(_font_size_cache, f)
+    if _font_cache_dirty:
+        with open(_FONT_CACHE_PATH, 'w') as f:
+            json.dump(_font_size_cache, f)
+
+atexit.register(_save_font_size_cache)
 
 
 @lru_cache(maxsize=256)
@@ -96,6 +101,7 @@ def _warm_font_cache() -> None:
 
 def _find_max_font_size_cached(font_path: str, lines: tuple[str, ...],
                                usable_width: int, usable_height: int) -> int:
+    global _font_cache_dirty
     key = _make_cache_key(font_path, lines, usable_width, usable_height)
     if key in _font_size_cache:
         return _font_size_cache[key]
@@ -118,7 +124,7 @@ def _find_max_font_size_cached(font_path: str, lines: tuple[str, ...],
             high = mid - 1
 
     _font_size_cache[key] = best
-    _save_font_size_cache()
+    _font_cache_dirty = True
     return max(best, 1)
 
 

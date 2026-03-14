@@ -1,8 +1,0 @@
-0s@converted
----
-PeripheralDriftIllusion     ->   47ms
-Bible                       ->  678ms
-Bubbles                     ->  251ms
-KochSnowflake4              ->  244ms
-Lojong                      ->  437ms
-GoesGenerator               -> 1156ms

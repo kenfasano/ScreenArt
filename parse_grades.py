@@ -13,6 +13,29 @@ import re
 import csv
 from pathlib import Path
 
+SOURCE_TYPE_MAP = {
+    "lojong":        "lojong",
+    "bible":         "psalms",
+    "psalms":        "psalms",
+    "wiki":          "photo",
+    "nasa":          "photo",
+    "goes":          "photo",
+    "maps":          "photo",
+    "bubbles":       "bubbles",
+    "cubes":         "cubes",
+    "hilbert":       "generated",
+    "kochsnowflake": "generated",
+    "koch":          "generated",
+    "peripheral":    "peripheral_drift",
+}
+
+def infer_source_type(generator: str) -> str:
+    g = generator.lower()
+    for key, stype in SOURCE_TYPE_MAP.items():
+        if key in g:
+            return stype
+    return "photo"
+
 # Matches:  "SomeTransformer","key=val,key=val"
 TRANSFORMER_RE = re.compile(r'\] - "([A-Za-z]+Transformer)","([^"]*)"')
 
@@ -36,7 +59,7 @@ def parse_filename(saved_path: str) -> tuple[str, str | None]:
     return Path(saved_path).stem, None
 
 
-def parse_log_file(filepath: Path) -> list[tuple[str, str, str, str]]:
+def parse_log_file(filepath: Path) -> list[tuple]:
     results = []
     current: list[str] = []
 
@@ -55,7 +78,14 @@ def parse_log_file(filepath: Path) -> list[tuple[str, str, str, str]]:
                 saved_path = g_match.group(2)
                 generator, layout_mode = parse_filename(saved_path)
                 transformer_str = ' | '.join(sorted(current))
-                results.append((generator, grade, layout_mode or '', transformer_str))
+                results.append((
+                    generator,
+                    infer_source_type(generator),
+                    grade,
+                    layout_mode or '',
+                    len(current),
+                    transformer_str,
+                ))
                 current = []
 
     return results
@@ -72,12 +102,12 @@ def main() -> None:
         print(f"  Found {len(rows)} entries")
         all_results.extend(rows)
 
-    all_results.sort(key=lambda r: (r[0], r[1], r[2], r[3]))
+    all_results.sort(key=lambda r: (r[0], r[2], r[5]))
 
     output_path = Path('~/Scripts/ScreenArt/logs/grades.csv').expanduser()
     with open(output_path, 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile, quoting=csv.QUOTE_NONNUMERIC)
-        writer.writerow(['generator', 'grade', 'layout_mode', 'transformers'])
+        writer.writerow(['generator', 'source_type', 'grade', 'layout_mode', 'transformer_count', 'transformers'])
         for row in all_results:
             writer.writerow(row)
 

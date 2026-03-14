@@ -46,7 +46,12 @@ while true; do
         break
     fi
 
-    echo "$i${num_times:+/$num_times}: Waiting for $sleep_seconds second(s)..."
+    if [ -n "${num_times}" ]; then
+        pct=$(( i * 100 / num_times ))
+        echo "$i/$num_times (${pct}%): Waiting for $sleep_seconds second(s)..."
+    else
+        echo "$i: Waiting for $sleep_seconds second(s)..."
+    fi
     sleep "${sleep_seconds}"
     (( i++ ))
 done

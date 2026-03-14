@@ -237,7 +237,26 @@ class ScreenArtMain(ScreenArt):
             m.write(final_output)
             
         self.log.info(final_output)
-        print(final_output)
+
+        # --- Split display: panel 1 (summary + generators), then panel 2 (transformers) ---
+        # Locate the two "---" separators; split after the second one
+        sep_indices = [i for i, line in enumerate(output_lines) if line == "---"]
+
+        if len(sep_indices) >= 2:
+            split_index = sep_indices[1] + 1  # include the second "---"
+            panel1_lines = output_lines[:split_index]
+            panel2_lines = output_lines[split_index:]
+        else:
+            panel1_lines = output_lines
+            panel2_lines = []
+
+        os.system("clear")
+        print("\n".join(panel1_lines))
+
+        if panel2_lines:
+            time.sleep(12)
+            os.system("clear")
+            print("\n".join(panel2_lines))
 
 def run_main():
     parser = argparse.ArgumentParser(description="Run the image processing and transformation pipeline.")
