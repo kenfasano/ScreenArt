@@ -15,6 +15,8 @@ while getopts "n:s:" opt; do
   esac
 done
 
+rm ./logs/*.log
+
 if [ -z "${num_times}" ]; then
     echo "Starting ScreenArt loop infinitely with ${sleep_seconds}s sleep..."
 else

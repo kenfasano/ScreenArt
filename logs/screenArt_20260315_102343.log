@@ -1,0 +1,244 @@
+2026-03-15 10:24:02,397 - INFO - [pipeline.py:136] - "FisheyeTransformer","shape=oval,strength=0.29,zoom=1.15"
+2026-03-15 10:24:02,435 - INFO - [pipeline.py:136] - "DataMoshTransformer","intensity=0.01"
+2026-03-15 10:24:02,453 - INFO - [pipeline.py:248] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/bubbles_4-C.jpeg
+2026-03-15 10:24:02,498 - INFO - [pipeline.py:136] - "ThermalImagingTransformer","thermal=True"
+2026-03-15 10:24:02,516 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/bubbles_8-A.jpeg
+2026-03-15 10:24:02,576 - INFO - [pipeline.py:136] - "HalftoneTransformer","size=2"
+2026-03-15 10:24:02,611 - INFO - [pipeline.py:136] - "ThermalImagingTransformer","thermal=True"
+2026-03-15 10:24:02,664 - INFO - [pipeline.py:136] - "MeltMorphTransformer","intensity=0.50"
+2026-03-15 10:24:02,721 - INFO - [pipeline.py:136] - "FlipWilsonTransformer","keep=top,narrow=0.46"
+2026-03-15 10:24:02,740 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/bubbles_9-A.jpeg
+2026-03-15 10:24:02,760 - INFO - [pipeline.py:136] - "ColormapTransformer","map=autumn"
+2026-03-15 10:24:02,797 - INFO - [pipeline.py:136] - "ThermalImagingTransformer","thermal=True"
+2026-03-15 10:24:02,810 - INFO - [pipeline.py:136] - "PosterizationTransformer","levels=4"
+2026-03-15 10:24:02,829 - INFO - [pipeline.py:248] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/bubbles_5-C.jpeg
+2026-03-15 10:24:02,887 - INFO - [pipeline.py:136] - "HalftoneTransformer","size=2"
+2026-03-15 10:24:02,904 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/bubbles_2-A.jpeg
+2026-03-15 10:24:02,993 - INFO - [pipeline.py:136] - "PixelSortTransformer","direction=rows,high=0.69,low=0.13,sort_key=red"
+2026-03-15 10:24:03,017 - INFO - [pipeline.py:136] - "RadialWarpTransformer","radius=0.25,strength=69.43213392711766,75.71001822738064,126.70142961753905,style=push,push,push"
+2026-03-15 10:24:03,034 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/bubbles_3-A.jpeg
+2026-03-15 10:24:03,077 - INFO - [pipeline.py:136] - "FractalWarpTransformer","iter=1,scale=0.05"
+2026-03-15 10:24:03,089 - INFO - [pipeline.py:136] - "PosterizationTransformer","levels=4"
+2026-03-15 10:24:03,106 - INFO - [pipeline.py:248] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/bubbles_10-C.jpeg
+2026-03-15 10:24:03,148 - INFO - [pipeline.py:136] - "FractalWarpTransformer","iter=1,scale=0.05"
+2026-03-15 10:24:03,184 - INFO - [pipeline.py:136] - "ThermalImagingTransformer","thermal=True"
+2026-03-15 10:24:03,197 - INFO - [pipeline.py:136] - "PosterizationTransformer","levels=4"
+2026-03-15 10:24:03,217 - INFO - [pipeline.py:136] - "RadialWarpTransformer","radius=0.25,strength=104.05121541073045,132.33141190184517,style=push,push"
+2026-03-15 10:24:03,235 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/bubbles_1-A.jpeg
+2026-03-15 10:24:03,277 - INFO - [pipeline.py:136] - "FractalWarpTransformer","iter=1,scale=0.05"
+2026-03-15 10:24:03,290 - INFO - [pipeline.py:136] - "PosterizationTransformer","levels=4"
+2026-03-15 10:24:03,322 - INFO - [pipeline.py:136] - "WheelTransformer","blend=normal,copies=4"
+2026-03-15 10:24:03,347 - INFO - [pipeline.py:136] - "FisheyeTransformer","shape=circle,strength=0.29,zoom=0.88"
+2026-03-15 10:24:03,365 - INFO - [pipeline.py:248] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/bubbles_6-C.jpeg
+2026-03-15 10:24:03,402 - INFO - [pipeline.py:136] - "GlitchWarpTransformer","intensity=0.01"
+2026-03-15 10:24:03,441 - INFO - [pipeline.py:136] - "ThermalImagingTransformer","thermal=True"
+2026-03-15 10:24:03,499 - INFO - [pipeline.py:136] - "FlipWilsonTransformer","keep=top,narrow=0.46"
+2026-03-15 10:24:03,518 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/bubbles_7-A.jpeg
+2026-03-15 10:24:03,557 - INFO - [pipeline.py:136] - "WheelTransformer","blend=normal,copies=4"
+2026-03-15 10:24:03,571 - INFO - [pipeline.py:136] - "ColormapTransformer","map=autumn"
+2026-03-15 10:24:03,783 - INFO - [pipeline.py:136] - "WatercolorTransformer","scale=0.85,style=psychedelic"
+2026-03-15 10:24:03,833 - INFO - [pipeline.py:136] - "PixelSortTransformer","direction=cols,high=0.72,low=0.31,sort_key=saturation"
+2026-03-15 10:24:03,850 - INFO - [pipeline.py:248] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/cubes_2-F.jpeg
+2026-03-15 10:24:03,903 - INFO - [pipeline.py:136] - "HalftoneTransformer","size=2"
+2026-03-15 10:24:03,919 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/cubes_3-A.jpeg
+2026-03-15 10:24:03,942 - INFO - [pipeline.py:136] - "RadialWarpTransformer","radius=0.25,strength=76.99689296215294,style=push"
+2026-03-15 10:24:03,978 - INFO - [pipeline.py:136] - "ThermalImagingTransformer","thermal=True"
+2026-03-15 10:24:03,996 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/cubes_4-A.jpeg
+2026-03-15 10:24:04,037 - INFO - [pipeline.py:136] - "ThermalImagingTransformer","thermal=True"
+2026-03-15 10:24:04,087 - INFO - [pipeline.py:136] - "KaleidoscopeTransformer","cx_off=0.01,cy_off=-0.13,segments=4"
+2026-03-15 10:24:04,115 - INFO - [pipeline.py:136] - "GlitchWarpTransformer","intensity=0.01"
+2026-03-15 10:24:04,140 - INFO - [pipeline.py:136] - "ChromaticAberrationTransformer","angle=182.10,edge_fade=1,shift=4.50"
+2026-03-15 10:24:04,158 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/cubes_5-A.jpeg
+2026-03-15 10:24:04,283 - INFO - [pipeline.py:136] - "OilPaintingTransformer","dyn_ratio=8,size=6"
+2026-03-15 10:24:04,301 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/cubes_6-A.jpeg
+2026-03-15 10:24:04,414 - INFO - [pipeline.py:136] - "OilPaintingTransformer","dyn_ratio=3,size=3"
+2026-03-15 10:24:04,434 - INFO - [pipeline.py:136] - "RadialWarpTransformer","radius=0.25,strength=60.31210847675736,39.53589317554735,style=push,push"
+2026-03-15 10:24:04,451 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/cubes_1-A.jpeg
+2026-03-15 10:24:04,459 - INFO - [pipeline.py:136] - "ThermalImagingTransformer","thermal=True"
+2026-03-15 10:24:04,463 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/magicnight_wagner_c1-A.jpg
+2026-03-15 10:24:04,490 - INFO - [pipeline.py:136] - "FractalWarpTransformer","iter=1,scale=0.05"
+2026-03-15 10:24:04,504 - INFO - [pipeline.py:136] - "StippleTransformer","bg=white,dot_radius=4,jitter=1,spacing=12"
+2026-03-15 10:24:04,525 - INFO - [pipeline.py:136] - "FlipWilsonTransformer","keep=top,narrow=0.46"
+2026-03-15 10:24:04,651 - INFO - [pipeline.py:136] - "VoronoiTransformer","edge_blend=1,num_points=290"
+2026-03-15 10:24:04,657 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/CygWideHa-OIIIBiColorImage2_crop2_1024-A.jpg
+2026-03-15 10:24:04,691 - INFO - [pipeline.py:136] - "MeltMorphTransformer","intensity=0.50"
+2026-03-15 10:24:04,717 - INFO - [pipeline.py:136] - "FlipWilsonTransformer","keep=top,narrow=0.46"
+2026-03-15 10:24:04,729 - INFO - [pipeline.py:136] - "ChromaticAberrationTransformer","angle=54.20,edge_fade=1,shift=9.20"
+2026-03-15 10:24:04,745 - INFO - [pipeline.py:136] - "WheelTransformer","blend=normal,copies=4"
+2026-03-15 10:24:04,753 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/a17anaglyph_vanMeijgaarden_1024v-A.jpg
+2026-03-15 10:24:04,763 - INFO - [pipeline.py:136] - "MeltMorphTransformer","intensity=0.50"
+2026-03-15 10:24:04,819 - INFO - [pipeline.py:136] - "VoronoiTransformer","edge_blend=1,num_points=257"
+2026-03-15 10:24:04,822 - INFO - [pipeline.py:136] - "FisheyeTransformer","shape=circle,strength=0.51,zoom=1.04"
+2026-03-15 10:24:04,831 - INFO - [pipeline.py:136] - "FlipWilsonTransformer","keep=top,narrow=0.46"
+2026-03-15 10:24:04,836 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/skies_cantin-A.jpg
+2026-03-15 10:24:04,977 - INFO - [pipeline.py:136] - "VoronoiTransformer","edge_blend=1,num_points=278"
+2026-03-15 10:24:04,995 - INFO - [pipeline.py:136] - "KaleidoscopeTransformer","cx_off=0.08,cy_off=-0.13,segments=6"
+2026-03-15 10:24:05,001 - INFO - [pipeline.py:248] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/m63_1024-C.jpg
+2026-03-15 10:24:05,024 - INFO - [pipeline.py:136] - "OilPaintingTransformer","dyn_ratio=3,size=8"
+2026-03-15 10:24:05,027 - INFO - [pipeline.py:136] - "ChromaticAberrationTransformer","angle=224.10,edge_fade=1,shift=4.60"
+2026-03-15 10:24:05,032 - INFO - [pipeline.py:136] - "ThermalImagingTransformer","thermal=True"
+2026-03-15 10:24:05,037 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/MilkyWayRoad_landolfi-A.jpg
+2026-03-15 10:24:05,055 - INFO - [pipeline.py:136] - "FractalWarpTransformer","iter=1,scale=0.05"
+2026-03-15 10:24:05,062 - INFO - [pipeline.py:248] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/M61_HubbleEsoGendler_960-C.jpg
+2026-03-15 10:24:05,074 - INFO - [pipeline.py:136] - "FisheyeTransformer","shape=oval,strength=0.43,zoom=1.07"
+2026-03-15 10:24:05,091 - INFO - [pipeline.py:136] - "FluidWarpTransformer","alpha=19.56,sigma=4.89"
+2026-03-15 10:24:05,106 - INFO - [pipeline.py:136] - "SwirlWarpTransformer","strength=1.50"
+2026-03-15 10:24:05,118 - INFO - [pipeline.py:136] - "DataMoshTransformer","intensity=0.01"
+2026-03-15 10:24:05,125 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/mercurytransit_cortner_960-A.jpg
+2026-03-15 10:24:05,146 - INFO - [pipeline.py:136] - "FisheyeTransformer","shape=oval,strength=0.30,zoom=0.93"
+2026-03-15 10:24:05,259 - INFO - [pipeline.py:136] - "WatercolorTransformer","scale=0.85,style=monet"
+2026-03-15 10:24:05,269 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/M27Subaru_colombari1024_q100_watermark-A.jpg
+2026-03-15 10:24:05,323 - INFO - [pipeline.py:136] - "WatercolorTransformer","scale=0.85,style=monet"
+2026-03-15 10:24:05,363 - INFO - [pipeline.py:136] - "PixelSortTransformer","direction=rows,high=0.72,low=0.26,sort_key=saturation"
+2026-03-15 10:24:05,367 - INFO - [pipeline.py:136] - "ColormapTransformer","map=autumn"
+2026-03-15 10:24:05,372 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/evapoplanet_hst-A.jpg
+2026-03-15 10:24:05,397 - INFO - [pipeline.py:136] - "ColormapTransformer","map=summer"
+2026-03-15 10:24:05,496 - INFO - [pipeline.py:136] - "OilPaintingTransformer","dyn_ratio=3,size=3"
+2026-03-15 10:24:05,551 - INFO - [pipeline.py:136] - "FlipWilsonTransformer","keep=top,narrow=0.46"
+2026-03-15 10:24:05,572 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/nasa_earth_1_Istanbul_True_Color-A.jpeg
+2026-03-15 10:24:05,601 - INFO - [pipeline.py:136] - "FisheyeTransformer","shape=oval,strength=0.44,zoom=1.08"
+2026-03-15 10:24:05,639 - INFO - [pipeline.py:136] - "FlipWilsonTransformer","keep=top,narrow=0.46"
+2026-03-15 10:24:05,657 - INFO - [pipeline.py:136] - "ChromaticAberrationTransformer","angle=29.70,edge_fade=1,shift=10.40"
+2026-03-15 10:24:05,676 - INFO - [pipeline.py:136] - "GlitchWarpTransformer","intensity=0.01"
+2026-03-15 10:24:05,690 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/noaa_goes_1_se_Dust-A.jpeg
+2026-03-15 10:24:05,751 - INFO - [pipeline.py:136] - "FisheyeTransformer","shape=oval,strength=0.49,zoom=1.13"
+2026-03-15 10:24:05,777 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/Sky_towe-A.jpeg
+2026-03-15 10:24:05,817 - INFO - [pipeline.py:136] - "ChromaticAberrationTransformer","angle=61.20,edge_fade=1,shift=10.10"
+2026-03-15 10:24:05,888 - INFO - [pipeline.py:136] - "MeltMorphTransformer","intensity=0.50"
+2026-03-15 10:24:05,909 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/Fragment-A.jpeg
+2026-03-15 10:24:05,918 - INFO - [pipeline.py:136] - "SwirlWarpTransformer","strength=1.50"
+2026-03-15 10:24:05,956 - INFO - [pipeline.py:136] - "WatercolorTransformer","scale=0.85,style=monet"
+2026-03-15 10:24:05,959 - INFO - [pipeline.py:248] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/500px-Vigilien_-C.jpeg
+2026-03-15 10:24:05,989 - INFO - [pipeline.py:136] - "ColormapTransformer","map=winter"
+2026-03-15 10:24:06,015 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/1280px-Pincehel-A.jpeg
+2026-03-15 10:24:06,035 - INFO - [pipeline.py:136] - "PosterizationTransformer","levels=4"
+2026-03-15 10:24:06,071 - INFO - [pipeline.py:136] - "ThermalImagingTransformer","thermal=True"
+2026-03-15 10:24:06,088 - INFO - [pipeline.py:248] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/lojong_2-C-scatter.jpeg
+2026-03-15 10:24:06,125 - INFO - [pipeline.py:136] - "FluidWarpTransformer","alpha=14.93,sigma=1.96"
+2026-03-15 10:24:06,162 - INFO - [pipeline.py:136] - "DataMoshTransformer","intensity=0.02"
+2026-03-15 10:24:06,248 - INFO - [pipeline.py:136] - "PixelSortTransformer","direction=rows,high=0.82,low=0.08,sort_key=blue"
+2026-03-15 10:24:06,266 - INFO - [pipeline.py:248] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/lojong_3-F-tile.jpeg
+2026-03-15 10:24:06,321 - INFO - [pipeline.py:136] - "HalftoneTransformer","size=2"
+2026-03-15 10:24:06,446 - INFO - [pipeline.py:136] - "OilPaintingTransformer","dyn_ratio=6,size=5"
+2026-03-15 10:24:06,459 - INFO - [pipeline.py:136] - "PosterizationTransformer","levels=4"
+2026-03-15 10:24:06,475 - INFO - [pipeline.py:248] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/lojong_8-C-scatter.jpeg
+2026-03-15 10:24:06,509 - INFO - [pipeline.py:136] - "GlitchWarpTransformer","intensity=0.01"
+2026-03-15 10:24:06,544 - INFO - [pipeline.py:136] - "FractalWarpTransformer","iter=1,scale=0.05"
+2026-03-15 10:24:06,578 - INFO - [pipeline.py:136] - "ThermalImagingTransformer","thermal=True"
+2026-03-15 10:24:06,594 - INFO - [pipeline.py:248] - [Grade: B] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/lojong_4-B-hero.jpeg
+2026-03-15 10:24:06,634 - INFO - [pipeline.py:136] - "WheelTransformer","blend=normal,copies=4"
+2026-03-15 10:24:06,647 - INFO - [pipeline.py:136] - "PosterizationTransformer","levels=4"
+2026-03-15 10:24:06,815 - INFO - [pipeline.py:136] - "VoronoiTransformer","edge_blend=1,num_points=119"
+2026-03-15 10:24:06,832 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/lojong_5-A-columns.jpeg
+2026-03-15 10:24:06,862 - INFO - [pipeline.py:136] - "RadialWarpTransformer","radius=0.25,strength=73.11778516430624,111.30159086003918,80.90209710503281,style=push,pull,pull"
+2026-03-15 10:24:06,880 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/lojong_9-A-scatter.jpeg
+2026-03-15 10:24:06,906 - INFO - [pipeline.py:136] - "RadialWarpTransformer","radius=0.25,strength=137.48846281963543,64.12451104028587,style=push,push"
+2026-03-15 10:24:06,944 - INFO - [pipeline.py:136] - "SwirlWarpTransformer","strength=1.50"
+2026-03-15 10:24:06,968 - INFO - [pipeline.py:136] - "FisheyeTransformer","shape=circle,strength=0.63,zoom=1.06"
+2026-03-15 10:24:07,021 - INFO - [pipeline.py:136] - "MeltMorphTransformer","intensity=0.50"
+2026-03-15 10:24:07,039 - INFO - [pipeline.py:248] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/lojong_6-C-scatter.jpeg
+2026-03-15 10:24:07,079 - INFO - [pipeline.py:136] - "FractalWarpTransformer","iter=1,scale=0.05"
+2026-03-15 10:24:07,104 - INFO - [pipeline.py:136] - "ChromaticAberrationTransformer","angle=187.80,edge_fade=1,shift=5.10"
+2026-03-15 10:24:07,122 - INFO - [pipeline.py:248] - [Grade: B] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/lojong_7-B-tile.jpeg
+2026-03-15 10:24:07,345 - INFO - [pipeline.py:136] - "VoronoiTransformer","edge_blend=1,num_points=148"
+2026-03-15 10:24:07,399 - INFO - [pipeline.py:136] - "StippleTransformer","bg=white,dot_radius=4,jitter=1,spacing=12"
+2026-03-15 10:24:07,424 - INFO - [pipeline.py:248] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/lojong_0-C-columns.jpeg
+2026-03-15 10:24:07,461 - INFO - [pipeline.py:136] - "GlitchWarpTransformer","intensity=0.01"
+2026-03-15 10:24:07,474 - INFO - [pipeline.py:136] - "ColormapTransformer","map=hsv"
+2026-03-15 10:24:07,494 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/lojong_1-A-scatter.jpeg
+2026-03-15 10:24:07,624 - INFO - [pipeline.py:136] - "OilPaintingTransformer","dyn_ratio=6,size=6"
+2026-03-15 10:24:07,649 - INFO - [pipeline.py:136] - "ChromaticAberrationTransformer","angle=46.40,edge_fade=1,shift=9.70"
+2026-03-15 10:24:07,864 - INFO - [pipeline.py:136] - "WatercolorTransformer","scale=0.85,style=monet"
+2026-03-15 10:24:07,881 - INFO - [pipeline.py:248] - [Grade: F] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/Rejected/psalms_56-F-scatter.jpeg
+2026-03-15 10:24:07,913 - INFO - [pipeline.py:136] - "FisheyeTransformer","shape=oval,strength=0.34,zoom=0.86"
+2026-03-15 10:24:07,968 - INFO - [pipeline.py:136] - "FlipWilsonTransformer","keep=top,narrow=0.46"
+2026-03-15 10:24:08,183 - INFO - [pipeline.py:136] - "VoronoiTransformer","edge_blend=1,num_points=158"
+2026-03-15 10:24:08,201 - INFO - [pipeline.py:248] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/psalms_41-C-tile.jpeg
+2026-03-15 10:24:08,245 - INFO - [pipeline.py:136] - "FractalWarpTransformer","iter=1,scale=0.05"
+2026-03-15 10:24:08,283 - INFO - [pipeline.py:136] - "SwirlWarpTransformer","strength=1.50"
+2026-03-15 10:24:08,309 - INFO - [pipeline.py:136] - "ChromaticAberrationTransformer","angle=49.60,edge_fade=1,shift=5.10"
+2026-03-15 10:24:08,363 - INFO - [pipeline.py:136] - "MeltMorphTransformer","intensity=0.50"
+2026-03-15 10:24:08,385 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/psalms_119-A-scatter.jpeg
+2026-03-15 10:24:08,441 - INFO - [pipeline.py:136] - "HalftoneTransformer","size=2"
+2026-03-15 10:24:08,457 - INFO - [pipeline.py:248] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/psalms_103-C-hero.jpeg
+2026-03-15 10:24:08,493 - INFO - [pipeline.py:136] - "GlitchWarpTransformer","intensity=0.01"
+2026-03-15 10:24:08,511 - INFO - [pipeline.py:248] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/psalms_9-C-scatter.jpeg
+2026-03-15 10:24:08,547 - INFO - [pipeline.py:136] - "GlitchWarpTransformer","intensity=0.01"
+2026-03-15 10:24:08,586 - INFO - [pipeline.py:136] - "SwirlWarpTransformer","strength=1.50"
+2026-03-15 10:24:08,604 - INFO - [pipeline.py:248] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/psalms_28-C-tile.jpeg
+2026-03-15 10:24:08,658 - INFO - [pipeline.py:136] - "HalftoneTransformer","size=2"
+2026-03-15 10:24:08,674 - INFO - [pipeline.py:248] - [Grade: C] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/psalms_4-C-scatter.jpeg
+2026-03-15 10:24:08,700 - INFO - [pipeline.py:136] - "RadialWarpTransformer","radius=0.25,strength=107.72240642509482,133.44731657091057,style=pull,push"
+2026-03-15 10:24:08,734 - INFO - [pipeline.py:136] - "FractalWarpTransformer","iter=1,scale=0.05"
+2026-03-15 10:24:08,750 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/psalms_35-A-scatter.jpeg
+2026-03-15 10:24:08,795 - INFO - [pipeline.py:136] - "ThermalImagingTransformer","thermal=True"
+2026-03-15 10:24:08,893 - INFO - [pipeline.py:136] - "OilPaintingTransformer","dyn_ratio=8,size=3"
+2026-03-15 10:24:08,921 - INFO - [pipeline.py:136] - "GlitchWarpTransformer","intensity=0.01"
+2026-03-15 10:24:08,939 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/psalms_148-A-tile.jpeg
+2026-03-15 10:24:09,069 - INFO - [pipeline.py:136] - "VoronoiTransformer","edge_blend=1,num_points=323"
+2026-03-15 10:24:09,081 - INFO - [pipeline.py:136] - "SwirlWarpTransformer","strength=1.50"
+2026-03-15 10:24:09,085 - INFO - [pipeline.py:136] - "PosterizationTransformer","levels=4"
+2026-03-15 10:24:09,091 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/peripheral_drift_2-A.jpeg
+2026-03-15 10:24:09,158 - INFO - [pipeline.py:136] - "WatercolorTransformer","scale=0.85,style=monet"
+2026-03-15 10:24:09,166 - INFO - [pipeline.py:136] - "ChromaticAberrationTransformer","angle=273.00,edge_fade=1,shift=7.80"
+2026-03-15 10:24:09,183 - INFO - [pipeline.py:136] - "FlipWilsonTransformer","keep=top,narrow=0.46"
+2026-03-15 10:24:09,202 - INFO - [pipeline.py:136] - "PixelSortTransformer","direction=cols,high=0.67,low=0.18,sort_key=brightness"
+2026-03-15 10:24:09,209 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/peripheral_drift_3-A.jpeg
+2026-03-15 10:24:09,222 - INFO - [pipeline.py:136] - "FractalWarpTransformer","iter=1,scale=0.05"
+2026-03-15 10:24:09,228 - INFO - [pipeline.py:248] - [Grade: A] Saved to: /Users/kenfasano/Scripts/ScreenArt/Images/TransformedImages/peripheral_drift_1-A.jpeg
+2026-03-15 10:24:09,228 - INFO - [main.py:188] - VoronoiTransformer
+2026-03-15 10:24:09,228 - INFO - [main.py:188] - WatercolorTransformer
+2026-03-15 10:24:09,228 - INFO - [main.py:188] - OilPaintingTransformer
+2026-03-15 10:24:09,228 - INFO - [main.py:188] - PixelSortTransformer
+2026-03-15 10:24:09,229 - INFO - [main.py:188] - HalftoneTransformer
+2026-03-15 10:24:09,229 - INFO - [main.py:188] - MeltMorphTransformer
+2026-03-15 10:24:09,229 - INFO - [main.py:188] - FlipWilsonTransformer
+2026-03-15 10:24:09,229 - INFO - [main.py:188] - StippleTransformer
+2026-03-15 10:24:09,229 - INFO - [main.py:188] - KaleidoscopeTransformer
+2026-03-15 10:24:09,229 - INFO - [main.py:188] - ThermalImagingTransformer
+2026-03-15 10:24:09,229 - INFO - [main.py:188] - DataMoshTransformer
+2026-03-15 10:24:09,229 - INFO - [main.py:188] - WheelTransformer
+2026-03-15 10:24:09,229 - INFO - [main.py:188] - FractalWarpTransformer
+2026-03-15 10:24:09,229 - INFO - [main.py:188] - GlitchWarpTransformer
+2026-03-15 10:24:09,229 - INFO - [main.py:188] - SwirlWarpTransformer
+2026-03-15 10:24:09,229 - INFO - [main.py:188] - FluidWarpTransformer
+2026-03-15 10:24:09,229 - INFO - [main.py:188] - FisheyeTransformer
+2026-03-15 10:24:09,229 - INFO - [main.py:188] - RadialWarpTransformer
+2026-03-15 10:24:09,229 - INFO - [main.py:188] - ChromaticAberrationTransformer
+2026-03-15 10:24:09,229 - INFO - [main.py:188] - ColormapTransformer
+2026-03-15 10:24:09,229 - INFO - [main.py:188] - PosterizationTransformer
+2026-03-15 10:24:09,229 - INFO - [main.py:231] - 25s@10:24 ✓
+Accepted: 51
+Rejected: 3
+---
+Bible                      -> 10742ms
+Lojong                     ->  2957ms
+Wiki                       ->  2262ms
+Nasa                       ->  1017ms
+GoesGenerator              ->   643ms
+Bubbles                    ->   469ms
+Cubes                      ->   185ms
+PeripheralDriftIllusion    ->    45ms
+NasaMapGenerator           ->    36ms
+---
+VoronoiTransformer               -> Min:    56ms | Avg:   146ms | Max:   215ms
+WatercolorTransformer            -> Min:    37ms | Avg:   116ms | Max:   215ms
+OilPaintingTransformer           -> Min:    21ms | Avg:    99ms | Max:   125ms
+PixelSortTransformer             -> Min:    19ms | Avg:    55ms | Max:    86ms
+HalftoneTransformer              -> Min:    47ms | Avg:    49ms | Max:    52ms
+MeltMorphTransformer             -> Min:     9ms | Avg:    44ms | Max:    71ms
+FlipWilsonTransformer            -> Min:     9ms | Avg:    37ms | Max:    58ms
+StippleTransformer               -> Min:    14ms | Avg:    34ms | Max:    54ms
+KaleidoscopeTransformer          -> Min:    18ms | Avg:    34ms | Max:    50ms
+ThermalImagingTransformer        -> Min:     5ms | Avg:    31ms | Max:    39ms
+DataMoshTransformer              -> Min:    13ms | Avg:    29ms | Max:    38ms
+WheelTransformer                 -> Min:    15ms | Avg:    28ms | Max:    33ms
+FractalWarpTransformer           -> Min:    10ms | Avg:    27ms | Max:    35ms
+GlitchWarpTransformer            -> Min:    19ms | Avg:    27ms | Max:    28ms
+SwirlWarpTransformer             -> Min:     8ms | Avg:    25ms | Max:    38ms
+FluidWarpTransformer             -> Min:    17ms | Avg:    24ms | Max:    31ms
+FisheyeTransformer               -> Min:     4ms | Avg:    22ms | Max:    47ms
+RadialWarpTransformer            -> Min:    16ms | Avg:    20ms | Max:    23ms
+ChromaticAberrationTransformer   -> Min:     3ms | Avg:    19ms | Max:    32ms
+ColormapTransformer              -> Min:     4ms | Avg:    12ms | Max:    15ms
+PosterizationTransformer         -> Min:     4ms | Avg:    12ms | Max:    13ms

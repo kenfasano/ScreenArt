@@ -187,7 +187,7 @@ class ScreenArtMain(ScreenArt):
                 avg_time = round(sum(times) / len(times))  #type: ignore
                 self.log.info(name)
                 formatted_times = (
-                    f"{name:26s} -> "
+                    f"{name:32s} -> "
                     f"Min: {min_time:5d}ms | "
                     f"Avg: {avg_time:5d}ms | "
                     f"Max: {max_time:5d}ms"

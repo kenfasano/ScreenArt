@@ -3,7 +3,6 @@ import os
 import random
 import cv2
 import numpy as np
-import piexif
 from collections import defaultdict
 
 from .screenArt import ScreenArt
@@ -148,7 +147,8 @@ class ImageProcessingPipeline(ScreenArt):
 
     def _calculate_grade(self, img_np: np.ndarray) -> str:
         """
-        Scores image quality as a composite of sharpness, contrast, and highlights.
+        Scores image quality as a composite of sharpness, contrast, highlights,
+        hue diversity, and uniform region detection.
         Returns a grade letter: A, B, C, or F.
         """
         gray    = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY).astype(np.float32)
@@ -186,6 +186,24 @@ class ImageProcessingPipeline(ScreenArt):
         if std_dev < 25:
             score = min(score, 0.49)
 
+        # --- Hue diversity penalty ---
+        # Fires when >80% of vividly-saturated pixels (sat>80) share a single
+        # 5° hue bin AND hue std-dev is <12 (truly monochromatic, not biased).
+        # Requires 15% vivid pixels to avoid greyscale false positives.
+        # Caps at B — catches solid-colour blobs without penalising gradients,
+        # dark space images, or naturally hue-biased photos and auroras.
+        small = cv2.resize(img_np, (320, 213))
+        hsv   = cv2.cvtColor(small, cv2.COLOR_BGR2HSV)
+        vivid_mask  = hsv[:, :, 1] > 80
+        vivid_count = int(vivid_mask.sum())
+        if vivid_count >= (320 * 213 * 0.15):
+            hues = hsv[:, :, 0][vivid_mask]
+            counts, _ = np.histogram(hues, bins=36, range=(0, 180))
+            dominant_frac = float(counts.max()) / vivid_count
+            hue_std = float(hues.std())
+            if dominant_frac > 0.80 and hue_std < 12.0:
+                score = min(score, 0.49)  # cap at B
+
         if score >= 0.65:   return "A"
         elif score >= 0.50: return "B"
         elif score >= 0.35: return "C"
@@ -198,14 +216,11 @@ class ImageProcessingPipeline(ScreenArt):
             ext = '.png'
 
         layout_mode = None
-        description = None
         sidecar_path = os.path.join(source_dir, f"{stem}.json")
         if os.path.exists(sidecar_path):
             try:
                 with open(sidecar_path, encoding="utf-8") as sf:
-                    sidecar = json.load(sf)
-                    layout_mode = sidecar.get("layout_mode")
-                    description = sidecar.get("description")
+                    layout_mode = json.load(sf).get("layout_mode")
             except Exception as e:
                 self.log.debug(f"Could not read sidecar {sidecar_path}: {e}")
             finally:
@@ -230,16 +245,6 @@ class ImageProcessingPipeline(ScreenArt):
             encode_params = [cv2.IMWRITE_PNG_COMPRESSION, 3]
 
         cv2.imwrite(final_path, img_np, encode_params)
-
-        # Inject description into EXIF (JPEG only — PNG has no EXIF support via piexif)
-        if description and ext.lower() in ('.jpg', '.jpeg'):
-            try:
-                desc_bytes = description.encode("utf-8")
-                exif_dict = {"0th": {piexif.ImageIFD.ImageDescription: desc_bytes}}
-                piexif.insert(piexif.dump(exif_dict), final_path)
-            except Exception as e:
-                self.log.debug(f"Could not write EXIF description: {e}")
-
         self.log.info(f"[Grade: {grade}] Saved to: {final_path}")
 
     def get_accepted_rejected(self) -> str:
