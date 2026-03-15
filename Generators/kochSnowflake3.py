@@ -15,7 +15,7 @@ class KochSnowflake3(DrawGenerator):
         
         self.width = int(self.config.get('width', 1920))
         self.height = int(self.config.get('height', 1080))
-        self.file_count = int(self.config.get('file_count', 5))
+        self.file_count = int(self.config.get("file_counts", {}).get("kochSnowflake", 6))
         self.base_filename = "koch_snowflake_3"
         
         self.koch_transformer = KochSnowflakeTransformer()

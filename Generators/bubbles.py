@@ -168,7 +168,7 @@ class Bubbles(DrawGenerator):
 
         self.width      = int(self.config.get('width',  1920))
         self.height     = int(self.config.get('height', 1080))
-        self.file_count = 10
+        self.file_count = self.config.get("file_counts", {}).get("bubbles", 10)
         self.min_radius = int(self.config.get('min_radius', 10))
         self.max_radius = int(self.config.get('max_radius', 60))
         self.base_filename = "bubbles"

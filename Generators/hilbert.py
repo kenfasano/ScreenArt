@@ -18,7 +18,7 @@ class Hilbert(DrawGenerator):
         
         self.width = int(self.config.get('width', 1920))
         self.height = int(self.config.get('height', 1080))
-        self.file_count = int(self.config.get('file_count', 5))
+        self.file_count = int(self.config.get("file_counts", {}).get("hilbert", 10))
         self.log.debug(f"{self.file_count=}")
         self.base_filename = "hilbert"
 

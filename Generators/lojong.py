@@ -13,7 +13,7 @@ class Lojong(Text):
         super().__init__()
 
         lojong_config = self.config.get("lojong", {})
-        self.file_count = lojong_config.get("file_count", 3)
+        self.file_count = self.config.get("file_counts", {}).get("lojong", 10)
 
         self.out_dir = os.path.join(self.config["paths"]["generators_in"], "lojong")
         os.makedirs(self.out_dir, exist_ok=True)

@@ -8,7 +8,7 @@ import os
 class PeripheralDriftIllusion(DrawGenerator):
     def __init__(self):
         super().__init__()
-        self.file_count = self.config.get("file_count", 3)
+        self.file_count = self.config.get("file_counts", {}).get("peripheraldriftillusion", 20)
         self.base_filename = "peripheral_drift"
 
     def generate_gradient_background(self, width: int, height: int, color_top: tuple[int, int, int], color_bottom: tuple[int, int, int]) -> Image.Image:

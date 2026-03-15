@@ -60,7 +60,7 @@ class NasaMapGenerator(DrawGenerator):
 
         self.width = int(self.config.get("width", 1920))
         self.height = int(self.config.get("height", 1080))
-        self.file_count = int(self.config.get("file_count", 1))
+        self.file_count = int(self.config.get("file_counts", {}).get("maps", 4))
         self.base_filename = "nasa_earth"
 
         self.grid_size = 3

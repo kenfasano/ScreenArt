@@ -17,7 +17,7 @@ class Wiki(DrawGenerator):
     def __init__(self):
         super().__init__()
 
-        self.file_count = int(self.config.get("wiki", {}).get("file_count", 1))
+        self.file_count = int(self.config.get("file_counts", {}).get("wiki", 6))
         self.out_dir = os.path.join(self.config["paths"]["generators_in"], "wiki")
         os.makedirs(self.out_dir, exist_ok=True)
 

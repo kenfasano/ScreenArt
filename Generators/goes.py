@@ -30,7 +30,7 @@ class GoesGenerator(DrawGenerator):
 
         self.width = int(self.config.get("width", 1200))
         self.height = int(self.config.get("height", 1200))
-        self.file_count = int(self.config.get("file_count", 1))
+        self.file_count = int(self.config.get("file_counts", {}).get("goes", 1))
         self.base_filename = "noaa_goes"
 
         self.session = requests.Session()

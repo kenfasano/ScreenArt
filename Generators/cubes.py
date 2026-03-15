@@ -113,7 +113,7 @@ class Cubes(DrawGenerator):
 
         self.width  = int(self.config.get('width',  1920))
         self.height = int(self.config.get('height', 1080))
-        self.file_count = int(self.config.get('file_count', 6))
+        self.file_count = int(self.config.get("file_counts", {}).get("cubes", 6))
         self.base_filename = "cubes"
 
         self.loops    = int(self.config.get('loops',    2000))

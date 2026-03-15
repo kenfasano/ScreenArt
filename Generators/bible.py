@@ -23,7 +23,7 @@ class Bible(Text):
         self.out_dir = os.path.join(self.config["paths"]["generators_in"], "bible")
         os.makedirs(self.out_dir, exist_ok=True)
 
-        self.file_count = self.config.get("bible", {}).get("file_count", 3)
+        self.file_count = self.config.get("file_counts", {}).get("bible", 10)
         self.log.debug(f"Bible: {self.file_count=}")
 
         # Precompute (book_name, language) — avoids per-call string scanning

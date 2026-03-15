@@ -12,7 +12,7 @@ class Nasa(Source):
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
         }
-        self.file_count = self.config.get("nasa", {}).get("file_count", 3)
+        self.file_count = self.config.get("file_counts", {}).get("nasa", 6)
         self.log.debug(f"{self.file_count=}")
 
         # Session pooling with connection reuse
