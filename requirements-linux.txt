@@ -1,0 +1,13 @@
+astral
+beautifulsoup4
+numba
+numpy
+openpyxl
+pandas
+Pillow
+requests
+scipy
+scikit-image
+opencv-python
+tqdm
+pytz

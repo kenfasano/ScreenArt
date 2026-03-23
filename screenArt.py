@@ -22,8 +22,11 @@ class ScreenArt(ABC):
         self.project_name = project_name
         self.os_type = sys.platform  # 'darwin' for Mac, 'linux' for Fedora
         
-        # Base project path (e.g., /home/kenfasano/Scripts/ScreenArt or /Users/kenfasano/Scripts/ScreenArt)
-        self.base_path = os.path.expanduser(f"~/Scripts/{self.project_name}")
+        if self.os_type == "darwin":
+            self.base_path = os.path.expanduser(f"~/Scripts/{self.project_name}")
+        else:
+            # Arch — access Mac files via sshfs mount
+            self.base_path = os.path.expanduser(f"~/mac/Scripts/{self.project_name}")
 
         # 1. Load Config FIRST (Singleton pattern)
         if ScreenArt._global_config is None:
@@ -89,10 +92,8 @@ class ScreenArt(ABC):
         is_darwin = self.os_type == "darwin"
 
         for key, path_str in raw_paths.items():
-            # Handle the macOS Google Drive pathing requirement
-            if is_darwin and "Google Drive" in path_str and "My Drive" not in path_str:
-                path_str = path_str.replace("Google Drive", "Google Drive/My Drive")
-
+            if self.os_type == "linux" and path_str.startswith("~/Scripts/"):
+                path_str = path_str.replace("~/Scripts/", "~/mac/Scripts/", 1)
             # Expand the tilde to the absolute user directory
             folder = Path(path_str).expanduser()
             
