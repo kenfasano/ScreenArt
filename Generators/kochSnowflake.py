@@ -20,7 +20,7 @@ class KochSnowflake(DrawGenerator):
         
         # generators = [KochSnowflake1, KochSnowflake2, KochSnowflake3, KochSnowflake4]
         generators = [KochSnowflake1, KochSnowflake2, KochSnowflake3, KochSnowflake4]
-        weights = [3, 4, 5, 6]
+        weights = [1,1,1,1]
         SelectedGeneratorClass = random.choices(generators, weights=weights, k=1)[0]
         
         # Instantiate without passing config, and call run()

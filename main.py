@@ -18,6 +18,7 @@ from .Generators import (
     cubes,
     goes,
     lojong,
+    mandalas,
     maps,
     nasa,
     peripheral_drift_illusion,
@@ -40,6 +41,7 @@ class ScreenArtMain(ScreenArt):
         self.generators: dict[str, str] = {
             "bubbles":                f"{gen_in}/bubbles",
             "cubes":                  f"{gen_in}/cubes",
+            "mandalas":               f"{gen_in}/mandalas", # only for generated mandalas, not static  
             "nasa":                   f"{gen_in}/nasa",
             "maps":                   f"{gen_in}/maps",
             "goes":                   f"{gen_in}/goes",
@@ -59,6 +61,7 @@ class ScreenArtMain(ScreenArt):
             "cubes": cubes.Cubes,
             "lojong": lojong.Lojong,
             "bible": bible.Bible,
+            "mandalas": mandalas.Mandalas,
             "peripheraldriftillusion": peripheral_drift_illusion.PeripheralDriftIllusion,
             # kochSnowflake and hilbert excluded — linear generators, not raster
         }
@@ -68,7 +71,7 @@ class ScreenArtMain(ScreenArt):
         self.active_transformers = []
         
         for t_key in requested_transformers:
-            TransformerClass: RasterTransformer = transformer_registry.get(t_key.lower().replace("transformer",""))
+            TransformerClass: RasterTransformer | None = transformer_registry.get(t_key.lower().replace("transformer",""))
             if TransformerClass:
                 self.active_transformers.append(TransformerClass())
             else:
@@ -141,12 +144,12 @@ class ScreenArtMain(ScreenArt):
             # Phase 1: Run Generators
 
             self.generator_stats: dict[str, float] = {}
-            for key in (bar := tqdm(keys_to_process, desc="Generators  ", unit="gen", ncols=80)):
+            for key in (_ := tqdm(keys_to_process, desc="Generators  ", unit="gen", ncols=80)):
                 self.erase_image_dir(self.generators[key])
                 self.run_generator(key)
 
             # Phase 2: Run Transformers
-            for key in (bar := tqdm(keys_to_process, desc="Transformers", unit="tra", ncols=80)):
+            for key in (_ := tqdm(keys_to_process, desc="Transformers", unit="tra", ncols=80)):
                 self.pipeline.run(self.generators[key], transformers=self.active_transformers)
 
         elapsed = str(t.elapsed)
