@@ -18,10 +18,12 @@ from .Generators import (
     cubes,
     goes,
     lojong,
-    mandalas,
+    mandala_draw,
     maps,
     nasa,
+    peace,
     peripheral_drift_illusion,
+    staticMandala,
     wiki 
 )
 
@@ -39,30 +41,34 @@ class ScreenArtMain(ScreenArt):
 
         # 1. GENERATOR DIRECTORIES
         self.generators: dict[str, str] = {
+            "bible":                  f"{gen_in}/bible",
             "bubbles":                f"{gen_in}/bubbles",
             "cubes":                  f"{gen_in}/cubes",
-            "mandalas":               f"{gen_in}/mandalas", # only for generated mandalas, not static  
-            "nasa":                   f"{gen_in}/nasa",
-            "maps":                   f"{gen_in}/maps",
             "goes":                   f"{gen_in}/goes",
-            "wiki":                   f"{gen_in}/wiki",
             "lojong":                 f"{gen_in}/lojong",
-            "bible":                  f"{gen_in}/bible",
+            "mandala_draw":           f"{gen_in}/mandala_draw",
+            "maps":                   f"{gen_in}/maps",
+            "nasa":                   f"{gen_in}/nasa",
+            "peace"                  :f"{gen_in}/peace",
             "peripheraldriftillusion":f"{gen_in}/opticalillusions",
+            "static_mandala":         f"{gen_in}/mandalas",
+            "wiki":                   f"{gen_in}/wiki",
         }
 
         # 2. GENERATOR REGISTRY (Map the string key directly to the Class)
         self.generator_classes = {
-            "wiki": wiki.Wiki,
-            "nasa": nasa.Nasa,
-            "maps": maps.NasaMapGenerator,
-            "goes": goes.GoesGenerator,
+            "bible": bible.Bible,
             "bubbles": bubbles.Bubbles,
             "cubes": cubes.Cubes,
+            "goes": goes.GoesGenerator,
             "lojong": lojong.Lojong,
-            "bible": bible.Bible,
-            "mandalas": mandalas.Mandalas,
+            "mandala_draw": mandala_draw.MandalaDraw,
+            "maps": maps.NasaMapGenerator,
+            "nasa": nasa.Nasa,
+            "peace": peace.Peace,
             "peripheraldriftillusion": peripheral_drift_illusion.PeripheralDriftIllusion,
+            "static_mandala": staticMandala.StaticMandala,
+            "wiki": wiki.Wiki,
             # kochSnowflake and hilbert excluded — linear generators, not raster
         }
 

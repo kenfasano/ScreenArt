@@ -60,8 +60,8 @@ class ImageProcessingPipeline(ScreenArt):
         overrides = tw.get(source_type, {})
 
         # Merge: start with defaults, apply source-specific overrides
-        merged = {k.lower(): float(v) for k, v in defaults.items()}
-        merged.update({k.lower(): float(v) for k, v in overrides.items()})
+        merged = {k.lower(): float(v) for k, v in defaults.items() if not k.startswith('#')}
+        merged.update({k.lower(): float(v) for k, v in overrides.items() if not k.startswith('#')})
 
         self._weight_cache[source_type] = merged
         return merged
@@ -231,6 +231,8 @@ class ImageProcessingPipeline(ScreenArt):
 
         mode_tag = f"-{layout_mode}" if layout_mode else ""
         graded_filename = f"{stem}-{grade}{mode_tag}{ext}"
+        uid = f"_{random.randbytes(2).hex()}"                      # e.g. _3f9a
+        graded_filename = f"{stem}-{grade}{mode_tag}{uid}{ext}"
 
         if grade in ('A', 'B', 'C'):
             final_path = os.path.join(self.out_dir, graded_filename)
