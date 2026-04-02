@@ -1,37 +1,37 @@
-33s@17:08 ✓
-Accepted: 82
-Rejected: 7
+28s@17:35 ✓
+Accepted: 57
+Rejected: 4
 ---
-Peace                      ->  4970ms
-Bible                      ->  4865ms
-Wiki                       ->  3061ms
-Lojong                     ->  2348ms
-NasaMapGenerator           ->  1797ms
-GoesGenerator              ->   985ms
-Nasa                       ->   750ms
-Bubbles                    ->   446ms
-PeripheralDriftIllusion    ->   364ms
-Cubes                      ->   201ms
-MandalaDraw                ->    27ms
-StaticMandala              ->    19ms
+Peace                      ->  5021ms
+Wiki                       ->  4207ms
+Bible                      ->  2979ms
+Nasa                       ->  1401ms
+NasaMapGenerator           ->  1066ms
+GoesGenerator              ->   989ms
+Lojong                     ->   761ms
+Bubbles                    ->   390ms
+PeripheralDriftIllusion    ->   152ms
+Cubes                      ->    87ms
+MandalaDraw                ->    29ms
+StaticMandala              ->    17ms
 ---
-WatercolorTransformer            -> Min:   209ms | Avg:   242ms | Max:   357ms
-VoronoiTransformer               -> Min:    31ms | Avg:   225ms | Max:   462ms
-PixelSortTransformer             -> Min:    24ms | Avg:   119ms | Max:   257ms
-DataMoshTransformer              -> Min:    11ms | Avg:    70ms | Max:   380ms
-KaleidoscopeTransformer          -> Min:    15ms | Avg:    55ms | Max:   250ms
-HalftoneTransformer              -> Min:    11ms | Avg:    53ms | Max:   108ms
-FlipWilsonTransformer            -> Min:    15ms | Avg:    47ms | Max:    64ms
-FluidWarpTransformer             -> Min:    10ms | Avg:    44ms | Max:   178ms
-ChromaticAberrationTransformer   -> Min:     8ms | Avg:    40ms | Max:   192ms
-MeltMorphTransformer             -> Min:    14ms | Avg:    36ms | Max:    55ms
-RadialWarpTransformer            -> Min:     6ms | Avg:    35ms | Max:   188ms
-WheelTransformer                 -> Min:     8ms | Avg:    26ms | Max:    54ms
-OilPaintingTransformer           -> Min:    12ms | Avg:    24ms | Max:    55ms
-ThermalImagingTransformer        -> Min:     6ms | Avg:    23ms | Max:    63ms
-FisheyeTransformer               -> Min:     7ms | Avg:    21ms | Max:    32ms
-FractalWarpTransformer           -> Min:     3ms | Avg:    20ms | Max:    36ms
-SwirlWarpTransformer             -> Min:    10ms | Avg:    19ms | Max:    38ms
-GlitchWarpTransformer            -> Min:     6ms | Avg:    15ms | Max:    33ms
-PosterizationTransformer         -> Min:     4ms | Avg:    11ms | Max:    14ms
-ColormapTransformer              -> Min:     3ms | Avg:    10ms | Max:    27ms
+WatercolorTransformer            -> Min:    64ms | Avg:   237ms | Max:   554ms
+WheelTransformer                 -> Min:    30ms | Avg:   148ms | Max:   582ms
+VoronoiTransformer               -> Min:    95ms | Avg:   140ms | Max:   177ms
+PixelSortTransformer             -> Min:     6ms | Avg:    87ms | Max:   217ms
+HalftoneTransformer              -> Min:    14ms | Avg:    78ms | Max:   460ms
+FlipWilsonTransformer            -> Min:    28ms | Avg:    73ms | Max:   158ms
+FluidWarpTransformer             -> Min:     6ms | Avg:    62ms | Max:   435ms
+GlitchWarpTransformer            -> Min:     8ms | Avg:    53ms | Max:   203ms
+ThermalImagingTransformer        -> Min:    12ms | Avg:    52ms | Max:   214ms
+MeltMorphTransformer             -> Min:    16ms | Avg:    47ms | Max:    85ms
+ChromaticAberrationTransformer   -> Min:     5ms | Avg:    36ms | Max:   179ms
+KaleidoscopeTransformer          -> Min:    16ms | Avg:    35ms | Max:    71ms
+DataMoshTransformer              -> Min:     4ms | Avg:    30ms | Max:    48ms
+FisheyeTransformer               -> Min:     7ms | Avg:    29ms | Max:    78ms
+OilPaintingTransformer           -> Min:     8ms | Avg:    28ms | Max:   107ms
+SwirlWarpTransformer             -> Min:    11ms | Avg:    26ms | Max:    49ms
+FractalWarpTransformer           -> Min:     9ms | Avg:    24ms | Max:    45ms
+RadialWarpTransformer            -> Min:     8ms | Avg:    18ms | Max:    32ms
+ColormapTransformer              -> Min:     5ms | Avg:    10ms | Max:    16ms
+PosterizationTransformer         -> Min:     2ms | Avg:     9ms | Max:    17ms
