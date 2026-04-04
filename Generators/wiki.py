@@ -4,6 +4,7 @@ import socket
 import os
 from concurrent.futures import ThreadPoolExecutor
 import re
+import random
 import time
 from typing import Any
 from PIL import Image
@@ -53,11 +54,22 @@ class Wiki(DrawGenerator):
             "iiurlwidth": 1600, # self.width,
         }
 
-        params.update({
-            "generator": "random",
-            "grnnamespace": 6,
-            "grnlimit": self.file_count,
-        })
+        eyeball = random.randint(1, 3)
+        self.log.info(f"Wiki: {'eyeball' if eyeball == 1 else 'random'}")
+
+        if eyeball == 1:
+            params.update({
+                "generator": "search",
+                "gsrsearch": "eye anatomy eyeball iris pupil",
+                "gsrnamespace": 6,
+                "gsrlimit": self.file_count,
+            })
+        else:
+            params.update({
+                "generator": "random",
+                "grnnamespace": 6,
+                "grnlimit": self.file_count,
+            })
 
         try:
             response = self.session.get(self.api_url, params=params, timeout=15)
