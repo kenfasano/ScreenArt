@@ -4,31 +4,15 @@ import random
 import cv2
 import numpy as np
 from collections import defaultdict
+from .source_type_map import SOURCE_TYPE_MAP
 
 from .screenArt import ScreenArt
 from .Transformers.RasterTransformers.rasterTransformer import RasterTransformer
 
-# Maps source_dir folder names to source type keys used in transformer_weights
-_SOURCE_TYPE_MAP = {
-    "lojong":   "lojong",
-    "bible":    "psalms",   # bible generator produces psalms
-    "wiki":     "photo",
-    "nasa":     "photo",
-    "goes":     "photo",
-    "maps":     "photo",
-    "bubbles":  "bubbles",
-    "cubes":    "cubes",
-    "hilbert":  "generated",
-    "kochsnowflake": "generated",
-    "peripheraldriftillusion": "generated",
-    "mandala_draw": "generated",
-    "static_mandala": "generated",
-}
-
 def _source_type_from_dir(source_dir: str) -> str:
     """Derive source type key from the last component of the source directory."""
     folder = os.path.basename(os.path.normpath(source_dir)).lower()
-    return _SOURCE_TYPE_MAP.get(folder, "photo")
+    return SOURCE_TYPE_MAP.get(folder, "photo")
 
 
 class ImageProcessingPipeline(ScreenArt):

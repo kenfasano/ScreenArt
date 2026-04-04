@@ -12,22 +12,7 @@ Filename formats supported:
 import re
 import csv
 from pathlib import Path
-
-SOURCE_TYPE_MAP = {
-    "lojong":        "lojong",
-    "bible":         "psalms",
-    "psalms":        "psalms",
-    "wiki":          "photo",
-    "nasa":          "photo",
-    "goes":          "photo",
-    "maps":          "photo",
-    "bubbles":       "bubbles",
-    "cubes":         "cubes",
-    "hilbert":       "generated",
-    "kochsnowflake": "generated",
-    "koch":          "generated",
-    "peripheral":    "peripheral_drift",
-}
+from .source_type_map import SOURCE_TYPE_MAP
 
 def infer_source_type(generator: str) -> str:
     g = generator.lower()
