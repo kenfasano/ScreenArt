@@ -20,7 +20,9 @@ _SOURCE_TYPE_MAP = {
     "cubes":    "cubes",
     "hilbert":  "generated",
     "kochsnowflake": "generated",
-    "peripheraldriftillusion": "peripheral_drift",
+    "peripheraldriftillusion": "generated",
+    "mandala_draw": "generated",
+    "static_mandala": "generated",
 }
 
 def _source_type_from_dir(source_dir: str) -> str:

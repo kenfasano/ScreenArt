@@ -1,0 +1,37 @@
+21s@13:16 ✓
+Accepted: 57
+Rejected: 2
+---
+Peace                      ->  3420ms
+Wiki                       ->  3164ms
+Bible                      ->  2671ms
+Lojong                     ->  1186ms
+Nasa                       ->  1070ms
+GoesGenerator              ->   555ms
+Bubbles                    ->   283ms
+PeripheralDriftIllusion    ->   158ms
+Cubes                      ->   112ms
+NasaMapGenerator           ->    67ms
+MandalaDraw                ->    28ms
+StaticMandala              ->    10ms
+---
+WatercolorTransformer            -> Min:    21ms | Avg:   144ms | Max:   255ms
+WheelTransformer                 -> Min:    31ms | Avg:   100ms | Max:   179ms
+PixelSortTransformer             -> Min:    53ms | Avg:    96ms | Max:   174ms
+VoronoiTransformer               -> Min:    26ms | Avg:    89ms | Max:   166ms
+MeltMorphTransformer             -> Min:     7ms | Avg:    57ms | Max:   189ms
+FlipWilsonTransformer            -> Min:    21ms | Avg:    56ms | Max:    78ms
+SwirlWarpTransformer             -> Min:    14ms | Avg:    50ms | Max:   116ms
+HalftoneTransformer              -> Min:    15ms | Avg:    49ms | Max:   118ms
+KaleidoscopeTransformer          -> Min:     6ms | Avg:    46ms | Max:   102ms
+FisheyeTransformer               -> Min:     7ms | Avg:    41ms | Max:   168ms
+ThermalImagingTransformer        -> Min:    12ms | Avg:    33ms | Max:    55ms
+DataMoshTransformer              -> Min:    10ms | Avg:    29ms | Max:    41ms
+FractalWarpTransformer           -> Min:    11ms | Avg:    29ms | Max:    45ms
+OilPaintingTransformer           -> Min:     9ms | Avg:    26ms | Max:    49ms
+FluidWarpTransformer             -> Min:     3ms | Avg:    23ms | Max:    52ms
+ChromaticAberrationTransformer   -> Min:     8ms | Avg:    22ms | Max:    45ms
+GlitchWarpTransformer            -> Min:     4ms | Avg:    22ms | Max:    29ms
+PosterizationTransformer         -> Min:     3ms | Avg:    19ms | Max:    55ms
+RadialWarpTransformer            -> Min:     7ms | Avg:    15ms | Max:    25ms
+ColormapTransformer              -> Min:     5ms | Avg:    14ms | Max:    38ms
