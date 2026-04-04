@@ -54,15 +54,29 @@ class Wiki(DrawGenerator):
             "iiurlwidth": 1600, # self.width,
         }
 
+        EYE_QUERIES = [
+            "human eye close-up photography",
+            "eye iris macro",
+            "eye pupil reflection",
+            "animal eye wildlife",
+            "eye retina anatomy",
+            "insect compound eye",
+            "eye portrait extreme close-up",
+            "eye color heterochromia",
+            "eye underwater photography",
+            "reptile eye macro",
+        ]
+
         eyeball = random.randint(1, 3)
-        self.log.info(f"Wiki: {'eyeball' if eyeball == 1 else 'random'}")
 
         if eyeball == 1:
+            query = random.choice(EYE_QUERIES)
+            self.log.info(f"Wiki eye query: {query}")
             params.update({
                 "generator": "search",
-                "gsrsearch": "eye anatomy eyeball iris pupil",
+                "gsrsearch": query,
                 "gsrnamespace": 6,
-                "gsrlimit": self.file_count,
+                "gsrlimit": max(self.file_count * 3, 20),  # fetch more, sample later
             })
         else:
             params.update({
@@ -87,6 +101,9 @@ class Wiki(DrawGenerator):
                     info = p["imageinfo"][0]
                     if "image" in info.get("mime", "") and "svg" not in info.get("mime", ""):
                         clean_list.append(info)
+
+            if len(clean_list) > self.file_count:
+                clean_list = random.sample(clean_list, self.file_count)
 
             return clean_list
 
