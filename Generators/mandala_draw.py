@@ -274,7 +274,7 @@ class MandalaDraw(DrawGenerator):
         import shutil
 
         out_dir = os.path.join(
-            self.config["paths"]["generators_in"], "mandala_draw"
+            self.config["paths"]["mandalas_out"]
         )
         if os.path.exists(out_dir):
             shutil.rmtree(out_dir)

@@ -23,6 +23,7 @@ from .Generators import (
     nasa,
     peace,
     peripheral_drift_illusion,
+    staticFavorites,
     staticMandala,
     wiki 
 )
@@ -46,11 +47,12 @@ class ScreenArtMain(ScreenArt):
             "cubes":                  f"{gen_in}/cubes",
             "goes":                   f"{gen_in}/goes",
             "lojong":                 f"{gen_in}/lojong",
-            "mandala_draw":           f"{gen_in}/mandala_draw",
+            "mandala_draw":           f"{gen_in}/mandalas",
             "maps":                   f"{gen_in}/maps",
             "nasa":                   f"{gen_in}/nasa",
             "peace"                  :f"{gen_in}/peace",
             "peripheraldriftillusion":f"{gen_in}/opticalillusions",
+            "static_favorites":       f"{gen_in}/favorites",
             "static_mandala":         f"{gen_in}/mandalas",
             "wiki":                   f"{gen_in}/wiki",
         }
@@ -67,6 +69,7 @@ class ScreenArtMain(ScreenArt):
             "nasa": nasa.Nasa,
             "peace": peace.Peace,
             "peripheraldriftillusion": peripheral_drift_illusion.PeripheralDriftIllusion,
+            "static_favorites": staticFavorites.StaticFavorites,
             "static_mandala": staticMandala.StaticMandala,
             "wiki": wiki.Wiki,
             # kochSnowflake and hilbert excluded — linear generators, not raster
@@ -118,13 +121,13 @@ class ScreenArtMain(ScreenArt):
     def _get_keys_to_process(self) -> list[str]:
         include_list = self.config.get("include", None)
         exclude_list = self.config.get("exclude", None)
-        
-        if include_list:
+
+        if isinstance(include_list, list):
             return [k for k in include_list if k in self.generators]
-        elif exclude_list:
+        elif isinstance(exclude_list, list):
             excluded_keys = set(exclude_list)
             return [k for k in self.generators.keys() if k not in excluded_keys]
-        
+
         return list(self.generators.keys())
 
     def run_generator(self, key: str):
@@ -312,7 +315,9 @@ def run_main():
         s.write_outcome(elapsed, True, accepted_rejected, pipeline_stats)
         sys.exit(0)
     except Exception as e:
+        import traceback
         s.log.error(f"An error occurred during run: {e}")
+        s.log.error(traceback.format_exc())
         s.write_outcome("0.0", False, "", None)
         sys.exit(1)
 

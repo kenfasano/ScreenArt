@@ -24,6 +24,7 @@ from pathlib import Path
 from typing import Optional
 
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from functools import lru_cache
 
 from .drawGenerator import DrawGenerator
 
@@ -467,6 +468,21 @@ def _find_fonts() -> dict[str, list[str]]:
     return result
 
 
+# ── Module-level singletons (initialised once at import time) ─────────────────
+_dummy_img  = Image.new("RGB", (1, 1))
+_dummy_draw = ImageDraw.Draw(_dummy_img)
+
+_FONT_MAP: dict[str, list[str]] | None = None
+
+def _get_font_map() -> dict[str, list[str]]:
+    """Return the font map, scanning the filesystem only on the first call."""
+    global _FONT_MAP
+    if _FONT_MAP is None:
+        _FONT_MAP = _find_fonts()
+    return _FONT_MAP
+
+
+@lru_cache(maxsize=256)
 def _load_font(path: str, size: int) -> Optional[ImageFont.FreeTypeFont]:
     try:
         return ImageFont.truetype(path, size)
@@ -727,7 +743,7 @@ class Peace(DrawGenerator):
     def __init__(self) -> None:
         super().__init__()
         self.file_count = self.config.get("file_counts", {}).get("peace", 4)
-        self.num_words = random.randint(12, 216) 
+        self.num_words = random.randint(12, 108) 
         self.out_dir: str = os.path.join(
             self.config["paths"]["generators_in"], "peace"
         )
@@ -736,7 +752,7 @@ class Peace(DrawGenerator):
         self.log.debug("Peace: ensuring Noto fonts …")
         _ensure_fonts_cached(self.log)
         self.log.debug("Peace: scanning fonts …")
-        self._font_map: dict[str, list[str]] = _find_fonts()
+        self._font_map: dict[str, list[str]] = _get_font_map()
         total = sum(len(v) for v in self._font_map.values())
         self.log.debug(f"Peace: {total} font paths indexed")
 
@@ -759,15 +775,13 @@ class Peace(DrawGenerator):
                         min_size: int = 12, max_size: int = 120) -> tuple[ImageFont.FreeTypeFont, int, int]:
 
         """Binary-search the largest font sze that fits within max_w × max_h."""
-        dummy_img  = Image.new("RGB", (1, 1))
-        dummy_draw = ImageDraw.Draw(dummy_img)
         lo, hi = min_size, max_size
         best_font = self._get_font(script, lo)
-        best_w, best_h = _text_bbox(dummy_draw, text, best_font)
+        best_w, best_h = _text_bbox(_dummy_draw, text, best_font)
         while lo < hi:
             mid  = (lo + hi + 1) // 2
             font = self._get_font(script, mid)
-            tw, th = _text_bbox(dummy_draw, text, font)
+            tw, th = _text_bbox(_dummy_draw, text, font)
             if tw <= max_w and th <= max_h:
                 lo, best_font, best_w, best_h = mid, font, tw, th
             else:

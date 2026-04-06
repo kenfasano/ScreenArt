@@ -40,7 +40,7 @@ class Wiki(DrawGenerator):
         socket.getaddrinfo("upload.wikimedia.org", 443)  # warms OS DNS cache
 
     # --------------------------------------------------------
-    # SEARCH QUERY BUILDER (75% keywords / 25% random)
+    # SEARCH QUERY BUILDER (50% keyword from config / 50% random)
     # --------------------------------------------------------
     # SINGLE SEARCH CALL
     # --------------------------------------------------------
@@ -54,29 +54,16 @@ class Wiki(DrawGenerator):
             "iiurlwidth": 1600, # self.width,
         }
 
-        EYE_QUERIES = [
-            "human eye close-up photography",
-            "eye iris macro",
-            "eye pupil reflection",
-            "animal eye wildlife",
-            "eye retina anatomy",
-            "insect compound eye",
-            "eye portrait extreme close-up",
-            "eye color heterochromia",
-            "eye underwater photography",
-            "reptile eye macro",
-        ]
+        keywords = self.config.get("wiki", {}).get("keywords", [])
 
-        eyeball = random.randint(1, 3)
-
-        if eyeball == 1:
-            query = random.choice(EYE_QUERIES)
-            self.log.info(f"Wiki eye query: {query}")
+        if keywords and random.random() < 0.5:
+            query = random.choice(keywords)
+            self.log.info(f"Wiki keyword query: {query}")
             params.update({
                 "generator": "search",
                 "gsrsearch": query,
                 "gsrnamespace": 6,
-                "gsrlimit": max(self.file_count * 3, 20),  # fetch more, sample later
+                "gsrlimit": self.file_count,
             })
         else:
             params.update({
