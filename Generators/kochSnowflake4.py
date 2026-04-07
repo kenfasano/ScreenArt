@@ -13,8 +13,8 @@ class KochSnowflake4(DrawGenerator):
     Generates Sierpinski Triangles using the Chaos Game (Random Point Cloud).
     The background color is calculated to be the opposite of the fractal's average color.
     """
-    def __init__(self):
-        super().__init__()
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
         
         self.width = int(self.config.get('width', 1920))
         self.height = int(self.config.get('height', 1080))
@@ -99,11 +99,6 @@ class KochSnowflake4(DrawGenerator):
         return img, bg
 
     def run(self, *args, **kwargs):
-        output_dir = os.path.join(self.config["paths"]["generators_in"], "kochsnowflake")
-        if os.path.exists(output_dir):
-            shutil.rmtree(output_dir)
-        os.makedirs(output_dir, exist_ok=True)
-
         for i in range(self.file_count):
             spiral_tightness = random.uniform(0.5, 2.0) 
             num_points = random.choice([50000, 100000, 200000])
@@ -121,7 +116,7 @@ class KochSnowflake4(DrawGenerator):
             cloud = self.spiral_transformer.run(cloud) 
                 
             filename_suffix = f"_{i+1}.jpeg" if self.file_count > 1 else ".jpeg"
-            filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
+            filename = os.path.join(self.out_dir, f"{self.base_filename}{filename_suffix}")
                 
             img, bg_color = self._create_image_with_opposite_bg(self.width, self.height, cloud, current_hues)
             img_arr, bg_color = self._create_image_with_opposite_bg(self.width, self.height, cloud, current_hues)

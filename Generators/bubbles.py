@@ -163,8 +163,8 @@ def _draw_bubbles_jit(
 
 
 class Bubbles(DrawGenerator):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
 
         self.width      = int(self.config.get('width',  1920))
         self.height     = int(self.config.get('height', 1080))
@@ -306,9 +306,7 @@ class Bubbles(DrawGenerator):
         return Image.fromarray(canvas, 'RGB')
 
     def run(self, *args, **kwargs) -> None:
-        out_dir = os.path.join(self.config["paths"]["generators_in"], "bubbles")
-        os.makedirs(out_dir, exist_ok=True)
         for i in range(self.file_count):
             img = self.draw_bubbles(self.width, self.height)
-            filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}.jpeg")
+            filename = os.path.join(self.out_dir, f"{self.base_filename}_{i+1}.jpeg")
             img.save(filename, quality=95)

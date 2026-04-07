@@ -12,8 +12,8 @@ class KochSnowflake(DrawGenerator):
     Master KochSnowflake class.
     Randomly delegates the work to KochSnowflake 1, 2, 3, or 4.
     """
-    def __init__(self):
-        super().__init__()
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
 
     def run(self, *args, **kwargs) -> None:
         self.log.debug("Running Master KochSnowflake Generator...")
@@ -24,5 +24,5 @@ class KochSnowflake(DrawGenerator):
         SelectedGeneratorClass = random.choices(generators, weights=weights, k=1)[0]
         
         # Instantiate without passing config, and call run()
-        generator_instance = SelectedGeneratorClass()
+        generator_instance = SelectedGeneratorClass(self.out_dir)
         generator_instance.run()

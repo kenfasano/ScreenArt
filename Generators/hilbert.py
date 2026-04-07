@@ -13,9 +13,9 @@ from ..Transformers.LinearTransformers.sinewaveTransformer import SineWaveTransf
 from ..Transformers.LinearTransformers.jitterTransformer import JitterTransformer
 
 class Hilbert(DrawGenerator):
-    def __init__(self):
-        super().__init__()
-        
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
+
         self.width = int(self.config.get('width', 1920))
         self.height = int(self.config.get('height', 1080))
         self.file_count = int(self.config.get("file_counts", {}).get("hilbert", 10))
@@ -56,8 +56,6 @@ class Hilbert(DrawGenerator):
     def run(self, *args, **kwargs):
         width = self.width
         height = self.height
-        output_dir = os.path.join(self.config["paths"]["generators_in"], "hilbert")
-        os.makedirs(output_dir, exist_ok=True)
 
         def random_bool(): return random.choice([True, False])
 
@@ -134,7 +132,7 @@ class Hilbert(DrawGenerator):
                     draw_ctx.line(screen_points, fill=solid_color, width=self.stroke_width)
 
             filename_suffix = f"_{i+1}.jpg" if self.file_count > 1 else ".jpg"
-            filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
+            filename = os.path.join(self.out_dir, f"{self.base_filename}{filename_suffix}")
             try:
                 img.save(filename, format="JPEG", quality=95, subsampling=0)
                 img.close()

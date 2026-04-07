@@ -21,8 +21,9 @@ class MandalaDraw(DrawGenerator):
     SYMMETRY_OPTIONS = [8, 8, 12, 12, 16]  # weights toward 8 and 12
     PRIMITIVE_TYPES  = ["rose", "polygon", "arc_burst", "dot_ring"]
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
+
         cfg           = self.config.get("mandala_draw", {})
         self.width    = int(cfg.get("width",  self.config.get("mandala_draw", {}).get("width",  1920)))
         self.height   = int(cfg.get("height", self.config.get("mandala_draw", {}).get("height", 1280)))
@@ -187,7 +188,7 @@ class MandalaDraw(DrawGenerator):
     # Single mandala image
     # ------------------------------------------------------------------
 
-    def _generate_one(self, index: int, out_dir: str) -> str:
+    def _generate_one(self, index: int) -> str:
         symmetry = random.choice(self.SYMMETRY_OPTIONS)
         cx       = self.width  / 2.0
         cy       = self.height / 2.0
@@ -260,7 +261,7 @@ class MandalaDraw(DrawGenerator):
         rgb = img.convert("RGB")
         import os
         filename = f"{self.base_filename}_{index}.jpeg"
-        out_path = os.path.join(out_dir, filename)
+        out_path = os.path.join(self.out_dir, filename)
         rgb.save(out_path, "JPEG", quality=95)
         self.log.debug(f"Generated {out_path}  symmetry={symmetry}  layers={n_layers}")
         return out_path
@@ -270,20 +271,10 @@ class MandalaDraw(DrawGenerator):
     # ------------------------------------------------------------------
 
     def run(self, *args, **kwargs) -> int:
-        import os
-        import shutil
-
-        out_dir = os.path.join(
-            self.config["paths"]["mandalas_out"]
-        )
-        if os.path.exists(out_dir):
-            shutil.rmtree(out_dir)
-        os.makedirs(out_dir, exist_ok=True)
-
         generated = 0
         for i in range(self.file_count):
             try:
-                self._generate_one(i, out_dir)
+                self._generate_one(i)
                 generated += 1
             except Exception as e:
                 self.log.warning(f"mandala_draw: failed on image {i}: {e}")

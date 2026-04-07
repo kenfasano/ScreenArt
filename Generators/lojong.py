@@ -9,15 +9,10 @@ class Lojong(Text):
         ("lojong_slogans_tib.json", "Tibetan"),
     ]
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
 
-        lojong_config = self.config.get("lojong", {})
         self.file_count = self.config.get("file_counts", {}).get("lojong", 10)
-
-        self.out_dir = os.path.join(self.config["paths"]["generators_in"], "lojong")
-        os.makedirs(self.out_dir, exist_ok=True)
-
         input_base_dir = os.path.join(self.base_path, "Generators", "Data", "Lojong")
 
         # Load both JSON files once at init — they never change at runtime

@@ -108,9 +108,8 @@ def _perspective_faces(
 
 
 class Cubes(DrawGenerator):
-    def __init__(self):
-        super().__init__()
-
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
         self.width  = int(self.config.get('width',  1920))
         self.height = int(self.config.get('height', 1080))
         self.file_count = int(self.config.get("file_counts", {}).get("cubes", 6))
@@ -190,9 +189,6 @@ class Cubes(DrawGenerator):
         img_cy = self.height / 2
         max_dist = math.sqrt(img_cx**2 + img_cy**2) or 1
 
-        out_dir = os.path.join(self.config["paths"]["generators_in"], "cubes")
-        os.makedirs(out_dir, exist_ok=True)
-
         for i in range(self.file_count):
             color_mode = random.choice(self.color_modes)
             proj_mode  = random.choice(self.proj_modes)
@@ -240,7 +236,7 @@ class Cubes(DrawGenerator):
                                 color, proj_mode, vp)
                 placed_count += 1
 
-            filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}.jpeg")
+            filename = os.path.join(self.out_dir, f"{self.base_filename}_{i+1}.jpeg")
             try:
                 img.save(filename, quality=95)
                 self.log.debug(f"proj={proj_mode} color={color_mode} placed={placed_count}")

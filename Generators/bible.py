@@ -17,11 +17,9 @@ class Bible(Text):
         ("UkrainianPsalms", 150),
     ]
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
         self.input_base_dir = os.path.join(self.base_path, "Generators", "Data")
-        self.out_dir = os.path.join(self.config["paths"]["generators_in"], "bible")
-        os.makedirs(self.out_dir, exist_ok=True)
 
         self.file_count = self.config.get("file_counts", {}).get("bible", 10)
         self.log.debug(f"Bible: {self.file_count=}")

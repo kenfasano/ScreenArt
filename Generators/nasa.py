@@ -7,8 +7,8 @@ import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class Nasa(Source):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
         }
@@ -60,13 +60,10 @@ class Nasa(Source):
     def _download_image(self, img_url: str) -> bool:
         try:
             filename = os.path.basename(img_url.split("?")[0])
-            out_dir = os.path.join(self.config["paths"]["generators_in"], self.INPUT_SOURCE)
-            os.makedirs(out_dir, exist_ok=True)
-
             response = self.session.get(img_url, timeout=10)
             response.raise_for_status()
 
-            with open(os.path.join(out_dir, filename), "wb") as f:
+            with open(os.path.join(self.out_dir, filename), "wb") as f:
                 f.write(response.content)
             self.log.debug(f"Downloaded {img_url}")
             return True

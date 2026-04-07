@@ -6,8 +6,8 @@ import random
 import os
 
 class PeripheralDriftIllusion(DrawGenerator):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
         self.file_count = self.config.get("file_counts", {}).get("peripheraldriftillusion", 20)
         self.base_filename = "peripheral_drift"
 
@@ -95,9 +95,6 @@ class PeripheralDriftIllusion(DrawGenerator):
         return img
 
     def run(self, *args, **kwargs):
-        out_dir = os.path.join(self.config["paths"]["generators_in"], "opticalillusions")
-        os.makedirs(out_dir, exist_ok=True)
-
         for i in range(self.file_count):
             turns: int = 6 + random.randint(1,6)
             hue_offset: float = (i * 0.125 * random.randint(1,7)) % 1.0 
@@ -136,7 +133,7 @@ class PeripheralDriftIllusion(DrawGenerator):
                     )
 
             if img:
-                filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}.jpeg")
+                filename = os.path.join(self.out_dir, f"{self.base_filename}_{i+1}.jpeg")
                 try:
                     img.save(filename, quality=95)
                     self.log.debug(f"Saved Optical Illusion: {filename}")

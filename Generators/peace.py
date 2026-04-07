@@ -740,14 +740,11 @@ class Peace(DrawGenerator):
     WIDTH  = 1920
     HEIGHT = 1080
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
+
         self.file_count = self.config.get("file_counts", {}).get("peace", 4)
         self.num_words = random.randint(12, 108) 
-        self.out_dir: str = os.path.join(
-            self.config["paths"]["generators_in"], "peace"
-        )
-        os.makedirs(self.out_dir, exist_ok=True)
 
         self.log.debug("Peace: ensuring Noto fonts …")
         _ensure_fonts_cached(self.log)

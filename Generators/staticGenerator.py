@@ -10,8 +10,8 @@ class StaticGenerator(DrawGenerator):
     Base class for generators that copy pre-saved images from a
     static source directory into an output directory.
     """
-    def __init__(self):
-        super().__init__()
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
 
     @property
     @abstractmethod
@@ -39,11 +39,6 @@ class StaticGenerator(DrawGenerator):
 
     def run(self, *args, **kwargs) -> int:
         file_count = int(self.config.get("file_counts", {}).get(self.file_count_key, 1))
-
-        if os.path.exists(self.output_dir):
-            shutil.rmtree(self.output_dir)
-        os.makedirs(self.output_dir, exist_ok=True)
-
         files: list[str] = [
             f for f in os.listdir(self.input_dir)
             if f.lower().endswith((".jpeg", ".jpg", ".png"))

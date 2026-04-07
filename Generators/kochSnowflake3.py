@@ -10,8 +10,8 @@ from ..Transformers.LinearTransformers.kochSnowflakeTransformer import KochSnowf
 from ..Transformers.LinearTransformers.spiralTransformer import SpiralTransformer
 
 class KochSnowflake3(DrawGenerator):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
         
         self.width = int(self.config.get('width', 1920))
         self.height = int(self.config.get('height', 1080))
@@ -77,11 +77,6 @@ class KochSnowflake3(DrawGenerator):
         return result
 
     def run(self, *args, **kwargs):
-        output_dir = os.path.join(self.config["paths"]["generators_in"], "kochsnowflake")
-        if os.path.exists(output_dir):
-            shutil.rmtree(output_dir)
-        os.makedirs(output_dir, exist_ok=True)
-
         for i in range(self.file_count):
             num_transforms = random.randint(2, 4) 
             spiral_tightness = random.uniform(0.3, 1.2)
@@ -107,7 +102,7 @@ class KochSnowflake3(DrawGenerator):
 
             # --- USING NATIVE PIL img.save() ---
             filename_suffix = f"_{i+1}.jpeg" if self.file_count > 1 else ".jpeg"
-            filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
+            filename = os.path.join(self.output_dir, f"{self.base_filename}{filename_suffix}")
                 
             try:
                 Image.fromarray(img).save(filename, quality=95)

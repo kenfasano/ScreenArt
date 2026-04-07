@@ -28,7 +28,25 @@ from .Generators import (
     wiki 
 )
 
-# 2. Explicitly Import your Raster Transformers for the Pipeline
+# 1. GENERATOR REGISTRY (Map the string key directly to the Class)
+GENERATOR_REGISTRY = {
+    "bible": bible.Bible,
+    "bubbles": bubbles.Bubbles,
+    "cubes": cubes.Cubes,
+"goes": goes.GoesGenerator,
+    "lojong": lojong.Lojong,
+    "mandala_draw": mandala_draw.MandalaDraw,
+    "maps": maps.NasaMapGenerator,
+    "nasa": nasa.Nasa,
+    "peace": peace.Peace,
+    "peripheraldriftillusion": peripheral_drift_illusion.PeripheralDriftIllusion,
+    "static_favorites": staticFavorites.StaticFavorites,
+    "static_mandala": staticMandala.StaticMandala,
+    "wiki": wiki.Wiki,
+    # kochSnowflake and hilbert excluded — linear generators, not raster
+}
+
+# Explicitly Import your Raster Transformers for the Pipeline
 
 from .Transformers.transformer_dictionary import transformer_registry
 from .pipeline import ImageProcessingPipeline
@@ -38,42 +56,7 @@ class ScreenArtMain(ScreenArt):
         super().__init__("ScreenArt")
         random.seed(time.time())
 
-        gen_in = self.config["paths"]["generators_in"]
-
-        # 1. GENERATOR DIRECTORIES
-        self.generators: dict[str, str] = {
-            "bible":                  f"{gen_in}/bible",
-            "bubbles":                f"{gen_in}/bubbles",
-            "cubes":                  f"{gen_in}/cubes",
-            "goes":                   f"{gen_in}/goes",
-            "lojong":                 f"{gen_in}/lojong",
-            "mandala_draw":           f"{gen_in}/mandalas",
-            "maps":                   f"{gen_in}/maps",
-            "nasa":                   f"{gen_in}/nasa",
-            "peace"                  :f"{gen_in}/peace",
-            "peripheraldriftillusion":f"{gen_in}/opticalillusions",
-            "static_favorites":       f"{gen_in}/favorites",
-            "static_mandala":         f"{gen_in}/mandalas",
-            "wiki":                   f"{gen_in}/wiki",
-        }
-
-        # 2. GENERATOR REGISTRY (Map the string key directly to the Class)
-        self.generator_classes = {
-            "bible": bible.Bible,
-            "bubbles": bubbles.Bubbles,
-            "cubes": cubes.Cubes,
-            "goes": goes.GoesGenerator,
-            "lojong": lojong.Lojong,
-            "mandala_draw": mandala_draw.MandalaDraw,
-            "maps": maps.NasaMapGenerator,
-            "nasa": nasa.Nasa,
-            "peace": peace.Peace,
-            "peripheraldriftillusion": peripheral_drift_illusion.PeripheralDriftIllusion,
-            "static_favorites": staticFavorites.StaticFavorites,
-            "static_mandala": staticMandala.StaticMandala,
-            "wiki": wiki.Wiki,
-            # kochSnowflake and hilbert excluded — linear generators, not raster
-        }
+        self.generators, self.generator_classes = self._build_generators()
 
         # Pull requested transformers from screenArt.conf, default to colormap
         requested_transformers = self.config.get("transformers", ["colormap"])
@@ -89,6 +72,27 @@ class ScreenArtMain(ScreenArt):
         # Initialize the pipeline
         self.pipeline = ImageProcessingPipeline()
         self.generator_stats: dict[str, float] = {}
+
+    # A method that builds both dicts, skipping missing config entries
+    def _build_generators(self) -> tuple[dict[str, str], dict[str, type]]:
+        paths: dict[str, str] = {}
+        classes: dict[str, type] = {}
+
+        for name, cls in GENERATOR_REGISTRY.items():
+            config_key = f"{name}_out"
+            if config_key in self.config["paths"]:
+                path = self.config["paths"][config_key]
+                classes[name] = cls
+                # check that the subdirectory exists
+                if os.path.isdir(os.path.expanduser(path)):
+                    paths[name] = path
+                    classes[name] = cls
+                else:
+                    self.log.warning(f"{path} not found")
+            else:
+                self.log.warning(f"key {config_key} not found in conf")
+
+        return paths, classes
 
     def erase_image_dir(self, directory: str):
         for dirpath, _, filenames in os.walk(directory):
@@ -135,7 +139,7 @@ class ScreenArtMain(ScreenArt):
         GeneratorClass = self.generator_classes.get(key)
         if GeneratorClass:
             with self.timer() as t:
-                generator = GeneratorClass()
+                generator = GeneratorClass(self.generators[key])
                 generator.run() 
             self.generator_stats[generator.__class__.__name__] = t.elapsed
         else:

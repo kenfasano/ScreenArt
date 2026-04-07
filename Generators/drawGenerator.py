@@ -1,4 +1,5 @@
 import os
+import shutil
 import hashlib
 import requests
 from requests.adapters import HTTPAdapter
@@ -10,8 +11,9 @@ from PIL import Image
 from .generator import Generator
 
 class DrawGenerator(Generator):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
+
         self.cache_dir = self.config.get("paths", {}).get("cache_dir", os.path.join(self.base_path, "cache"))
         os.makedirs(self.cache_dir, exist_ok=True)
 

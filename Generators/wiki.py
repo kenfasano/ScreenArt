@@ -15,12 +15,10 @@ from .drawGenerator import DrawGenerator
 MAX_WORKERS = 10
 
 class Wiki(DrawGenerator):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
 
         self.file_count = int(self.config.get("file_counts", {}).get("wiki", 6))
-        self.out_dir = os.path.join(self.config["paths"]["generators_in"], "wiki")
-        os.makedirs(self.out_dir, exist_ok=True)
 
         self.api_url = "https://commons.wikimedia.org/w/api.php"
         self.headers = {

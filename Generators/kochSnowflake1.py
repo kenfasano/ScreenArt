@@ -12,9 +12,8 @@ class KochSnowflake1(DrawGenerator):
     """
     Generates Koch Snowflake fractal images with Spiral distortion and Psychedelic coloring.
     """
-    def __init__(self):
-        super().__init__()
-        
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
         self.width = int(self.config.get('width', 1920))
         self.height = int(self.config.get('height', 1080))
         self.file_count = int(self.config.get("file_counts", {}).get("kochSnowflake", 6))
@@ -85,11 +84,6 @@ class KochSnowflake1(DrawGenerator):
         return Image.fromarray(result_arr)
 
     def run(self, *args, **kwargs):
-        output_dir = os.path.join(self.config["paths"]["generators_in"], "kochsnowflake")
-        if os.path.exists(output_dir):
-            shutil.rmtree(output_dir)
-        os.makedirs(output_dir, exist_ok=True)
-
         for i in range(self.file_count):
             # 1. Randomize Settings specifically for KS1
             num_transforms = random.randint(4, 6) 
@@ -122,7 +116,7 @@ class KochSnowflake1(DrawGenerator):
 
             # 7. Save
             filename_suffix = f"_{i+1}.jpeg" if self.file_count > 1 else ".jpeg"
-            filename = os.path.join(output_dir, f"{self.base_filename}{filename_suffix}")
+            filename = os.path.join(self.out_dir, f"{self.base_filename}{filename_suffix}")
                 
             try:
                 img.save(filename, quality=95)

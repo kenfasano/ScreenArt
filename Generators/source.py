@@ -8,8 +8,8 @@ class Source(Generator):
     """
     Intermediate base class for generators that fetch data based on dates.
     """
-    def __init__(self):
-        super().__init__()
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
 
     def get_random_date(self, min_year: int) -> date:
         start_date = date(min_year, 1, 1)

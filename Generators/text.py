@@ -2,6 +2,7 @@
 from PIL import Image, ImageDraw, ImageFont
 from PIL.ImageFont import FreeTypeFont, ImageFont as BitmapFont
 import os
+import shutil
 import json
 import hashlib
 import random
@@ -159,8 +160,9 @@ class Text(DrawGenerator):
     Provides canvas creation, dynamic font scaling, and text layout.
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
+
         self.width = self.config.get("canvas_width", 1920)
         self.height = self.config.get("canvas_height", 1080)
         self.border_size = self.config.get("border_size", 15)

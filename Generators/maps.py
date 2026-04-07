@@ -54,8 +54,9 @@ LAYERS = {
 MAX_TILE_WORKERS = 9  # grid_size² = 3×3
 
 class NasaMapGenerator(DrawGenerator):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
+
         self.cache_dir = os.path.expanduser(os.path.join("~", "Scripts", "ScreenArt", "Generators", "maps_cache"))
 
         self.width = int(self.config.get("width", 1920))
@@ -140,9 +141,6 @@ class NasaMapGenerator(DrawGenerator):
         return stitched_map.resize((self.width, self.height), Image.Resampling.LANCZOS)
 
     def run(self, *args, **kwargs) -> None:
-        out_dir = os.path.join(self.config["paths"]["generators_in"], "maps")
-        os.makedirs(out_dir, exist_ok=True)
-
         layer_items = list(LAYERS.items())
 
         for i in range(self.file_count):
@@ -161,7 +159,7 @@ class NasaMapGenerator(DrawGenerator):
 
             safe_layer_name = layer_name.replace(" ", "_").replace("(", "").replace(")", "")
             safe_city_name = city_name.split(",")[0].replace(" ", "_")
-            filename = os.path.join(out_dir, f"{self.base_filename}_{i+1}_{safe_city_name}_{safe_layer_name}.jpeg")
+            filename = os.path.join(self.out_dir, f"{self.base_filename}_{i+1}_{safe_city_name}_{safe_layer_name}.jpeg")
 
             try:
                 img.save(filename, quality=95)

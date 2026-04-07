@@ -25,8 +25,8 @@ PRODUCTS = {
 MAX_WORKERS = 6  # max is len(PRODUCTS)
 
 class GoesGenerator(DrawGenerator):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, out_dir: str):
+        super().__init__(out_dir)
 
         self.width = int(self.config.get("width", 1200))
         self.height = int(self.config.get("height", 1200))
