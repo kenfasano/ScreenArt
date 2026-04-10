@@ -13,6 +13,7 @@ from tqdm import tqdm
 
 # 1. Import your Generators
 from .Generators import (
+    asciiScreenArt,
     bible,
     bubbles,
     cubes,
@@ -25,15 +26,16 @@ from .Generators import (
     peripheral_drift_illusion,
     staticFavorites,
     staticMandala,
-    wiki 
+    wiki
 )
 
 # 1. GENERATOR REGISTRY (Map the string key directly to the Class)
 GENERATOR_REGISTRY = {
+    "ascii_screen_art": asciiScreenArt.AsciiScreenArt,
     "bible": bible.Bible,
     "bubbles": bubbles.Bubbles,
     "cubes": cubes.Cubes,
-"goes": goes.GoesGenerator,
+    "goes": goes.GoesGenerator,
     "lojong": lojong.Lojong,
     "mandala_draw": mandala_draw.MandalaDraw,
     "maps": maps.NasaMapGenerator,

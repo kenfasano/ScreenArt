@@ -12,7 +12,7 @@ Filename formats supported:
 import re
 import csv
 from pathlib import Path
-from .source_type_map import SOURCE_TYPE_MAP
+from source_type_map import SOURCE_TYPE_MAP
 
 def infer_source_type(generator: str) -> str:
     g = generator.lower()
