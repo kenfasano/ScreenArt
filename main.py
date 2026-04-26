@@ -225,6 +225,17 @@ class ScreenArtMain(ScreenArt):
 
         main_msg = f"{ms_value:02d}s@{formatted_datetime} {mark}\n{accepted_rejected}"
         output_lines = [main_msg]
+
+        transformed_dir = os.path.expanduser("~/Scripts/ScreenArt/Images/TransformedImages")
+        dir_bytes = sum(f.stat().st_size for f in Path(transformed_dir).rglob("*") if f.is_file())
+        if dir_bytes >= 1 << 30:
+            dir_size_str = f"{dir_bytes / (1 << 30):.2f} GB"
+        elif dir_bytes >= 1 << 20:
+            dir_size_str = f"{dir_bytes / (1 << 20):.2f} MB"
+        else:
+            dir_size_str = f"{dir_bytes / (1 << 10):.2f} KB"
+        output_lines.append(f"TransformedImages: {dir_size_str}")
+
         output_lines.append("---") # Optional separator between sections
 
         # 1. Process and append the Generator Stats
@@ -237,7 +248,7 @@ class ScreenArtMain(ScreenArt):
         if pipeline_stats:
             # Process the pipeline transformer stats
             output_lines.extend(self.format_stats(pipeline_stats, strip_word="Transformer")) #type: ignore
-      
+
         final_output = "\n".join(output_lines)
         
         results_file = os.path.join(self.config["paths"]["results_file_dir"], "results.txt")
