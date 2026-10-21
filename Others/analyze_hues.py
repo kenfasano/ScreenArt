@@ -20,6 +20,10 @@ VALUE_THRESHOLD: float = 0.1
 # --- Removed hardcoded paths ---
 
 def write(f: TextIO, s: str): 
+<<<<<<< HEAD
+=======
+    print(s)
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
     f.write(f"{s}\n")
 
 def process_chunk(rgb_chunk: np.ndarray, num_buckets: int) -> np.ndarray:
@@ -61,6 +65,10 @@ def process_chunk(rgb_chunk: np.ndarray, num_buckets: int) -> np.ndarray:
     except Exception as e:
         # Cannot write to file 'f' from a child process.
         # Print to stderr instead.
+<<<<<<< HEAD
+=======
+        print(f"Error processing chunk: {e}", file=sys.stderr)
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
         return np.zeros(num_buckets, dtype=np.int64)
 
 # --- Updated function signature to accept 'f' ---

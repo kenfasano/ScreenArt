@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 from logging import log
 
+=======
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
 from .source import Source
 from bs4 import BeautifulSoup
 import requests
@@ -53,8 +56,11 @@ class Nasa(Source):
             return None
 
         img_url = f"https://apod.nasa.gov/apod/{img_tag['src']}"
+<<<<<<< HEAD
         if str(img_tag) in 'EarthPlanets900':
             self.log.info('Earth CHART encountered!')
+=======
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
         if "svg" in img_url:
             self.log.debug(f"Skipping SVG: {img_url}")
             return None

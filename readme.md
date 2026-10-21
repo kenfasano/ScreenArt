@@ -51,7 +51,11 @@ All generators write JPEG files to `generators_in/<name>/`.
 | `maps.py` | `Maps` | Map tile imagery |
 | `lojong.py` | `Lojong` | Text: Tibetan lojong slogans |
 | `bible.py` | `Bible` | Text: Psalms / Bible verses |
+<<<<<<< HEAD
 | `numinous.py` | `Numinous` | Text: "peace" in ~200 languages, themed color palettes |
+=======
+| `peace.py` | `Peace` | Text: "peace" in ~200 languages, themed color palettes |
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
 | `bubbles.py` | `Bubbles` | Procedural: Numba JIT Lambert/Blinn-Phong sphere shading |
 | `cubes.py` | `Cubes` | Procedural: isometric and perspective 3D projection |
 | `kochSnowflake.py` | `KochSnowflake` | Procedural: Koch snowflake fractal |
@@ -114,7 +118,11 @@ Grade thresholds: A ≥ 0.65, B ≥ 0.50, C ≥ 0.35, F < 0.35
 `screenArt.conf` → `"transformer_weights"` section:
 - `"enabled": true/false` — set false for uniform baseline run
 - `"default"` — base weights for all source types
+<<<<<<< HEAD
 - Per-source overrides: `"lojong"`, `"psalms"`, `"bubbles"`, `"cubes"`, `"peripheral_drift"`, `"numinous"`, `"static_mandala"`, `"nasa_earth"`, `"noaa_goes"`, `"photo"`
+=======
+- Per-source overrides: `"lojong"`, `"psalms"`, `"bubbles"`, `"cubes"`, `"peripheral_drift"`, `"peace"`, `"static_mandala"`, `"nasa_earth"`, `"noaa_goes"`, `"photo"`
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
 - `"#comment"` keys are ignored by `_get_transformer_weights()` (filter: `not k.startswith('#')`)
 - Source type is derived from the generator output folder name via `_SOURCE_TYPE_MAP` in `pipeline.py`
 
@@ -306,7 +314,11 @@ SwiftUI macOS screensaver-like app displaying ScreenArt output across all connec
             "WatercolorTransformer": 1.17,
             "WheelTransformer": 0.89
         },
+<<<<<<< HEAD
         "numinous": {
+=======
+        "peace": {
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
             "#comment": "n=104. Kaleidoscope/Water/Fractal/Chromatic lead; Thermal/Glitch/Fisheye/Voronoi suppress.",
             "ChromaticAberrationTransformer": 1.1,
             "ColormapTransformer": 1.08,

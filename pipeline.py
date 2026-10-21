@@ -9,8 +9,11 @@ from .source_type_map import SOURCE_TYPE_MAP
 from .screenArt import ScreenArt
 from .Transformers.RasterTransformers.rasterTransformer import RasterTransformer
 
+<<<<<<< HEAD
 MIN_TRANSFORMERS = 6
 
+=======
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
 def _source_type_from_dir(source_dir: str) -> str:
     """Derive source type key from the last component of the source directory."""
     folder = os.path.basename(os.path.normpath(source_dir)).lower()
@@ -21,9 +24,15 @@ class ImageProcessingPipeline(ScreenArt):
     def __init__(self):
         super().__init__("ScreenArt")
         self.out_dir    = os.path.expanduser(self.config["paths"]["transformers_out"])
+<<<<<<< HEAD
         #self.reject_dir = os.path.expanduser(self.config["paths"]["rejected_out"])
         os.makedirs(self.out_dir,    exist_ok=True)
         #os.makedirs(self.reject_dir, exist_ok=True)
+=======
+        self.reject_dir = os.path.expanduser(self.config["paths"]["rejected_out"])
+        os.makedirs(self.out_dir,    exist_ok=True)
+        os.makedirs(self.reject_dir, exist_ok=True)
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
         self.accepted = 0
         self.rejected = 0
         self.stats: defaultdict[str, list[float]] = defaultdict(list)
@@ -61,7 +70,11 @@ class ImageProcessingPipeline(ScreenArt):
         Sample 1–4 transformers using per-source weights from config.
         Falls back to uniform random.sample if weights are disabled or missing.
         """
+<<<<<<< HEAD
         n = random.randint(1, min(MIN_TRANSFORMERS, len(transformers)))
+=======
+        n = random.randint(1, min(4, len(transformers)))
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
         weights = self._get_transformer_weights(source_type)
 
         if not weights:
@@ -94,7 +107,11 @@ class ImageProcessingPipeline(ScreenArt):
 
         return selected
 
+<<<<<<< HEAD
     def run(self, source_dir: str, transformers: list[RasterTransformer]) -> int:
+=======
+    def run(self, source_dir: str, transformers: list[RasterTransformer]):
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
         image_files = [f for f in os.listdir(source_dir)
                        if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
 
@@ -125,7 +142,11 @@ class ImageProcessingPipeline(ScreenArt):
                 except Exception as e:
                     self.log.error(f"{t_name}: {e}")
                     continue
+<<<<<<< HEAD
                 self.stats[t_name].append(t.to_millis())
+=======
+                self.stats[t_name].append(t.elapsed)
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
 
             img_out = np.clip(img_f32 * 255.0, 0, 255).astype(np.uint8)
             try:
@@ -226,8 +247,12 @@ class ImageProcessingPipeline(ScreenArt):
             final_path = os.path.join(self.out_dir, graded_filename)
             self.accepted += 1
         else:
+<<<<<<< HEAD
             # final_path = os.path.join(self.reject_dir, graded_filename)
             final_path = None
+=======
+            final_path = os.path.join(self.reject_dir, graded_filename)
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
             self.rejected += 1
 
         if ext.lower() in ('.jpg', '.jpeg'):
@@ -235,12 +260,20 @@ class ImageProcessingPipeline(ScreenArt):
         else:
             encode_params = [cv2.IMWRITE_PNG_COMPRESSION, 3]
 
+<<<<<<< HEAD
         if final_path:
             cv2.imwrite(final_path, img_np, encode_params)
             self.log.info(f"[Grade: {grade}] Saved to: {final_path}")
 
     def get_accepted_rejected(self) -> str:
         return f"Accepted: {self.accepted} Rejected: {self.rejected}"
+=======
+        cv2.imwrite(final_path, img_np, encode_params)
+        self.log.info(f"[Grade: {grade}] Saved to: {final_path}")
+
+    def get_accepted_rejected(self) -> str:
+        return f"Accepted: {self.accepted}\nRejected: {self.rejected}"
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
 
     def get_performance_stats(self) -> dict[str, list[float]]:
         return self.stats

@@ -12,9 +12,17 @@ venv/
 env/
 
 # Media
+<<<<<<< HEAD
 Images/
 Generators/maps_cache/
 
 # Logs
 logs/
 .aider*
+=======
+Images
+Generators/maps_cache/
+
+# Logs
+.logs
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3

@@ -54,7 +54,11 @@ class Wiki(DrawGenerator):
 
         keywords = self.config.get("wiki", {}).get("keywords", [])
 
+<<<<<<< HEAD
         if keywords: # and random.random() < 0.5:
+=======
+        if keywords and random.random() < 0.5:
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
             query = random.choice(keywords)
             self.log.info(f"Wiki keyword query: {query}")
             params.update({

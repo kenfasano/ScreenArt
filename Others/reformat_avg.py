@@ -55,6 +55,10 @@ def write_results_format(total: int | None, generators: dict[str, int], out_path
         for name, ms in generators.items():
             f.write(f"{name:<27} ->  {ms}ms\n")
         f.write("---\n")
+<<<<<<< HEAD
+=======
+    print(f"Written: {out_path}")
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
 
 
 def main() -> None:
@@ -64,6 +68,10 @@ def main() -> None:
         path = sys.argv[1]
 
     if not os.path.exists(path):
+<<<<<<< HEAD
+=======
+        print(f"File not found: {path}")
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
         sys.exit(1)
 
     total, generators = parse_three_value_file(path)

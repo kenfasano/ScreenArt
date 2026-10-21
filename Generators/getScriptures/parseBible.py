@@ -11,9 +11,18 @@ class ParseBible:
 
         try:
             os.chdir(expanded_path)
+<<<<<<< HEAD
         except FileNotFoundError:
             exit(1)
         except Exception as e:
+=======
+            print(f"Successfully changed directory to: {os.getcwd()}")
+        except FileNotFoundError:
+            print(f"Error: The directory '{expanded_path}' was not found.")
+            exit(1)
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
             exit(1)
 
     @abstractmethod
@@ -21,6 +30,10 @@ class ParseBible:
         ...
 
     def write_line(self, f: TextIO, line: str):
+<<<<<<< HEAD
+=======
+        print(line)
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
         f.write(f"{line}\n")
 
     def write(self, results: list[str], book: str, chapter: int):
@@ -46,3 +59,7 @@ class ParseBible:
                     results = self.parse(contents, chapter)
                     self.write(results, book, chapter)
             except FileNotFoundError:
+<<<<<<< HEAD
+=======
+                print(f"Error: '{book}_{chapter}.html' not found.")
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3

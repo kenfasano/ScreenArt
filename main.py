@@ -1,5 +1,6 @@
 from .Transformers.RasterTransformers.rasterTransformer import RasterTransformer
 from .screenArt import ScreenArt
+<<<<<<< HEAD
 import argparse
 import os
 from pathlib import Path
@@ -11,12 +12,24 @@ import random
 import shutil
 import subprocess
 import logging
+=======
+import argparse 
+import os
+from pathlib import Path
+import sys
+from multiprocessing import freeze_support 
+import glob
+import random
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
 import time
 from datetime import datetime
 from tqdm import tqdm
 
+<<<<<<< HEAD
 LOGGER = logging.getLogger(__name__)
 
+=======
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
 # 1. Import your Generators
 from .Generators import (
     asciiScreenArt,
@@ -28,7 +41,11 @@ from .Generators import (
     mandala_draw,
     maps,
     nasa,
+<<<<<<< HEAD
     numinous,
+=======
+    peace,
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
     peripheral_drift_illusion,
     staticFavorites,
     staticMandala,
@@ -38,6 +55,7 @@ from .Generators import (
 # 1. GENERATOR REGISTRY (Map the string key directly to the Class)
 GENERATOR_REGISTRY = {
     "ascii_screen_art": asciiScreenArt.AsciiScreenArt,
+<<<<<<< HEAD
 #    "bible": bible.Bible,
     "bubbles": bubbles.Bubbles,
     "cubes": cubes.Cubes,
@@ -49,6 +67,19 @@ GENERATOR_REGISTRY = {
     "numinous": numinous.Numinous,
     "peripheraldriftillusion": peripheral_drift_illusion.PeripheralDriftIllusion,
 #    "static_favorites": staticFavorites.StaticFavorites,
+=======
+    "bible": bible.Bible,
+    "bubbles": bubbles.Bubbles,
+    "cubes": cubes.Cubes,
+    "goes": goes.GoesGenerator,
+    "lojong": lojong.Lojong,
+    "mandala_draw": mandala_draw.MandalaDraw,
+    "maps": maps.NasaMapGenerator,
+    "nasa": nasa.Nasa,
+    "peace": peace.Peace,
+    "peripheraldriftillusion": peripheral_drift_illusion.PeripheralDriftIllusion,
+    "static_favorites": staticFavorites.StaticFavorites,
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
     "static_mandala": staticMandala.StaticMandala,
     "wiki": wiki.Wiki,
     # kochSnowflake and hilbert excluded — linear generators, not raster
@@ -63,7 +94,10 @@ class ScreenArtMain(ScreenArt):
     def __init__(self):
         super().__init__("ScreenArt")
         random.seed(time.time())
+<<<<<<< HEAD
         self.log = getattr(self, "log", LOGGER)
+=======
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
 
         self.generators, self.generator_classes = self._build_generators()
 
@@ -117,7 +151,10 @@ class ScreenArtMain(ScreenArt):
         image_files = glob.glob(search_path)
         current_count = len(image_files)
 
+<<<<<<< HEAD
         self.log.info(f"trim_images: {search_path=}, {current_count=}")
+=======
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
         if current_count >= max_images and max_images > 0:
             trim_images_count = current_count - max_images
             self.log.debug(f"🚨 Trimming {trim_images_count} oldest files from {directory_path}.")
@@ -130,7 +167,11 @@ class ScreenArtMain(ScreenArt):
                     deleted_count += 1
                 except OSError as e:
                     self.log.error(f"Error deleting {file_path}: {e}")
+<<<<<<< HEAD
             self.log.info(f"✅ Deleted {deleted_count} files.")
+=======
+            self.log.debug(f"✅ Deleted {deleted_count} files.")
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
 
     def _get_keys_to_process(self) -> list[str]:
         include_list = self.config.get("include", None)
@@ -144,6 +185,7 @@ class ScreenArtMain(ScreenArt):
 
         return list(self.generators.keys())
 
+<<<<<<< HEAD
     def run_generator(self, key: str) -> None:
         """Instantiate and run one registered generator."""
         generator_class = self.generator_classes.get(key)
@@ -233,11 +275,50 @@ class ScreenArtMain(ScreenArt):
             raise
 
     def format_generator_stats(self, stats: dict[str, list[float] | float], strip_word: str = "") -> list[str]:
+=======
+    def run_generator(self, key: str):
+        """Dynamically instantiates and runs a generator from the registry."""
+        GeneratorClass = self.generator_classes.get(key)
+        if GeneratorClass:
+            with self.timer() as t:
+                generator = GeneratorClass(self.generators[key])
+                generator.run() 
+            self.generator_stats[generator.__class__.__name__] = t.elapsed
+        else:
+            self.log.warning(f"Generator class for key '{key}' not mapped in registry.")
+
+    def run(self) -> str:
+        elapsed = None
+        with self.timer("Total", "s") as t:
+            self.trim_images(self.config["paths"]["transformers_out"], 50)
+            self.trim_images(self.config["paths"]["rejected_out"], 50)
+            self.trim_images(self.config["paths"]["wiki_out"], 10)
+
+            keys_to_process = self._get_keys_to_process()
+            
+            # Phase 1: Run Generators
+
+            self.generator_stats: dict[str, float] = {}
+            for key in (_ := tqdm(keys_to_process, desc="Generators  ", unit="gen", ncols=80)):
+                self.erase_image_dir(self.generators[key])
+                self.run_generator(key)
+
+            # Phase 2: Run Transformers
+            for key in (_ := tqdm(keys_to_process, desc="Transformers", unit="tra", ncols=80)):
+                self.pipeline.run(self.generators[key], transformers=self.active_transformers)
+
+        elapsed = str(t.elapsed)
+        self.log.debug("----------------------------")
+        return elapsed
+
+    def format_stats(self, stats: dict[str, list[float] | float], strip_word: str = "") -> list[str]:
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
         formatted_lines = []
         
         if not stats:
             return formatted_lines
 
+<<<<<<< HEAD
         float_stats: dict[str, float] = {k: v for k, v in stats.items() if isinstance(v, (int, float))}
 
         sorted_stats = sorted(
@@ -245,11 +326,29 @@ class ScreenArtMain(ScreenArt):
             key=lambda item: item[1],
             reverse=True
         )
+=======
+        list_stats: dict[str, list[float]] = {k: v for k, v in stats.items() if isinstance(v, list)}
+        float_stats: dict[str, float] = {k: v for k, v in stats.items() if isinstance(v, (int, float))}
+
+        if list_stats:
+            sorted_stats = sorted(
+                list_stats.items(),
+                key=lambda item: sum(item[1]) / len(item[1]) if item[1] else 0,
+                reverse=True
+            )
+        else:
+            sorted_stats = sorted(
+                float_stats.items(),
+                key=lambda item: item[1],
+                reverse=True
+            )
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
 
         for name, times in sorted_stats:
             if not times:
                 continue
             
+<<<<<<< HEAD
             name = name.strip()
             # Calculate the value first
             single_time = humanize.intcomma(round(times, 0))                      #type: ignore
@@ -257,11 +356,30 @@ class ScreenArtMain(ScreenArt):
             
             # Then format it with alignment
             formatted_times = f"{name:<25} {single_time_str}"
+=======
+            if list_stats:
+                min_time = round(min(times)) #type: ignore
+                max_time = round(max(times)) #type: ignore
+                avg_time = round(sum(times) / len(times))  #type: ignore
+                self.log.info(name)
+                formatted_times = (
+                    f"{name:32s} -> "
+                    f"Min: {min_time:5d}ms | "
+                    f"Avg: {avg_time:5d}ms | "
+                    f"Max: {max_time:5d}ms"
+                )
+            else:
+                formatted_times = (
+                    f"{name:26s} -> "
+                    f"{round(times):5d}ms" #type: ignore     
+                )
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
 
             formatted_lines.append(formatted_times)
 
         return formatted_lines
 
+<<<<<<< HEAD
     def prepare_pipeline_stats(self, data: dict[str, list[int]]) -> dict[str, int]:
         summed_data = {k: sum(v) for k, v in data.items()}
         top_four = dict(sorted(summed_data.items(), key=lambda item: item[1], reverse=True)[:4])
@@ -285,19 +403,38 @@ class ScreenArtMain(ScreenArt):
             dir_bytes = 0
             file_count = 0
         
+=======
+    def write_outcome(self, elapsed_time: str, ok: bool, accepted_rejected: str, pipeline_stats: dict[str, list[float]] | None):
+        formatted_datetime = datetime.now().strftime('%H:%M')
+        mark = "✓" if ok else "❌"
+        ms_value = int(float(elapsed_time))
+
+        main_msg = f"{ms_value:02d}s@{formatted_datetime} {mark}\n{accepted_rejected}"
+        output_lines = [main_msg]
+
+        transformed_dir = os.path.expanduser("~/Scripts/ScreenArt/Images/TransformedImages")
+        dir_bytes = sum(f.stat().st_size for f in Path(transformed_dir).rglob("*") if f.is_file())
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
         if dir_bytes >= 1 << 30:
             dir_size_str = f"{dir_bytes / (1 << 30):.2f} GB"
         elif dir_bytes >= 1 << 20:
             dir_size_str = f"{dir_bytes / (1 << 20):.2f} MB"
         else:
             dir_size_str = f"{dir_bytes / (1 << 10):.2f} KB"
+<<<<<<< HEAD
             output_lines.append(f"Images: {dir_size_str} ({file_count})") 
             
         output_lines.append("") # Optional separator between sections
+=======
+        output_lines.append(f"TransformedImages: {dir_size_str}")
+
+        output_lines.append("---") # Optional separator between sections
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
 
         # 1. Process and append the Generator Stats
         if self.generator_stats:
             # Use extend() to add the returned list of strings to our main output
+<<<<<<< HEAD
             output_lines.extend(self.format_generator_stats(self.generator_stats, strip_word="Generator")) #type: ignore
             output_lines.append("") # Optional separator between sections
 
@@ -310,6 +447,15 @@ class ScreenArtMain(ScreenArt):
                 stats_list.append(f"{key:<25} {humanize.intcomma(value):>12}ms")
 
             output_lines.extend(stats_list)
+=======
+            output_lines.extend(self.format_stats(self.generator_stats, strip_word="Generator"))
+            output_lines.append("---") # Optional separator between sections
+
+        # 2. Process and append the Pipeline Stats
+        if pipeline_stats:
+            # Process the pipeline transformer stats
+            output_lines.extend(self.format_stats(pipeline_stats, strip_word="Transformer")) #type: ignore
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
 
         final_output = "\n".join(output_lines)
         
@@ -331,6 +477,7 @@ class ScreenArtMain(ScreenArt):
             panel1_lines = output_lines
             panel2_lines = []
 
+<<<<<<< HEAD
     def run_files(self, file_paths: list[str], count: int = 1) -> int:
         """Transform explicit image files, bypassing all generators.
 
@@ -510,3 +657,77 @@ def run_main() -> int:
 if __name__ == "__main__":
     freeze_support()
     sys.exit(run_main())
+=======
+        os.system("clear")
+        print("\n".join(panel1_lines))
+
+        if panel2_lines:
+            time.sleep(12)
+            os.system("clear")
+            print("\n".join(panel2_lines))
+
+    def run_files(self, file_paths: list[str], count: int = 1) -> str:
+        """
+        Transform a list of explicit file paths, bypassing all generators.
+        Each file is transformed `count` times with independently sampled
+        transformer sets, producing up to len(file_paths) * count outputs.
+        """
+        import shutil, tempfile
+
+        # Validate and resolve paths
+        valid = []
+        for p in file_paths:
+            resolved = Path(p).expanduser().resolve()
+            if resolved.is_file() and resolved.suffix.lower() in ('.jpg', '.jpeg', '.png'):
+                valid.append(resolved)
+            else:
+                self.log.warning(f"Skipping '{p}': not a valid image file.")
+
+        if not valid:
+            self.log.error("No valid image files provided to -f/--files.")
+            return "0"
+
+        with self.timer("Total", "s") as t:
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                # Copy each file into the temp dir `count` times with unique names
+                for src in valid:
+                    for i in range(count):
+                        self.log.info(f"{src} #{i}")
+                        stem = src.stem if count == 1 else f"{src.stem}_{i+1}"
+                        dst = Path(tmp_dir) / f"{stem}{src.suffix}"
+                        shutil.copy2(src, dst)
+
+                self.log.info(f"run_files: {len(valid)} file(s) × {count} = {len(valid)*count} inputs → {tmp_dir}")
+                self.pipeline.run(tmp_dir, transformers=self.active_transformers)
+
+        return str(t.elapsed)
+
+def run_main():
+    parser = argparse.ArgumentParser(description="Run the image processing and transformation pipeline.")
+    parser.add_argument('-c', '--config', type=str, help='Override the transformation file specified in the config.')
+    parser.add_argument('-t', '--test', type=str, help='Path to a CSV file for test mode.')
+    parser.add_argument('-f', '--files', type=str, nargs='+', help='One or more image file paths to transform directly, bypassing generators.')
+    parser.add_argument('-n', '--count', type=int, default=1, help='Number of transformed outputs to produce per input file (default: 1).')
+    args, _ = parser.parse_known_args()
+
+    s = ScreenArtMain()
+    try:
+        if args.files:
+            elapsed = s.run_files(args.files, args.count) or ""
+        else:
+            elapsed = s.run() or ""
+        accepted_rejected = s.pipeline.get_accepted_rejected()
+        pipeline_stats = s.pipeline.get_performance_stats()
+        s.write_outcome(elapsed, True, accepted_rejected, pipeline_stats)
+        sys.exit(0)
+    except Exception as e:
+        import traceback
+        s.log.error(f"An error occurred during run: {e}")
+        s.log.error(traceback.format_exc())
+        s.write_outcome("0.0", False, "", None)
+        sys.exit(1)
+
+if __name__ == "__main__":
+    freeze_support() 
+    run_main()
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3

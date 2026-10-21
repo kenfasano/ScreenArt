@@ -119,8 +119,20 @@ tib_data = [
   {"point": 7, "category": "Guidelines (Precepts of Mind Training)", "slogan_id": "7.13", "text": "གཞན་དོན་དུ་སེམས་བསྒོམ།"}
 ]
 
+<<<<<<< HEAD
 with open(eng_path, 'w', encoding='utf-8') as f:
     json.dump(eng_data, f, ensure_ascii=False, indent=2)
 
 with open(tib_path, 'w', encoding='utf-8') as f:
     json.dump(tib_data, f, ensure_ascii=False, indent=2)
+=======
+print(f"Restoring {eng_path}...")
+with open(eng_path, 'w', encoding='utf-8') as f:
+    json.dump(eng_data, f, ensure_ascii=False, indent=2)
+print("Success.")
+
+print(f"Restoring {tib_path}...")
+with open(tib_path, 'w', encoding='utf-8') as f:
+    json.dump(tib_data, f, ensure_ascii=False, indent=2)
+print("Success.")
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3

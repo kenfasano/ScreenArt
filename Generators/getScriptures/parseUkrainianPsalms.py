@@ -39,4 +39,10 @@ class ParseUkrainianPsalms(ParseBible):
         return results
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     ParseUkrainianPsalms().run(book="psalm", num_chapters=150)
+=======
+    print("Starting main execution.") # <-- NEW PRINT
+    ParseUkrainianPsalms().run(book="psalm", num_chapters=150)
+    print("Finished main execution.") # <-- NEW PRINT
+>>>>>>> 13cbfdb469bfedc70094c84f240b666a122666e3
