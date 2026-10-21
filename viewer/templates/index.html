@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScreenArt</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+  <h1>Screen<span>Art</span></h1>
+</header>
+<main id="grid">
+{% for f in files %}
+  <div class="tile{% if f in hearted %} hearted{% endif %}" data-file="{{ f }}">
+    <img loading="lazy" src="{{ url_for('serve_image', filename=f) }}" alt="">
+    <svg class="heart-badge" viewBox="0 0 24 24" fill="#ff5577" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 21s-7-4.5-9.5-9C.5 8 3 4 7 4c2 0 3.5 1 5 3 1.5-2 3-3 5-3 4 0 6.5 4 4.5 8C19 16.5 12 21 12 21z"/>
+    </svg>
+  </div>
+{% endfor %}
+</main>
+
+<div id="lightbox">
+  <img id="lb-img" src="" alt="">
+  <div class="filename" id="lb-filename"></div>
+  <div class="controls">
+    <button id="lb-close">Close</button>
+    <button class="heart-btn" id="lb-heart" aria-label="Favorite">
+      <svg id="lb-heart-svg" viewBox="0 0 24 24" fill="none" stroke="#ff5577" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 21s-7-4.5-9.5-9C.5 8 3 4 7 4c2 0 3.5 1 5 3 1.5-2 3-3 5-3 4 0 6.5 4 4.5 8C19 16.5 12 21 12 21z"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<footer>{{ count }} images</footer>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

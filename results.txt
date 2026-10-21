@@ -1,0 +1,18 @@
+12,801ms@12:20 ✓	Accepted: 18 Rejected: 2
+
+Nasa                           1,557.0ms
+Numinous                       1,334.0ms
+Wiki                           1,294.0ms
+AsciiScreenArt                   983.0ms
+GoesGenerator                    540.0ms
+Bubbles                          316.0ms
+NasaMapGenerator                  64.0ms
+MandalaDraw                       57.0ms
+Cubes                             42.0ms
+PeripheralDriftIllusion           30.0ms
+StaticMandala                      7.0ms
+
+VoronoiTransformer               1,749ms
+WheelTransformer                   715ms
+MeltMorphTransformer               512ms
+FlipWilsonTransformer              465ms

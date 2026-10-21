@@ -1,0 +1,20 @@
+# Mac system files
+.DS_Store
+
+# Python build/runtime files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments (adjust name if yours is different)
+.venv/
+venv/
+env/
+
+# Media
+Images/
+Generators/maps_cache/
+
+# Logs
+logs/
+.aider*

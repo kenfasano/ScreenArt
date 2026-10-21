@@ -1,0 +1,61 @@
+import numpy as np
+import random
+from .rasterTransformer import RasterTransformer
+
+DEFAULT_MELT_INTENSITY = 0.5
+
+class MeltMorphTransformer(RasterTransformer):
+    """
+    Applies a melt effect to an image, reminiscent of Salvador Dali's artwork.
+    Uses vectorized operations to morph the input image.
+    """
+    def __init__(self):
+        super().__init__()
+
+    def run(self, img_np: np.ndarray, *args, **kwargs) -> np.ndarray:
+        np.random.seed()
+        
+        # Convert to grayscale to determine luminosity
+        if img_np.ndim == 3:
+            grayscale_np = np.dot(img_np[...,:3], [0.299, 0.587, 0.114]).astype(np.float32)
+        else:
+            grayscale_np = img_np.astype(np.float32)
+
+        height, width = img_np.shape[:2]
+
+        t_config = self.config.get("meltmorphtransformer", {})
+
+        # --- Parameter Handling ---
+        self.melt_intensity = t_config.get("melt_intensity")
+        if not isinstance(self.melt_intensity, (int, float)):
+            self.melt_intensity = random.uniform(0.15, 0.55)
+
+        # Clamp the intensity to the valid range [0, 1]
+        self.melt_intensity = max(0.0, min(1.0, self.melt_intensity))
+        
+        # --- POPULATE METADATA ---
+        self.metadata_dictionary["intensity"] = round(self.melt_intensity, 2)
+        
+        # Calculate the melt shift for all pixels at once based on luminosity
+        shifts = (self.melt_intensity * (1 - grayscale_np / 255.0) * height * 0.1).astype(int)
+
+        # Generate a random vertical offset at reduced resolution and upsample.
+        # The jitter range is only ±5px, so per-pixel uniqueness has no visible benefit.
+        DOWNSAMPLE = 8
+        small_h = max(1, -(-height // DOWNSAMPLE))  # ceiling division
+        small_w = max(1, -(-width // DOWNSAMPLE))   # ceiling division
+        random_offset = np.repeat(
+            np.repeat(np.random.randint(-5, 6, size=(small_h, small_w)), DOWNSAMPLE, axis=0),
+            DOWNSAMPLE, axis=1
+        )[:height, :width]
+
+        # Create coordinate arrays for vectorized indexing
+        y_coords, x_coords = np.meshgrid(np.arange(height), np.arange(width), indexing='ij')
+
+        # Calculate the new y-coordinates for all pixels
+        new_y_coords = np.clip(y_coords - shifts + random_offset, 0, height - 1)
+        
+        # Use advanced indexing to create the final warped image
+        output_np = img_np[new_y_coords, x_coords]
+
+        return output_np.astype(np.float32)  # ensure pipeline contract: float32 [0,1]

@@ -1,0 +1,248 @@
+[
+  {
+    "point": 1,
+    "category": "The Preliminaries",
+    "slogan_id": "1.1",
+    "text": "སྔོན་འགྲོ་ལ་སྦྱོར།"
+  },
+  {
+    "point": 1,
+    "category": "The Preliminaries",
+    "slogan_id": "1.2",
+    "text": "མི་རྟག་པའི་དོན་ལ་དྲན་པ།"
+  },
+  {
+    "point": 1,
+    "category": "The Preliminaries",
+    "slogan_id": "1.3",
+    "text": "འཆི་བ་དང་མི་རྟག་པ་ལ་ཤེས་པ།"
+  },
+  {
+    "point": 1,
+    "category": "The Preliminaries",
+    "slogan_id": "1.4",
+    "text": "ལས་དང་འབྲས་བུ་ལ་ཤེས་པ།"
+  },
+  {
+    "point": 1,
+    "category": "The Preliminaries",
+    "slogan_id": "1.5",
+    "text": "འཁོར་བའི་སྡུག་བསྔལ་ལ་ཤེས་པ།"
+  },
+  {
+    "point": 2,
+    "category": "The Main Practice: Cultivating Bodhichitta",
+    "slogan_id": "2.1",
+    "text": "བྱང་ཆུབ་སེམས་ཀྱི་རྟོགས་པ་གཅིག་ལ་སྦྱོར།"
+  },
+  {
+    "point": 2,
+    "category": "The Main Practice: Cultivating Bodhichitta",
+    "slogan_id": "2.2",
+    "text": "ཆོས་ཉིད་བྱང་ཆུབ་སེམས་ལ་སྦྱོར།"
+  },
+  {
+    "point": 2,
+    "category": "The Main Practice: Cultivating Bodhichitta",
+    "slogan_id": "2.3",
+    "text": "དགེ་བ་དང་སྡུག་བསྔལ་གཉིས་ལ་སེམས་ཅན་གྱི་དོན་དུ་བསྒོམ།"
+  },
+  {
+    "point": 2,
+    "category": "The Main Practice: Cultivating Bodhichitta",
+    "slogan_id": "2.4",
+    "text": "སེམས་ཅན་དང་བཅས་པའི་དོན་དུ་འཇུག་པ།"
+  },
+  {
+    "point": 2,
+    "category": "The Main Practice: Cultivating Bodhichitta",
+    "slogan_id": "2.5",
+    "text": "གཉིས་ཀ་མི་བསྐྱོད་པའི་སྦྱོར་བ།"
+  },
+  {
+    "point": 3,
+    "category": "Transforming Adversity into the Path of Awakening",
+    "slogan_id": "3.1",
+    "text": "ངན་པ་སུམ་ཅུར་གྱུར་པ་ལ་ལམ་བཅོས།"
+  },
+  {
+    "point": 3,
+    "category": "Transforming Adversity into the Path of Awakening",
+    "slogan_id": "3.2",
+    "text": "གཞན་དོན་དུ་བཅོས་པ།"
+  },
+  {
+    "point": 3,
+    "category": "Transforming Adversity into the Path of Awakening",
+    "slogan_id": "3.3",
+    "text": "ངན་སོང་ལ་གནོད་པར་མ་བྱ།"
+  },
+  {
+    "point": 3,
+    "category": "Transforming Adversity into the Path of Awakening",
+    "slogan_id": "3.4",
+    "text": "ངན་སོང་དང་བཅས་པ་ལ་བསྟན་པ།"
+  },
+  {
+    "point": 3,
+    "category": "Transforming Adversity into the Path of Awakening",
+    "slogan_id": "3.5",
+    "text": "ངན་པ་བཞི་དང་བཅས་པ་ལ་བསྟན་པ།"
+  },
+  {
+    "point": 4,
+    "category": "Applying the Practice Throughout the Whole of Life",
+    "slogan_id": "4.1",
+    "text": "དུས་འཁོར་ལ་གནོད་པར་མ་བྱ།"
+  },
+  {
+    "point": 4,
+    "category": "Applying the Practice Throughout the Whole of Life",
+    "slogan_id": "4.2",
+    "text": "བྱ་བ་དང་སེམས་ཀྱི་འཇུག་ལ་མི་འགྱུར།"
+  },
+  {
+    "point": 4,
+    "category": "Applying the Practice Throughout the Whole of Life",
+    "slogan_id": "4.3",
+    "text": "རང་དོན་ལ་སོགས་པ་ལ་གནོད་པར་མ་བྱ།"
+  },
+  {
+    "point": 4,
+    "category": "Applying the Practice Throughout the Whole of Life",
+    "slogan_id": "4.4",
+    "text": "གནས་སུ་འཇུག་པའི་ལམ་ལ་མ་འཇུག།"
+  },
+  {
+    "point": 4,
+    "category": "Applying the Practice Throughout the Whole of Life",
+    "slogan_id": "4.5",
+    "text": "རང་དོན་ལ་མ་འགྱུར།"
+  },
+  {
+    "point": 5,
+    "category": "The Measure of Proficiency in Mind Training",
+    "slogan_id": "5.1",
+    "text": "གཞན་དོན་དུ་སེམས་བསྒོམ།"
+  },
+  {
+    "point": 5,
+    "category": "The Measure of Proficiency in Mind Training",
+    "slogan_id": "5.2",
+    "text": "གཞན་དོན་ལ་སྦྱོར།"
+  },
+  {
+    "point": 5,
+    "category": "The Measure of Proficiency in Mind Training",
+    "slogan_id": "5.3",
+    "text": "དོན་གྲུབ་ལ་སྦྱོར།"
+  },
+  {
+    "point": 5,
+    "category": "The Measure of Proficiency in Mind Training",
+    "slogan_id": "5.4",
+    "text": "རང་དོན་ལ་སྦྱོར།"
+  },
+  {
+    "point": 6,
+    "category": "The Commitments (Disciplines of Mind Training)",
+    "slogan_id": "6.1",
+    "text": "བདག་གི་དོན་ལ་མ་འཇུག།"
+  },
+  {
+    "point": 6,
+    "category": "The Commitments (Disciplines of Mind Training)",
+    "slogan_id": "6.2",
+    "text": "སེམས་ཅན་གྱི་དོན་ལ་འཇུག་པ།"
+  },
+  {
+    "point": 6,
+    "category": "The Commitments (Disciplines of Mind Training)",
+    "slogan_id": "6.3",
+    "text": "དོན་གྲུབ་ལ་འཇུག་པ།"
+  },
+  {
+    "point": 6,
+    "category": "The Commitments (Disciplines of Mind Training)",
+    "slogan_id": "6.4",
+    "text": "གཞན་དོན་དུ་འཇུག་པ།"
+  },
+  {
+    "point": 7,
+    "category": "Guidelines (Precepts of Mind Training)",
+    "slogan_id": "7.1",
+    "text": "རང་དོན་ལ་འཇུག་པ།"
+  },
+  {
+    "point": 7,
+    "category": "Guidelines (Precepts of Mind Training)",
+    "slogan_id": "7.2",
+    "text": "གཞན་དོན་ལ་འཇུག་པ།"
+  },
+  {
+    "point": 7,
+    "category": "Guidelines (Precepts of Mind Training)",
+    "slogan_id": "7.3",
+    "text": "དོན་གྲུབ་ལ་འཇུག་པ།"
+  },
+  {
+    "point": 7,
+    "category": "Guidelines (Precepts of Mind Training)",
+    "slogan_id": "7.4",
+    "text": "སེམས་ཅན་གྱི་དོན་ལ་འཇུག་པ།"
+  },
+  {
+    "point": 7,
+    "category": "Guidelines (Precepts of Mind Training)",
+    "slogan_id": "7.5",
+    "text": "གནོད་པར་མ་བྱ།"
+  },
+  {
+    "point": 7,
+    "category": "Guidelines (Precepts of Mind Training)",
+    "slogan_id": "7.6",
+    "text": "དུས་འཁོར་ལ་གནོད་པར་མ་བྱ།"
+  },
+  {
+    "point": 7,
+    "category": "Guidelines (Precepts of Mind Training)",
+    "slogan_id": "7.7",
+    "text": "དོན་གྲུབ་ལ་འཇུག་པ།"
+  },
+  {
+    "point": 7,
+    "category": "Guidelines (Precepts of Mind Training)",
+    "slogan_id": "7.8",
+    "text": "གཞན་དོན་ལ་འཇུག་པ།"
+  },
+  {
+    "point": 7,
+    "category": "Guidelines (Precepts of Mind Training)",
+    "slogan_id": "7.9",
+    "text": "ངན་པ་དང་བཅས་པ་ལ་འཇུག་པ།"
+  },
+  {
+    "point": 7,
+    "category": "Guidelines (Precepts of Mind Training)",
+    "slogan_id": "7.10",
+    "text": "སེམས་ཅན་གྱི་དོན་ལ་འཇུག་པ།"
+  },
+  {
+    "point": 7,
+    "category": "Guidelines (Precepts of Mind Training)",
+    "slogan_id": "7.11",
+    "text": "དངོས་གྲུབ་རྣམ་གྲོལ་ལ་འཇུག་པ།"
+  },
+  {
+    "point": 7,
+    "category": "Guidelines (Precepts of Mind Training)",
+    "slogan_id": "7.12",
+    "text": "དམ་ཅན་གྱི་ལམ་ལ་འཇུག་པ།"
+  },
+  {
+    "point": 7,
+    "category": "Guidelines (Precepts of Mind Training)",
+    "slogan_id": "7.13",
+    "text": "གཞན་དོན་དུ་སེམས་བསྒོམ།"
+  }
+]

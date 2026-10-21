@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.kenfasano.screenart-viewer</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/bin/python3</string>
+        <string>/Users/kenfasano/Scripts/ScreenArt/viewer/app.py</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/kenfasano/Scripts/ScreenArt/viewer</string>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/kenfasano/Library/Logs/screenart-viewer.out</string>
+
+    <key>StandardErrorPath</key>
+    <string>/Users/kenfasano/Library/Logs/screenart-viewer.err</string>
+</dict>
+</plist>
