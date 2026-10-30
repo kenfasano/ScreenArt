@@ -2,9 +2,9 @@
 
 ## Overview
 
-ScreenArt is Kenny's personal generative art pipeline written in Python. It runs on a Mac M1 (primary) and an Arch Linux ARM64 VM under UTM (secondary). The pipeline fetches or generates source images, applies chains of raster transformers, grades each output A/B/C/F, and saves results to a watched directory. A companion SwiftUI screensaver app called **SASS** (Screen Art Slideshow) displays the output images across all connected monitors.
+ScreenArt is my personal generative art pipeline written in Python. It runs on a Mac M1 (primary) and an Arch Linux ARM64 VM under UTM (secondary). The pipeline fetches or generates source images, applies chains of raster transformers, grades each output A/B/C/F, and saves results to a watched directory. A companion SwiftUI screensaver app called **SASS** (Screen Art Slideshow) displays the output images across all connected monitors.
 
-The project lives at `~/Scripts/ScreenArt/` on Mac and `~/mac/Scripts/ScreenArt/` on Arch. GitHub repo: `github.com/kenfasano/ScreenArt`. SASS lives at `~/Xcode/SASS/` with repo `github.com/kenfasano/SASS`.
+The project lives at `~/Scripts/ScreenArt/` on Mac and `~/mac/Scripts/ScreenArt/` on Linux. GitHub repo: `github.com/kenfasano/ScreenArt`. SASS lives at `~/Xcode/SASS/` with repo `github.com/kenfasano/SASS`.
 
 ---
 
